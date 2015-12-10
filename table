@@ -1,0 +1,171 @@
+
+IMSI = max 15 digit  utf8 mcc mnc msin
+teminal-info = IMEI = max 14 digit utf8
+			 = SOFT-VERS = 2 digit	utf8
+RAT-TYPE = ENUMERATOR
+ULR-FLG = UINT32
+UE-SRVCC-CAP = ENUM
+VISITED-PLMN-ID = 3-OCTETS OCTETSTRING
+SGSN-NUMBER = max 15 digit  octetstirng		CC NDC SN
+HOME-SUPPR-IMS-VOP-SESS = ENUM
+GMLC-ADDRESS = IPV4/IPV6 ADDRESS
+
+ACTIVE-APN = CONTEXT-ID = UINT32
+		   = SERVICE-SELECTION = MAX-63-OCTET UTF8   (LIKE FQDN OR WILDCARD)
+		   = MIP6-AGENT-INFO = MIP-Home-Agent-Addres = IPV4/IPV6 ADDRESS
+		   					 = MIP-Home-Agent-Host = Destination-Host = DIAMETEID
+												   = Destination-Realm = DIAMETID (epc.mnc<MNC>.mcc<MCC>.3gppnetwork.org )
+
+		   = VISTED-NETWORK-ID = OCTET   (mnc<MNC>.mcc<MCC>.3gppnetwork.org)
+		   = SPECIFIC-APN-INFO = SERVICE-SELECTION = MAX-63-OCTET UTF8   (LIKE FQDN OR WILDCARD)
+							   = MIP6-AGENT-INFO 
+							   = VISTED-NETWORK-ID
+EQUIVALENT-PLMN-LIST = 1*(VISITED-PLMN-ID)
+MME-NUMBER-MT-SMS = 15 DIGIT MAX OCTET
+SMS-REGISTER-REQUEST = ENUM
+COUPLED-NODE-DIAMETER-ID = DIAMETERID  255 octet max
+
+
+ULA-Flags = UINT32
+SUBSCRIPTION-DATA = SUBSCRIP-STATUS = ENUM
+				  = MSISDN = 15 DIG OCTET
+				  = A_MSISDN = 15 DIG OCTET
+				  = STN-SR = 15 DIG OCTET (e.164)
+				  = ICS-INDICATOR = ENUM
+				  = NETWORK-ACCESS-MODE = ENUM
+				  = HPLMN-ODB = UINT32
+				  = *10{Regional-Subscription-Zone-Code} MAX 8 OCTET MCC(CC) (MNC)NDC ZC
+				  = ACCESS-RESTRIC-DATA = UINT32
+				  = APN-OI-Replacement = 9...100 OCTET UTF8 FQDN
+				  = LCS-Info = *(GMLC-NUMBER = 15DIG OCTET ISDN
+			  /*only for sgsn= *(LCS-PrivacyException) = SS-CODE = ONE OCTET  SUPPLIMENTARY SERVICE
+												= SS-STATUS= ONE OCTET (4 BIT) Provisioned Registered 'Active and Operative' 'Active and Quiescent' 
+											= Notification-To-UE-User = ENUM
+											= *(External-Client = Client-Identity
+													 = GMLC-Restriction = ENUM
+													 = Notification-To-UE-User = ENUM
+											= *(PLMN-Client = enum
+										    = *(Service-Type = ServiceTypeIdentity = UINT32
+															= GMLC-Restriction = ENUM
+															= Notification-To-UE-User = ENUM*/
+							 =*(MO-LR = SS-CODE = ONE OCTET  SUPPLIMENTARY SERVICE
+									  = SS-STATUS= OCTET 4 BIT 
+
+				   = Teleservice-List = *(TS-Code = ONE OCTET (USING BIT TO ID TELESERVICES)
+				   = *(Call-Barring-Info = SS-CODE = ONE OCTET  SUPPLIMENTARY SERVICE
+									  = SS-STATUS= OCTET 4 BIT 
+				   = 3GPP-Charging-Characteristics = 2 OCTETS UTF8
+				   = AMBR = Max-Requested-Bandwidth-UL = UINT32
+						  = Max-Requested-Bandwidth-DL = UINT32
+				   = APN-Configuration-Profile = CONTEXT-ID = UINT32
+										= All-APN-Configurations-Included-Indicator = ENUM
+						= *(APN-Configuration = CONTEXT-ID = UINT32
+								= *2(Served-Party-IP-Address = IPV4/&IPV6 ADDR
+								=  PDN-Type = ENUM
+								=  SERVICE-SELECTION = MAX-63-OCTET UTF8   (LIKE FQDN OR WILDCARD)
+								= EPS-Subscribed-QoS-Profile = QoS-Class-Identifier = ENUM
+										= Priority-Level = UINT32
+										= Pre-emption-Capability = ENUM
+										= Pre-emption-Vulnerability = ENUM
+								= VPLMN-Dynamic-Address-Allowed = ENUM
+								= MIP6-Agent-Info =
+								= Visited-Network-Identifier 
+								= PDN-GW-Allocation-Type = ENUM
+								= 3GPP-Charging-Characteristics
+								= AMBR
+								= *(Specific-APN-Info
+								= APN-OI-Replacement = 9..100 OCTET UTF8 FQDN
+ 								= SIPTO-Permission = ENUM
+								= LIPA-Permission = ENUM
+								= Restoration-Priority = UINT32
+								= SIPTO-Local-Network-Permission = UINT32
+								= WLAN-offloadability = WLAN-offloadability-EUTRAN = UINT32
+													= WLAN-offloadability-UTRAN = UINT32
+				  = RAT-Frequency-Selection-Priority-ID = UINT32	
+				  = Trace-Data = Trace-Reference = 6 octets OCTETSTRI (MCC MNC TID(3 OCTETS))
+							   = Trace-Depth = ENUM
+							= Trace-NE-Type-List = ONE OCTET OCTETSTR (SGW MME BM-SC RNC GGSN SGSN MGW MSC)
+							= Trace-Interface-List = 2 OCTET OCTETSTR
+							= Trace-Event-List = 2 OCTET OCTETSTR
+							= OMC-Id = OCTET 20 LEN
+							= Trace-Collection-Entity = IPV4 OR IPV6 ADDR 4..16
+							= MDT-Configuration = Job-Type =ENUM
+									= Area-Scope = *(Cell-Global-Identity =  7 OCTET (MCC MNC LAC(2 OCT) CI(2 OCT))
+								 		= *(E-UTRAN-Cell-Global-Identity = 7 octet
+										= *(Routing-Area-Identity = 6 OCTET (MCC MNC LAC RAC)		47 OCTET FQDN (rac<RAC>.lac<LAC>.rac.epc.mnc<MNC>.mcc<MCC>.3gppnetwork.org)
+										= *(Location-Area-Identity = 5 OCTET (MCC MNC LAC)
+										= *(Tracking-Area-Identity = 5 OCTET (MCC MNC TAC)
+
+									= List-Of-Measurements =UINT32
+									= Reporting-Trigger = UINT32
+									= Report-Interval = ENUM
+									= Report-Amount = ENUM 
+									= Event-Threshold-RSRP = UINT32
+									= Event-Threshold-RSRQ = UINT32
+									= Logging-Interval = ENUM
+									= Logging-Duration =ENUM
+									= Measurement-Period-LTE = ENUM
+									= Measurement-Period-UMTS = ENUM
+									= Collection-Period-RMM-LTE = ENUM
+									= Collection-Period-RRM-UMTS = ENUM
+									= Positioning-Method = ONE OCTET 
+									= Measurement-Quantity = ONE OCTET
+									= Event-Threshold-Event-1F = INT32
+									= Event-Threshold-Event-1I = INT32
+									= *(MDT-Allowed-PLMN-Id =  3 OCTET
+					= GPRS-Subscription-Data = Complete-Data-List-Included-Indicator = ENUM
+											= *(PDP-Context = Context-Identifier
+														= PDP-Type = ONE OCTET (HEX(21)IPV4 HEX(57 IPV6))
+														= PDP-Address = 1-16 OCTET IPV4 IPV6 ADDR
+														= QoS-Subscribed = 3 OCTET
+													 	= VPLMN-Dynamic-Address-Allowed = ENUM
+														= Service-Selection	
+														= 3GPP-Charging-Characteristics
+														= Ext-PDP-Type = 2 OCTET   (IPV4/V6 DUAL STACK SUPPORT)
+														= Ext-PDP-Address = 1-16 OCTE IPV4 IPV6 (ADDITIONAL ADDRES WHEN DUALSTACK IPV4/6 IS SUPPORTED)
+														= AMBR
+														= APN-OI-Replacement
+														= SIPTO-Permission
+														= LIPA-Permission
+														= Restoration-Priority
+														= SIPTO-Local-Network-Permission
+					= *(CSG-Subscription-Data = CSG-Id = UINT32
+										= Expiration-Date = 4 OCTETS TIME (seconds relative to 0h on 1 January 1900 LAST 32 BITS FOR FRACTION OF SECONDS)
+										= Service-Selection
+										= Visited-PLMN-Id
+					= Roaming-Restricted-Due-To-Unsupported-Feature = ENUM
+					= Subscribed-Periodic-RAU-TAU-Timer = UINT32
+					= MPS-Priority = UINT32
+					= VPLMN-LIPA-Allowed = ENUM
+					= Relay-Node-Indicator = ENUM
+					= MDT-User-Consent = ENUM
+					= Subscribed-VSRVCC = ENUM
+					= ProSe-Subscription-Data = ProSe-Permission = UINT32
+					= Subscription-Data-Flags = UINT32
+*(RESET-ID = OCTET
+
+
+Requested-EUTRAN-Authentication-Info = NO NeED
+Requested-UTRAN-GERAN-Authentication-Info = NO NEED
+
+Authentication-Info = *( E-UTRAN-Vector = Item-Number = UINT32
+									= RAND = 16 OCTET
+									= XRES = 4..16 OCTET
+									= AUTN = 16 OCTET
+									= KASME = 32 OCTET
+					= *(UTRAN-Vector = Item-Number = UINT32
+									= RAND = 16 OCTET
+									= XRES = 4..16 OCTET
+									= AUTN = 16 OCTET
+									= Confidentiality-Key = 16 OCTET
+									= Integrity-Key = 16 OCTET
+					= *(GERAN-Vector = Item-Number = UINT32
+									= RAND = 16 OCTET
+									= XRES = 4..16 OCTET 
+									= Kc = 8 OCTET
+
+
+/*charging*/
+3GPP type = 13 fist octet
+3GPP Length= 6 2nd octet
+characteristics value: Text type 3-6th octet

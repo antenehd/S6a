@@ -1,0 +1,18 @@
+
+# -------- Test configuration ---------
+
+Identity = "peer1.localdomain";
+Realm = "localdomain";
+# Port = 3868;
+# SecPort = 3869;
+
+TLS_Cred = "peer1.cert.pem",
+	   "peer1.key.pem";
+TLS_CA = "cacert.pem";
+
+LoadExtension = "extensions/dict_nasreq.fdx" : "test_app2.conf";
+LoadExtension = "extensions/dict_dcca.fdx" : "test_app2.conf";
+LoadExtension = "extensions/dict_dcca_3gpp.fdx" : "test_app2.conf";
+
+ConnectPeer = "peer2.localdomain" { ConnectTo = "127.0.0.1"; No_TLS; port = 30868; };
+

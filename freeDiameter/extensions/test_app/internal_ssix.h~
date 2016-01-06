@@ -1,4 +1,0 @@
-
-typedef struct avp** avp_objects_ptr;
-
-int msg_to_dict(struct s6_msg *msg,dict_objects *dict_objts,size_t count);

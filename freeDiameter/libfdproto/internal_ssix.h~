@@ -1,0 +1,2 @@
+
+typedef struct avp** avps_ptr; 

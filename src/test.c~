@@ -1,0 +1,10 @@
+#include <stdio.h>
+
+inline int xx(int x){
+	return x * 2;
+}
+
+int main(){
+
+
+}

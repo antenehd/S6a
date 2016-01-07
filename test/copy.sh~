@@ -1,3 +1,0 @@
-cp -f testapp ../bin/libssixa.so ./test/testmme1;
-cp -f testapp ../bin/libssixa.so ./test/testmme2;
-cp -f testapp ../bin/libssixa.so ./test/testhss;

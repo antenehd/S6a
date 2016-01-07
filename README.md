@@ -1,170 +1,87 @@
 
- S6a Application Interface Module
+ S6a INTERFACE IMPLEMENTATION LIBRARY
  Work in progress
- The freediameter library has some modified code in file message.c found in directory libfdproto, in file cnxctx.c found in directory libfdcore and in file sctp.c found in directory libfdcore. All the modified codes are put between comment 'MODIFIED' and 'ENDMODIFIED'.
 
 
-/*
- * FUNCTION:	fd_msg_send, fd_msg_send_timeout  
- *
- * PARAMETERS:
- *  pmsg 	: Location of the message to be sent on the network (set to NULL on function return to avoid double deletion).
- *  anscb	: A callback to be called when corresponding answer is received, when sending a request (not used with answers)
- *  anscb_data	: opaque data to be passed back to the anscb (or expirecb) when it is called.
- *  expirecb    : (only for fd_msg_send_timeout) If the request did not get an answer before timeout, this callback is called.
- *  timeout     : (only for fd_msg_send_timeout) sets the absolute time until when to wait for an answer. Past this time,
- *                the expirecb is called with the request and the answer will be discarded if received later.
- *
- * DESCRIPTION: 
- *   Sends a message on the network. (actually simply queues it in a global queue, to be picked by a daemon's thread)
- * For requests, the end-to-end id must be set (see fd_msg_get_eteid / MSGFL_ALLOC_ETEID).
- * For answers, the message must be created with function fd_msg_new_answer_from_req.
- *
- * The routing module will handle sending to the correct peer, usually based on the Destination-Realm / Destination-Host AVP.
- *
- * If the msg is a request, there are two ways of receiving the answer:
- *  - either having registered a callback in the dispatch module (see fd_disp_register)
- *  - or provide a anscb callback here. If such callback is provided, it is called before the dispatch callbacks.
- *    The prototype for this anscb callback function is:
- *     void anscb(void * data, struct msg ** answer)
- *	where:
- *		data   : opaque data that was registered along with the callback.
- *		answer : location of the pointer to the answer.
- *      note1: on function return, if *answer is not NULL, the message is passed to the dispatch module for regular callbacks.
- *	       otherwise, the callback must take care of freeing the message (fd_msg_free).
- *	note2: the opaque data is not freed by the daemon in any case, extensions should ensure clean handling in fd_ext_fini.
- * 
- * If no callback is registered to handle an answer, the message is discarded and an error is logged.
- *
- *  fd_msg_send_timeout is similar to fd_msg_send, except that it takes two additional arguments "expirecb" and "timeout". 
- * If the message parameter is an answer, there is no difference with fd_msg_send.
- * Otherwise, if the corresponding answer (or error) is received before the timeout date elapses, everything occurs as with fd_msg_send. 
- * Otherwise, the request is removed from the queue (meaning the matching answer will be discarded upon reception) and passed to the expirecb 
- * function. Upon return, if the *msg parameter is not NULL, it is freed (not passed to other callbacks). 
- * expirecb is called in a dedicated thread.
- * 
- *    The prototype for the expirecb callback function is:
- *     void expirecb(void * data, struct peer_hdr * sentto, struct msg ** request)
- *	where:
- *		data   : opaque data that was registered along with the callback.
- *              sentto : pointer to the peer to which the message was sent and no answer received within timeout.
- *		request: location of the pointer to the request that was not answered.
- *
- * RETURN VALUE:
- *  0      	: The message has been queued for sending (sending may fail asynchronously).
- *  EINVAL 	: A parameter is invalid (ex: anscb provided but message is not a request).
- *  ...
- */
-int fd_msg_send ( struct msg ** pmsg, void (*anscb)(void *, struct msg **), void * data );
-int fd_msg_send_timeout ( struct msg ** pmsg, void (*anscb)(void *, struct msg **), void * data, void (*expirecb)(void *, DiamId_t, size_t, struct msg **), const struct timespec *timeout );
+ 1. INTRODUCTION
+	
+	This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of 
+	APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net)   
+    software libraries  'linfdproto' and 'libfdcore' which contains the implementation for the diameter basic 
+    protocol and other basic functionalities need for this implementation to work. And it also requires the 
+    extensions 'dict_dcca', 'dict_dcca_3gpp' and 'dict_nasreq' found in freediameter to be loaded for this   
+    implementation to work.
+	
+
+ 2. HOW TO USE
 
 	
 
-/*
- * FUNCTION:	fd_disp_register
- *
- * PARAMETERS:
- *  cb 		  : The callback function to register (see dispatch_callback description above).
- *  how	  	  : How the callback must be registered.
- *  when          : Values that must match, depending on the how argument.
- *  opaque        : A pointer that is passed back to the handler. The content is not interpreted by the framework.
- *  handle        : On success, a handler to the registered callback is stored here if not NULL. 
- *		   This handler can be used to unregister the cb.
- *
- * DESCRIPTION: 
- *   Register a new callback to handle messages delivered locally.
- *
- * RETURN VALUE:
- *  0      	: The callback is registered.
- *  EINVAL 	: A parameter is invalid.
- *  ENOMEM	: Not enough memory to complete the operation
- */
-int fd_disp_register ( int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *), 
-			enum disp_how how, struct disp_when * when, void * opaque, struct disp_hdl ** handle );
-
-
-/*
- * FUNCTION:	fd_disp_unregister
- *
- * PARAMETERS:
- *  handle       : Location of the handle of the callback that must be unregistered.
- *  opaque       : If not NULL, the opaque data that was registered is restored here.
- *
- * DESCRIPTION: 
- *   Removes a callback previously registered by fd_disp_register.
- *
- * RETURN VALUE:
- *  0      	: The callback is unregistered.
- *  EINVAL 	: A parameter is invalid.
- */
-int fd_disp_unregister ( struct disp_hdl ** handle, void ** opaque );
-
-/* Destroy all handlers */
-void fd_disp_unregister_all ( void );
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
- * FUNCTION:	fd_msg_send, fd_msg_send_timeout  
- *
- * PARAMETERS:
- *  pmsg 	: Location of the message to be sent on the network (set to NULL on function return to avoid double deletion).
- *  anscb	: A callback to be called when corresponding answer is received, when sending a request (not used with answers)
- *  anscb_data	: opaque data to be passed back to the anscb (or expirecb) when it is called.
- *  expirecb    : (only for fd_msg_send_timeout) If the request did not get an answer before timeout, this callback is called.
- *  timeout     : (only for fd_msg_send_timeout) sets the absolute time until when to wait for an answer. Past this time,
- *                the expirecb is called with the request and the answer will be discarded if received later.
- *
- * DESCRIPTION: 
- *   Sends a message on the network. (actually simply queues it in a global queue, to be picked by a daemon's thread)
- * For requests, the end-to-end id must be set (see fd_msg_get_eteid / MSGFL_ALLOC_ETEID).
- * For answers, the message must be created with function fd_msg_new_answer_from_req.
- *
- * The routing module will handle sending to the correct peer, usually based on the Destination-Realm / Destination-Host AVP.
- *
- * If the msg is a request, there are two ways of receiving the answer:
- *  - either having registered a callback in the dispatch module (see fd_disp_register)
- *  - or provide a anscb callback here. If such callback is provided, it is called before the dispatch callbacks.
- *    The prototype for this anscb callback function is:
- *     void anscb(void * data, struct msg ** answer)
- *	where:
- *		data   : opaque data that was registered along with the callback.
- *		answer : location of the pointer to the answer.
- *      note1: on function return, if *answer is not NULL, the message is passed to the dispatch module for regular callbacks.
- *	       otherwise, the callback must take care of freeing the message (fd_msg_free).
- *	note2: the opaque data is not freed by the daemon in any case, extensions should ensure clean handling in fd_ext_fini.
- * 
- * If no callback is registered to handle an answer, the message is discarded and an error is logged.
- *
- *  fd_msg_send_timeout is similar to fd_msg_send, except that it takes two additional arguments "expirecb" and "timeout". 
- * If the message parameter is an answer, there is no difference with fd_msg_send.
- * Otherwise, if the corresponding answer (or error) is received before the timeout date elapses, everything occurs as with fd_msg_send. 
- * Otherwise, the request is removed from the queue (meaning the matching answer will be discarded upon reception) and passed to the expirecb 
- * function. Upon return, if the *msg parameter is not NULL, it is freed (not passed to other callbacks). 
- * expirecb is called in a dedicated thread.
- * 
- *    The prototype for the expirecb callback function is:
- *     void expirecb(void * data, struct peer_hdr * sentto, struct msg ** request)
- *	where:
- *		data   : opaque data that was registered along with the callback.
- *              sentto : pointer to the peer to which the message was sent and no answer received within timeout.
- *		request: location of the pointer to the request that was not answered.
- *
- * RETURN VALUE:
- *  0      	: The message has been queued for sending (sending may fail asynchronously).
- *  EINVAL 	: A parameter is invalid (ex: anscb provided but message is not a request).
- *  ...
- */
-int fd_msg_send ( struct msg ** pmsg, void (*anscb)(void *, struct msg **), void * data );
-int fd_msg_send_timeout ( struct msg ** pmsg, void (*anscb)(void *, struct msg **), void * data, void (*expirecb)(void *, DiamId_t, size_t, struct msg **), const struct timespec *timeout );
+	2.1. INSTALL FREEDIAMETER
 	
+		 Since this library totally relies on freediameter libraries, freediameter software must be installed.
+		 To install freediameter follow the install instruction stated in the files found in the 
+		 freediameter directory. The freediameter software in this directory should be used since it contains 
+       	 some modific codes.
+	
+	2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
+
+		 Assuming it has been downloaded to you PC already. To build the S6a library, on your terminal goto the 
+	  	 directory where this implementation is downloaded to, and excute the 'Makefile', run the following on 
+       	 terminal:
+		 
+		 # make 	
+	 
+      	 This will create two new directories 'OBJECTS' and 'bin'. And the library is place in the new directory 
+	     'bin' under the name 'libssixa.so'. 
+
+	2.3. USING THE LIBRARY
+		
+		 This library is built as a shared library so it should be used as one. And check the documentaion found in
+		 'doc' directory which is found in the root git directory for API descriptions defined in this library. 
+
+		 
+ 3. TESTING
+
+	Testing for all functionalities provided by the library are not yet done. The testing approached used is end to 
+	end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to  
+    end testing each function will also be tested since all the functions will be used when all the end to end 
+    testing is completed. 
+	The end to end testing that has be done so far is for Update-Location-Request message and 
+    Update-Location-Answer messages.
+
+	Running the test: 
+	    To run the test, first the procedures mentioned in section 2.1. and section 2.2. must be completed 
+	 	successfuly. Then on your command terminal navigate to 'test' directory which is found in the main directory 
+	 	and	excute 'Makefile' and then excute 'copy.sh' as follows:
+		
+		# cd test
+		# make
+		# sh copy.sh
+
+	    Then configure the password and username of the mysql server on your system in 'mysql.conf' file found in  			this directory('test' directory). Read the instruction in the file configure accordingly.
+
+	 	After this create the test HSS database by navigating to 'hss_db' directory which is found in the current
+	  	directory('test' directory) and excuting 'my.sh' as follows:
+
+		# sh my.sh
+
+	 	Now navigate back to the 'test' directory and then navigate to 'testhss' directory and run the following 
+	    command to simulate an HSS server which is waiting for S6a interface messages:
+
+		# ./testapp hss
+
+	 	Then open another terminal and navigate to 'testmme1' directory which is found in the same directory as
+	    'testhss'. From there run the following to simulate an MME client sending Update-Location-Request and 
+       	waiting for Upadate-Location-Answer:
+
+		# ./testapp ulr peer1.localdomain
+
+	 	Now you should see the test running on both terminals. 'Warnings' messages in the terminal are just 
+   		notifications that an optional AVP is not present which is could be normal. The 'ERROR' messages 
+   	    immediatly following or preceding the 'warning' messages is caused by the same situation as the 'warning'
+	 	message and it is generated by the freediameter application not the test application.
+
+
+
+

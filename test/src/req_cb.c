@@ -1001,7 +1001,7 @@ static void set_subsc_data(struct msg ** msg, char * imsi, unsigned32 ulr_flg, s
 			size_t tmp_size;
 			
 			/*Get array of Visited-Plmn-Id values*/
-			ss_get_visited_plmn_id_array(tmp_gavp2, &visited_plmn_id, &array_size);
+			ss_get_visited_plmn_id_gavp_array(tmp_gavp2, &visited_plmn_id, &array_size);
 			tmp_size = array_size;
 
 			while(tmp_size > 0){
@@ -1176,7 +1176,7 @@ static inline int get_mip_addr(struct avp *gavp, address ** addr_1, address ** a
 		return 1;
 
 	/*Get MIP-Home-Agent-Address*/							
-	SS_WCHECK( ss_get_mip_home_agent_address_array( gavp, &hm_agnt_addr, &array_size), "MIP-Home-Agent-Address array of values retrieved.\n", "Failed to retrieve MIP-Home-Agent-Address values.\n", NULL);
+	SS_WCHECK( ss_get_mip_home_agent_address_gavp_array( gavp, &hm_agnt_addr, &array_size), "MIP-Home-Agent-Address array of values retrieved.\n", "Failed to retrieve MIP-Home-Agent-Address values.\n", NULL);
 
 	if(array_size){
 		

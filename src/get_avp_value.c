@@ -411,7 +411,7 @@ int ss_get_service_selection_gavp(struct avp *gavp, unsigned char **ret){
 }
 
 /*Retrieves multiple Service-Selection AVPs' values from group avp*/
-int ss_get_service_selection_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_service_selection_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_service_selection, array_ret, array_size);		
 }
@@ -423,7 +423,7 @@ int ss_get_visited_network_identifier_gavp(struct avp *gavp, unsigned char **ret
 }
 
 /*Retrieves multiple MIP-Home-Agent-Address AVPs' values from group avp */
-int ss_get_mip_home_agent_address_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_mip_home_agent_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_mip_home_agent_address, array_ret, array_size);		
 }
@@ -435,7 +435,7 @@ int ss_get_visited_plmn_id_gavp(struct avp *gavp, unsigned char **ret){
 }
 
 /*Retrieves multiple Visited-PLMN-Id AVPs' values from group avp*/
-int ss_get_visited_plmn_id_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_visited_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_visited_plmn_id, array_ret, array_size);		
 }
@@ -597,7 +597,7 @@ int ss_get_subscription_data_flags(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves multiple GMLC-Number AVPs value from group avp */
-int ss_get_gmlc_number(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_gmlc_number_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_gmlc_number, array_ret, array_size);		
 }
@@ -632,7 +632,7 @@ int ss_get_gmlc_restriction(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves multiple PLMN-Client AVPs value from group avp*/
-int ss_get_plmn_client(struct avp *gavp, int32_t **array_ret, size_t *array_size){	
+int ss_get_plmn_client_gavp_array(struct avp *gavp, int32_t **array_ret, size_t *array_size){	
 	
 	return get_int_gavp_array(gavp, ss_plmn_client, array_ret, array_size);		
 }
@@ -644,19 +644,19 @@ int ss_get_serviceTypeIdentity(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves multiple TS-Code AVPs value from group avp*/
-int ss_get_ts_code_gavp(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_ts_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_ts_code, array_ret, array_size);		
 }
 
 /*Retrieves Max-Requested-Bandwidth-UL avp value from group avp */
-int ss_get_max_requested_bw_ul(struct avp *gavp, uint32_t *ret){	
+int ss_get_max_requested_bandwidth_ul(struct avp *gavp, uint32_t *ret){	
 
 	return get_uint_value_gavp(gavp, ss_max_requested_bandwidth_ul, ret);
 }
 
 /*Retrieves Max-Requested-Bandwidth-DL avp value from group avp*/
-int ss_get_max_requested_bw_dl(struct avp *gavp, uint32_t *ret){	
+int ss_get_max_requested_bandwidth_dl(struct avp *gavp, uint32_t *ret){	
 
 	return get_uint_value_gavp(gavp, ss_max_requested_bandwidth_dl, ret);
 }
@@ -703,7 +703,7 @@ int ss_get_sipto_local_network_permission(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves multiple Served-Party-IP-Address AVPs' values from group avp*/
-int ss_get_served_party_ip_address(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_served_party_ip_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_served_party_ip_address, array_ret, array_size);		
 }
@@ -788,31 +788,31 @@ int ss_get_job_type(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves multiple Cell-Global-Identity AVPs' values from group avp */
-int ss_get_cell_global_identity(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_cell_global_identity, array_ret, array_size);		
 }
 
 /*Retrieves multiple E-UTRAN-Cell-Global-Identity AVPs' values from group avp */
-int ss_get_e_utran_cell_global_identity(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_e_utran_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_e_utran_cell_global_identity, array_ret, array_size);		
 }
 
 /*Retrieves multiple Routing-Area-Identity AVPs' values from group avp*/
-int ss_get_routing_area_identity(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_routing_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_routing_area_identity, array_ret, array_size);		
 }
 
 /*Retrieves multiple Location-Area-Identity AVPs' values from group avp*/
-int ss_get_location_area_identity(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_location_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_location_area_identity, array_ret, array_size);		
 }
 
 /*Retrieves multiple Tracking-Area-Identity AVPs' values from group avp*/
-int ss_get_tracking_area_identity(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_tracking_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_tracking_area_identity, array_ret, array_size);		
 }
@@ -906,7 +906,7 @@ int ss_get_event_threshold_event_1i(struct avp *gavp, uint32_t *ret){
 }	
 
 /*Retrieves multiple MDT-Allowed-PLMN-Id AVPs' values from group avp*/
-int ss_get_mdt_allowed_plmn_id(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_mdt_allowed_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_gavp_array(gavp, ss_mdt_allowed_plmn_id, array_ret, array_size);		
 }
@@ -965,7 +965,7 @@ int ss_get_prose_permission(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves multiple Reset-ID AVPs' values from group avp*/
-int ss_get_reset_id(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_reset_id_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_array(msg, ss_reset_id, array_ret, array_size);		
 }
@@ -1151,13 +1151,13 @@ int ss_get_trace_reference(struct msg *msg, unsigned char **ret){
 }
 
 /*Retrieves multiple TS-Code AVPs value from message*/
-int ss_get_ts_code(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_ts_code_msg_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_array(msg, ss_ts_code, array_ret, array_size);		
 }
 
 /*Retrieves multiple SS-Code AVPs value from message*/
-int ss_get_ss_code(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_ss_code_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_array(msg, ss_ss_code, array_ret, array_size);		
 }
@@ -1181,7 +1181,7 @@ int ss_get_pua_flags(struct msg *msg, uint32_t *ret){
 }
 
 /*Retrieves multiple User-Id AVPs value from message*/
-int ss_get_user_id(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_user_id_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
 	
 	return get_str_array(msg, ss_user_id, array_ret, array_size);		
 }

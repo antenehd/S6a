@@ -65,17 +65,17 @@ int main(int argc, char **argv){
 		if(strncmp(argv[1], hss, 3) == 0){
 
 			/*Register callback for ULR*/
-			SS_CHECK( ss_reg_ulr_cb(test_req_cb_ulr), "Call back for ULR registerd.\n", "Failed to register callback for ULR.\n");
+			SS_CHECK( ss_reg_cb_ulr(test_req_cb_ulr), "Call back for ULR registerd.\n", "Failed to register callback for ULR.\n");
 
 			/*Register callback for AIR*/
-			SS_CHECK( ss_reg_air_cb(test_req_cb_air), "Call back for AIR registerd.\n", "Failed to register callback for AIR.\n");
+			SS_CHECK( ss_reg_cb_air(test_req_cb_air), "Call back for AIR registerd.\n", "Failed to register callback for AIR.\n");
 		}
 
 		/*if started as MME*/
 		else if(strncmp(argv[1], mme, 3) == 0){
 
 			/*Register callback for CLR*/
-			SS_CHECK( ss_reg_clr_cb(test_req_cb_clr), "Call back for CLR registerd.\n", "Failed to register callback for CLR.\n");
+			SS_CHECK( ss_reg_cb_clr(test_req_cb_clr), "Call back for CLR registerd.\n", "Failed to register callback for CLR.\n");
 		}
 
 		else

@@ -15,7 +15,7 @@
 /**Registers a callback function 'cb' that will be call when Update-Location-Request is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_ulr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_ulr(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_ulr);
 }
@@ -23,7 +23,7 @@ int ss_reg_ulr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void
 /**Registers a callback function 'cb' that will be call when Cancel-Location-Request is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_clr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_clr(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_clr);	
 }
@@ -31,7 +31,7 @@ int ss_reg_clr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void
 /**Registers a callback function 'cb' that will be call when Authentication-Information-Request is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_air_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_air(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_air);	
 }
@@ -39,7 +39,7 @@ int ss_reg_air_cb(int (*cb)( struct msg **, struct avp *, struct session *, void
 /**Registers a callback function 'cb' that will be call when Insert-Subscriber-Data-Request is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_idr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_idr(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_idr);	
 }
@@ -47,7 +47,7 @@ int ss_reg_idr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void
 /**Registers a callback function 'cb' that will be call when Delete-Subscriber-Data-Request  is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_dsr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_dsr(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_dsr);	
 }
@@ -55,7 +55,7 @@ int ss_reg_dsr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void
 /**Registers a callback function 'cb' that will be call when  Purge-UE-Request is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_pur_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_pur(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_pur);	
 }
@@ -63,7 +63,7 @@ int ss_reg_pur_cb(int (*cb)( struct msg **, struct avp *, struct session *, void
 /**Registers a callback function 'cb' that will be call when Reset-Request  is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_rsr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_rsr(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_rsr);	
 }
@@ -71,7 +71,7 @@ int ss_reg_rsr_cb(int (*cb)( struct msg **, struct avp *, struct session *, void
 /**Registers a callback function 'cb' that will be call when  Notify-Request is received. 
  Check Request callback function description for detail about the callback function.
 */
-int ss_reg_nor_cb(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
+int ss_reg_cb_nor(int (*cb)( struct msg **, struct avp *, struct session *, void *, enum disp_action *)){
 	
 	REG_CALL_BACK(cb, ss_cmd_nor);	
 }

@@ -96,8 +96,8 @@
 
 		    To fetch the value of an AVP which is found in a message. The AVP should be a direct child
       		of the message. If the AVP is a child AVP of other AVP which is a direct child of the message the parent
-           	AVP should be fetched first using 'ss_get_gavp_&lt;AVPname&gt;'('AVPname' is the name of the parent AVP) and
- 			then use 'ss_get_&lt;AVPname&gt;_gavp'('AVPname' is the name of the child AVP) to fetch the value. The AVP 
+           	AVP should be fetched first using 'ss_get_gavp_<AVPname>'('AVPname' is the name of the parent AVP) and
+ 			then use 'ss_get_<AVPname>_gavp'('AVPname' is the name of the child AVP) to fetch the value. The AVP 
 	 		should be of not type grouped since AVPs of typed group do not have a value rather they have other AVPs 
 	     	as a child in their data field.
 	
@@ -125,13 +125,13 @@
 	   'ss_create_&lt;AVPname&gt;' : 
 
 		    To create an empty AVP structure of a specific AVP of typed grouped.  For AVPs which 
- 			are not of typed grouped, 'ss_set_&lt;AVPname&gt;' does the trick for both creating the AVP setting it's value 
+ 			are not of typed grouped, 'ss_set_<AVPname>' does the trick for both creating the AVP setting it's value 
 	 		and adding it to it's parent.
 
 	   'ss_add_&lt;AVPname&gt;' : 
 
 		    To add an AVP of typed grouped into it's parent, which could be a message or an AVP of 
- 	 		typed grouped. For AVPs which are not of typed grouped, 'ss_set_&lt;AVPname>' does the trick for both 
+ 	 		typed grouped. For AVPs which are not of typed grouped, 'ss_set_<AVPname>' does the trick for both 
 	 		creating the AVP setting it's value and adding it to it's parent.
 
 	   'ss_get_gavp_&lt;AVPname&gt;' : 
@@ -168,9 +168,11 @@
 		    Blocks untill the diameter module is shut down.
 
 		
-	   Note : '&lt;cmd&gt;' is abbreviated name of request command message(eg. rsr for Reset-Request). 
+	   Note :
+ 
+		    '<cmd>' is abbreviated name of request command message(eg. rsr for Reset-Request). 
 
-		      '&lt;AVPname&gt;' is name of the AVP all in small letters and the hyphens(-) substituded by underscore
+		    '<AVPname>;' is name of the AVP all in small letters and the hyphens(-) substituded by underscore
 			   eg. for AVP Active-APN, AVPname would be 'active_apn'.
 
 	

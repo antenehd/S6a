@@ -7,10 +7,10 @@ This implementation of the S6a interface is meant to be used as a shared library
 \section use 2.USING THIS LIBRARY APIs
 	
 	The first thing that should be done is initailize 'ss_diameter_conffile_name' global variable. This variable 
-    should be set to the file name(full path eg "./diam/diam.conf") of the diameter configuration file. If this 
+    should be set to the file name including path (eg "./diam/diam.conf") of the diameter configuration file. If this 
     variable is not set the configuration file will be searched in the directory where the excutable resides and the
     default file name is 'freediameter.conf'. Check the 'freediameter.conf.sample' file found in 'doc' directory 
-    for details about how to configuration.
+    for details about the diameter configuration file.
 
 	The next step is to initiate the diameter module using 'ss_init()' API. This will load the diameter 
     configuration, load the dictionary that contains the AVP and command definition. In additions it starts the module
@@ -224,7 +224,7 @@ This will create two new directories 'OBJECTS' and 'bin'. And the library is pla
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an HSS server which is waiting for S6a interface messages:
 
-		# ./testapp mme
+		# ./testapp hss
 
 	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an MME client sending Update-Location-Request and 

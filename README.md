@@ -168,9 +168,10 @@
 		    Blocks untill the diameter module is shut down.
 
 		
-	    Note : 'cmd' is abbreviated name of request command message(eg. rsr for Reset-Request).
-		       'AVPname' is name of the AVP all in small letters and the hyphens(-) substituded by underscore
-			   eg. for AVP Active-APN, AVPname would be 'active_apn'.
+	    Note : 
+			'cmd' is abbreviated name of request command message(eg. rsr for Reset-Request).
+		    'AVPname' is name of the AVP all in small letters and the hyphens(-) substituded by underscore
+			 eg. for AVP Active-APN, AVPname would be 'active_apn'.
 
 	
  4. TESTING

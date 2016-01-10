@@ -26,10 +26,10 @@
 	/*Set experimental result*/																						\
 	SS_CHECK( ss_create_experimental_result(&tmp_gavp), "Experimental-Result AVP created.\n", "Failed to create Experimental-Result AVP.\n");																						\
 	/*Vendor-id*/																									\
-	SS_CHECK( ss_set_vendor_id(&tmp_gavp,(unsigned32)VENDOR_ID_3GPP), "vendor id set.\n", "Failed to set vendor id.\n");	   																										\
+	SS_CHECK( ss_set_vendor_id( &tmp_gavp,(unsigned32)VENDOR_ID_3GPP), "vendor id set.\n", "Failed to set vendor id.\n");	   																										\
 	/*experimental result code*/																					\
-  	SS_CHECK(ss_set_experimental_result_code(&tmp_gavp, (unsigned32)result), "experimental result code set.\n", "Failed to set experimental result code.\n");																		\
-	SS_CHECK( ss_add_avp( (msg_or_avp **) msg, tmp_gavp ), "experimental result added.\n", "Failed to add experimental result.\n");																							\
+  	SS_CHECK(ss_set_experimental_result_code( &tmp_gavp, (unsigned32)result), "experimental result code set.\n", "Failed to set experimental result code.\n");																		\
+	SS_CHECK( ss_add_avp(  (avp_or_msg **)msg, tmp_gavp ), "experimental result added.\n", "Failed to add experimental result.\n");																							\
 }
 
 /*macro to be used by function parse_db_conf only*/
@@ -142,7 +142,7 @@ static void set_ambr(struct avp **gavp, char * ul, char * dl){
 		SS_SET_U32( ss_set_max_requested_bw_dl( &tmp_gavp, tmp_u), tmp_u, dl, "Max-Requested-Bandwidth-DL set.\n", "Failed to set Max-Requested-Bandwidth-DL.\n");
 
 	/*Add AMBR group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) gavp, tmp_gavp), "AMBR AVP set.\n", "Failed to add AMBR.\n");
+	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "AMBR AVP set.\n", "Failed to add AMBR.\n");
 }
 
 /* Set WLAN-offloadability*/
@@ -168,7 +168,7 @@ static void set_wlan_offload(struct avp **gavp, char * eutran, char * utran){
 		SS_SET_U32( ss_set_wlan_offloadability_utran( &tmp_gavp, tmp_u), tmp_u, utran, "WLAN-offloadability-UTRAN set.\n", "Failed to set WLAN-offloadability-UTRAN.\n");		
 		
 	/*Add WLAN-offloadability group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) gavp, tmp_gavp), "WLAN-offloadability AVP added.\n", "Failed to add WLAN-offloadability.\n");
+	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "WLAN-offloadability AVP added.\n", "Failed to add WLAN-offloadability.\n");
 }
 
 /* Set Allocation-Retention-Priority */
@@ -199,7 +199,7 @@ static void set_alloc_retention_prio(struct avp **gavp, char * level, char * cap
 		SS_SET_I32( ss_set_pre_emption_vulnerability( &tmp_gavp, tmp_i), tmp_i, vulner, "Pre-emption-Vulnerability set.\n", "Failed to set Pre-emption-Vulnerability.\n");
 		
 	/*Add Allocation-Retention-Priority group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **)&gavp, tmp_gavp), "Allocation-Retention-Priority AVP added.\n", "Failed to add Allocation-Retention-Priority.\n");
+	SS_CHECK( ss_add_avp( (avp_or_msg **)&gavp, tmp_gavp), "Allocation-Retention-Priority AVP added.\n", "Failed to add Allocation-Retention-Priority.\n");
 }
 
 /*** Set eps_qos_prof: EPS-Subscribed-QoS-Profile **************************/
@@ -224,7 +224,7 @@ static void eps_subsc_qos_prof(struct avp **gavp, char * qos, char * level, char
 	set_alloc_retention_prio( &tmp_gavp, level, capab, vulner);		
 	
 	/*Add EPS-Subscribed-QoS-Profile group AVP into the group AVP provided in parameter 'gavp'*/			
-	SS_CHECK( ss_add_avp( (msg_or_avp **)&gavp, tmp_gavp), "EPS-Subscribed-QoS-Profile set.\n", "Failed to add EPS-Subscribed-QoS-Profile.\n");	
+	SS_CHECK( ss_add_avp( (avp_or_msg **)&gavp, tmp_gavp), "EPS-Subscribed-QoS-Profile set.\n", "Failed to add EPS-Subscribed-QoS-Profile.\n");	
 }
 
 /*Set Area-Scope AVP*/
@@ -251,35 +251,35 @@ static void set_area_scope(struct avp **gavp, const char * imsi){
 
 	/*Create Area-Scope AVP*/
 	if(mysql_num_rows(res) != 0)
-		SS_CHECK( ss_create_area_scope( &tmp_gavp), "Area-Scope AVP created.\n", "Failed to create Area-Scope.\n");
+		SS_CHECK( ss_create_area_scope(&tmp_gavp), "Area-Scope AVP created.\n", "Failed to create Area-Scope.\n");
 
 	/*Fetch row from mysql result for Area-Scope data */			
 	while((row = mysql_fetch_row(res)) != NULL){
 	
 		/* Set Cell-Global-Identity*/
 		if(row[1])
-			SS_CHECK( ss_set_cell_global_identity(&tmp_gavp, (octetstring *)row[1]), "Cell-Global-Identity set.\n", "Failed to set Cell-Global-Identity.\n");
+			SS_CHECK( ss_set_cell_global_identity( &tmp_gavp, (octetstring *)row[1]), "Cell-Global-Identity set.\n", "Failed to set Cell-Global-Identity.\n");
 
 		/* Set E-UTRAN-Cell-Global-Identity*/
 		if(row[2])
-			SS_CHECK( ss_set_e_utran_cell_global_identity(&tmp_gavp, (octetstring *)row[2]), "E-UTRAN-Cell-Global-Identity set.\n", "Failed to set E-UTRAN-Cell-Global-Identity.\n");
+			SS_CHECK( ss_set_e_utran_cell_global_identity( &tmp_gavp, (octetstring *)row[2]), "E-UTRAN-Cell-Global-Identity set.\n", "Failed to set E-UTRAN-Cell-Global-Identity.\n");
 
 		/* Set Routing-Area-Identity*/
 		if(row[3])
-			SS_CHECK( ss_set_routing_area_identity(&tmp_gavp, (octetstring *)row[3]), "Routing-Area-Identity set.\n", "Failed to set Routing-Area-Identity.\n");
+			SS_CHECK( ss_set_routing_area_identity( &tmp_gavp, (octetstring *)row[3]), "Routing-Area-Identity set.\n", "Failed to set Routing-Area-Identity.\n");
 
 		/* Set Location-Area-Identity*/
 		if(row[4])
-			SS_CHECK( ss_set_location_area_identity(&tmp_gavp, (octetstring *)row[4]), "Location-Area-Identity set.\n", "Failed to set Location-Area-Identity.\n");
+			SS_CHECK( ss_set_location_area_identity( &tmp_gavp, (octetstring *)row[4]), "Location-Area-Identity set.\n", "Failed to set Location-Area-Identity.\n");
 
 		/* Set Tracking-Area-Identity*/
 		if(row[5])
-			SS_CHECK( ss_set_tracking_area_identity(&tmp_gavp, (octetstring *)row[5]), "Tracking-Area-Identity set.\n", "Failed to set Tracking-Area-Identity.\n");	
+			SS_CHECK( ss_set_tracking_area_identity( &tmp_gavp, (octetstring *)row[5]), "Tracking-Area-Identity set.\n", "Failed to set Tracking-Area-Identity.\n");	
 	}
 		
 	/*Add Area-Scope group AVP into the group AVP provided in parameter 'gavp'*/
 	if(tmp_gavp)
-		SS_CHECK( ss_add_avp( (msg_or_avp **) gavp, tmp_gavp), "Area-Scope AVP added.\n", "Failed to add Area-Scope group AVP.\n");
+		SS_CHECK( ss_add_avp(  (avp_or_msg **)gavp, tmp_gavp), "Area-Scope AVP added.\n", "Failed to add Area-Scope group AVP.\n");
 
 	mysql_free_result(res);
 	mysql_close(conn);
@@ -319,7 +319,7 @@ static void set_trace_data(struct avp **gavp, const char * imsi){
 		
 	/* Set Trace-Reference*/
 	if(row[1])
-		SS_CHECK( ss_set_trace_reference_gavp( &tmp_gavp, (octetstring *)row[1]), "Trace-Reference set.\n", "Failed to set Trace-Reference.\n");
+		SS_CHECK( ss_set_trace_reference( (avp_or_msg **)&tmp_gavp, (octetstring *)row[1]), "Trace-Reference set.\n", "Failed to set Trace-Reference.\n");
 	
 	/* Set Trace-Depth*/
 	if(row[2])
@@ -346,14 +346,14 @@ static void set_trace_data(struct avp **gavp, const char * imsi){
 		SS_CHECK( ss_set_trace_collection_entity( &tmp_gavp, (address *)row[7]), "Trace-Collection-Entity set.\n", "Failed to set Trace-Collection-Entity.\n");
 	
 	/*** Set MDT-Configuration group AVP  ***/
-	SS_CHECK( ss_create_mdt_configuration( &tmp_gavp2), "MDT-Configuration set.\n", "Failed to create MDT-Configuration.\n");	
+	SS_CHECK( ss_create_mdt_configuration(&tmp_gavp2), "MDT-Configuration set.\n", "Failed to create MDT-Configuration.\n");	
 
 	/** Set Job-Type **/
 	if(row[8])
 		SS_SET_I32( ss_set_job_type(&tmp_gavp2, tmp_i), tmp_i, row[8], "Job-Type set.\n", "Failed to set Job-Type.\n");	
 
 	/* Set Area-Scope group AVP*/
-	set_area_scope( &tmp_gavp2, imsi);	
+	set_area_scope(&tmp_gavp2, imsi);	
 		
 	/* Set List-Of-Measurements */		
 	if(row[9])
@@ -430,10 +430,10 @@ static void set_trace_data(struct avp **gavp, const char * imsi){
 	mysql_free_result(res);
 
 	/*Add MDT-Configuration into Trace-Data*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) &tmp_gavp, tmp_gavp2), "MDT-Configuration AVP added", "Failed to add MDT-Configuration.\n");
+	SS_CHECK( ss_add_avp(  (avp_or_msg **)&tmp_gavp, tmp_gavp2), "MDT-Configuration AVP added", "Failed to add MDT-Configuration.\n");
 	
 	/*Add Trace-Data group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) gavp, tmp_gavp), "Trace-Data AVP added.\n", "Failed to add Trace-Data.\n");
+	SS_CHECK( ss_add_avp(  (avp_or_msg **)gavp, tmp_gavp), "Trace-Data AVP added.\n", "Failed to add Trace-Data.\n");
 
 }
 
@@ -455,10 +455,10 @@ static void set_gprs_subsc_data(struct avp **gavp, char * imsi){
 		return;
 	
 	/*Create GPRS-Subscription-Data group AVP*/
-	SS_CHECK( ss_create_gprs_subscription_data( &tmp_gavp), "GPRS-Subscription-Data AVP created.\n", "Failed to create GPRS-Subscription-Data.\n");
+	SS_CHECK( ss_create_gprs_subscription_data(&tmp_gavp), "GPRS-Subscription-Data AVP created.\n", "Failed to create GPRS-Subscription-Data.\n");
 
 	/*Set Complete-Data-List-Included-Indicator*/
-	SS_CHECK( ss_set_complete_data_list_included_indicator(&tmp_gavp, (int)cmp_ind), "Complete-Data-List-Included-Indicator set.\n", "Failed to set Complete-Data-List-Included-Indicator.\n");		
+	SS_CHECK( ss_set_complete_data_list_included_indicator( &tmp_gavp, (int)cmp_ind), "Complete-Data-List-Included-Indicator set.\n", "Failed to set Complete-Data-List-Included-Indicator.\n");		
 	
 	/** Set PDP-Context	group AVP **/
 
@@ -482,7 +482,7 @@ static void set_gprs_subsc_data(struct avp **gavp, char * imsi){
 	
 		/* Set Context-Identifier */
 		if(row[1])
-			SS_SET_U32( ss_set_context_identifier_gavp( &tmp_gavp2, tmp_u), tmp_u, row[1], "context identifier set.\n", "Failed to set Context-Identifier.\n");
+			SS_SET_U32( ss_set_context_identifier( (avp_or_msg **)&tmp_gavp2, tmp_u), tmp_u, row[1], "context identifier set.\n", "Failed to set Context-Identifier.\n");
 
 		/* Set PDP-Type */
 		if(row[2])
@@ -502,7 +502,7 @@ static void set_gprs_subsc_data(struct avp **gavp, char * imsi){
 
 		/* Set Service-Selection*/
 		if(row[6])
-			SS_CHECK( ss_set_service_selection_gavp(&tmp_gavp2, (utf8string *)row[6]), " service selection set.\n", "Failed to set Service-Selection.\n");
+			SS_CHECK( ss_set_service_selection((avp_or_msg **)&tmp_gavp2, (utf8string *)row[6]), " service selection set.\n", "Failed to set Service-Selection.\n");
 
 		/* Set 3GPP-Charging-Characteristics */
 		if(row[7])
@@ -540,14 +540,14 @@ static void set_gprs_subsc_data(struct avp **gavp, char * imsi){
 			SS_SET_U32( ss_set_sipto_local_network_permission( &tmp_gavp2, tmp_u), tmp_u, row[16], "sipto local network permission set.\n", "Fail to set SIPTO-Local-Network-Permission.\n");	
 
 		/*Add PDP-Context into GPRS-Subscription-Data*/
-		SS_CHECK( ss_add_avp( (msg_or_avp **) &tmp_gavp, tmp_gavp2), "PDP-Context added.\n", "Failed to add PDP-Context.\n");		
+		SS_CHECK( ss_add_avp( (avp_or_msg **)&tmp_gavp, tmp_gavp2), "PDP-Context added.\n", "Failed to add PDP-Context.\n");		
 	} 
 
 	mysql_free_result(res);	
 	mysql_close(conn);
 
 	/*Add GPRS-Subscription-Data group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) gavp, tmp_gavp), "GPRS-Subscription-Data added.\n", "Failed to add GPRS-Subscription-Data.\n");			
+	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "GPRS-Subscription-Data added.\n", "Failed to add GPRS-Subscription-Data.\n");			
 }
 
 /* Set CSG-Subscription-Data */
@@ -590,21 +590,21 @@ static void set_csg_subscription_data(struct avp **gavp, char * imsi, octetstrin
 	
 	/* Set Service-Selection (only 3 AVPs for testing)*/
 	if(row[3])
-		SS_CHECK( ss_set_service_selection_gavp( &tmp_gavp, (utf8string *)row[3]), "Service-Selection set.\n", "Failed to set Service-Selection.\n");
+		SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, (utf8string *)row[3]), "Service-Selection set.\n", "Failed to set Service-Selection.\n");
 	if(row[4])
-		SS_CHECK( ss_set_service_selection_gavp( &tmp_gavp, (utf8string *)row[4]), "Service-Selection 2 set.\n", "Failed to set Service-Selection 2.\n");
+		SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, (utf8string *)row[4]), "Service-Selection 2 set.\n", "Failed to set Service-Selection 2.\n");
 	if(row[5])
-		SS_CHECK( ss_set_service_selection_gavp( &tmp_gavp, (utf8string *)row[5]), "Service-Selection 3 set.\n", "Failed to set Service-Selection 3.\n");	
+		SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, (utf8string *)row[5]), "Service-Selection 3 set.\n", "Failed to set Service-Selection 3.\n");	
 		
 	/* Set Visited-PLMN-Id*/
 	if(row[6])
-		SS_CHECK( ss_set_visited_plmn_id_gavp( &tmp_gavp, (octetstring *)row[6]), "Visited-PLMN-Id set.\n", "Failed to set Visited-PLMN-Id.\n");	
+		SS_CHECK( ss_set_visited_plmn_id( (avp_or_msg **)&tmp_gavp, (octetstring *)row[6]), "Visited-PLMN-Id set.\n", "Failed to set Visited-PLMN-Id.\n");	
 
 	mysql_free_result(res);
 	mysql_close(conn);
 
 	/*Add CSG-Subscription-Data group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) gavp, tmp_gavp), "CSG-Subscription-Data added.\n", "Failed to add CSG-Subscription-Data.\n") ;	
+	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "CSG-Subscription-Data added.\n", "Failed to add CSG-Subscription-Data.\n") ;	
 }
 
 /************ Set APN-Configuration-Profile ***************************************/
@@ -628,10 +628,10 @@ static void set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id)
 	SS_CHECK( ss_create_apn_configuration_profile( &tmp_gavp), "APN-Configuration-Profile AVP created.\n", "Failed to create APN-Configuration-Profile.\n");
 
 	/*Set Context-Identifier*/
-	SS_SET_U32( ss_set_context_identifier_gavp(&tmp_gavp, tmp_u), tmp_u, context_id, "Context-Identifier set.\n", "Failed to set Context-Identifier.\n");
+	SS_SET_U32( ss_set_context_identifier( (avp_or_msg **)&tmp_gavp, tmp_u), tmp_u, context_id, "Context-Identifier set.\n", "Failed to set Context-Identifier.\n");
 	
 	/*Set All-APN-Configurations-Included-Indicator */
-	SS_CHECK( ss_set_all_apn_configuration_included_indicator(&tmp_gavp, (int)apn_ind), "All-APN-Configurations-Included-Indicator set.\n", "Failed to set All-APN-Configurations-Included-Indicator.\n");
+	SS_CHECK( ss_set_all_apn_configuration_included_indicator( &tmp_gavp, (int)apn_ind), "All-APN-Configurations-Included-Indicator set.\n", "Failed to set All-APN-Configurations-Included-Indicator.\n");
 
 	/******Set APN-Configuration****************************************************/
 	/*connect to database*/
@@ -654,7 +654,7 @@ static void set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id)
 
 		/*Set Context-Identifier*/
 		if(row[1])
-			SS_SET_U32( ss_set_context_identifier_gavp(&tmp_gavp2, tmp_u), tmp_u, row[1], "Context-Identifier set.\n", "Failed to set Context-Identifier.\n");
+			SS_SET_U32( ss_set_context_identifier((avp_or_msg **)&tmp_gavp2, tmp_u), tmp_u, row[1], "Context-Identifier set.\n", "Failed to set Context-Identifier.\n");
 	
 		/* Set Served-Party-IP-Address (IPV4 and IPV6)*/	
 		if(row[2])
@@ -668,7 +668,7 @@ static void set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id)
 
 		/* Set Service-Selection*/
 		if(row[5])
-			SS_CHECK( ss_set_service_selection_gavp(&tmp_gavp2, (utf8string *)row[5]), "Service-Selection set.\n", "Failed to set Service-Selection.\n");
+			SS_CHECK( ss_set_service_selection((avp_or_msg **)&tmp_gavp2, (utf8string *)row[5]), "Service-Selection set.\n", "Failed to set Service-Selection.\n");
 	
 		/*** Set eps_qos_prof: EPS-Subscribed-QoS-Profile **************************/
 		eps_subsc_qos_prof(&tmp_gavp2, row[6], row[7], row[8], row[9]);							
@@ -682,7 +682,7 @@ static void set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id)
 							
 		/* Set Visited-Network-Identifier *********************/
 		if(row[15])
-			SS_CHECK( ss_set_visited_network_identifier_gavp( &tmp_gavp2, (octetstring *)row[15]), "Visited-Network-Identifier set.\n", "Failed to set Visited-Network-Identifier.\n");
+			SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp2, (octetstring *)row[15]), "Visited-Network-Identifier set.\n", "Failed to set Visited-Network-Identifier.\n");
 
 		/* Set PDN-GW-Allocation-Type */
 		if(row[16])
@@ -719,14 +719,14 @@ static void set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id)
 		set_wlan_offload( &tmp_gavp2, row[25], row[26]);
 								
 		/*Add APN-Configuration into APN-Configuration-Profile*/
-		SS_CHECK( ss_add_avp( (msg_or_avp **) &tmp_gavp, tmp_gavp2), "APN-Configuration added.\n", "Failed to add APN-Configuration.\n");			
+		SS_CHECK( ss_add_avp( (avp_or_msg **)&tmp_gavp, tmp_gavp2), "APN-Configuration added.\n", "Failed to add APN-Configuration.\n");			
 	}
 	
 	mysql_free_result(res);
 	mysql_close(conn);
 
 	/*Add APN-Configuration-Profile group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) &gavp, tmp_gavp), "APN-Configuration-Profile added.\n", "Failed to add APN-Configuration-Profile.\n");		
+	SS_CHECK( ss_add_avp( (avp_or_msg **)&gavp, tmp_gavp), "APN-Configuration-Profile added.\n", "Failed to add APN-Configuration-Profile.\n");		
 }
 
 /* Set ProSe-Subscription-Data*/
@@ -745,7 +745,7 @@ static void set_prose_subsc(struct avp **gavp, char * prose_perm){
 	SS_SET_U32( ss_set_prose_permission( &tmp_gavp, tmp_u), tmp_u, prose_perm, "ProSe-Permission set.\n", "Failed to set ProSe-Permission.\n");	
 
 	/*Add ProSe-Subscription-Data group AVP into the group AVP provided in parameter 'gavp'*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **) &gavp, tmp_gavp), "ProSe-Subscription-Data added.\n", "Failed to add ProSe-Subscription-Data.\n");
+	SS_CHECK( ss_add_avp( (avp_or_msg **)&gavp, tmp_gavp), "ProSe-Subscription-Data added.\n", "Failed to add ProSe-Subscription-Data.\n");
 }
 
 /*************** Set Call-Barring-Info ******************************************/
@@ -777,14 +777,14 @@ static void set_call_barring_info(struct avp **gavp, char * imsi){
 						
 		/*Set SS-Code*/	
 		if(row[1])
-			SS_CHECK( ss_set_ss_code_gavp( &tmp_gavp, (octetstring *)row[1]), "SS-Code set.\n", "Failed to set SS-Code.\n");
+			SS_CHECK( ss_set_ss_code( (avp_or_msg **)&tmp_gavp, (octetstring *)row[1]), "SS-Code set.\n", "Failed to set SS-Code.\n");
 
 		/*Set SS-Status*/	
 		if(row[2])
 			SS_CHECK( ss_set_ss_status( &tmp_gavp, (octetstring *)row[2]), "SS-Status set.\n", "Failed to set SS-Status.\n");
 
 		/*Add Call-Barring-Info*/
-		SS_CHECK( ss_add_avp( (msg_or_avp **) gavp, tmp_gavp), "Call-Barring-Info added.\n", "Failed to add Call-Barring-Info AVP.\n");		
+		SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "Call-Barring-Info added.\n", "Failed to add Call-Barring-Info AVP.\n");		
 	} 
 
 	mysql_free_result(res);
@@ -805,14 +805,14 @@ static void set_teleserv_list(struct avp **gavp, octetstring *ts_cd1, octetstrin
 
 	/*Set TS-Code AVP(3 AVPs for test)*/
 	if(ts_cd1)
-		SS_CHECK( ss_set_ts_code_gavp(&tmp_gavp, ts_cd1), "TS-Code 1 set.\n", "Failed to set TS-Code 1.\n");
+		SS_CHECK( ss_set_ts_code( (avp_or_msg **)&tmp_gavp, ts_cd1), "TS-Code 1 set.\n", "Failed to set TS-Code 1.\n");
 	if(ts_cd2)
-		SS_CHECK( ss_set_ts_code_gavp(&tmp_gavp, ts_cd2), "TS-Code 2 set.\n", "Failed to set TS-Code 2.\n");
+		SS_CHECK( ss_set_ts_code( (avp_or_msg **)&tmp_gavp, ts_cd2), "TS-Code 2 set.\n", "Failed to set TS-Code 2.\n");
 	if(ts_cd3)
-		SS_CHECK( ss_set_ts_code_gavp(&tmp_gavp, ts_cd3), "TS-Code 3 set.\n", "Failed to set TS-Code 3.\n");
+		SS_CHECK( ss_set_ts_code( (avp_or_msg **)&tmp_gavp, ts_cd3), "TS-Code 3 set.\n", "Failed to set TS-Code 3.\n");
 	
 	/*Add Teleservice-List group AVP*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **)gavp, tmp_gavp), "Teleservice-List added.\n", "Failed to add Teleservice-List.\n");
+	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "Teleservice-List added.\n", "Failed to add Teleservice-List.\n");
 }
 
 /*Set MO-LR group AVP*/
@@ -827,13 +827,13 @@ static void set_mo_lr(struct avp **gavp, octetstring * ss_cd, octetstring * ss_s
 	SS_CHECK( ss_create_mo_lr( &tmp_gavp), "MO-LR AVP created.\n", "Failed to create MO-LR AVP.\n");		
 	
 	/*Set SS-Code AVP*/
-	SS_CHECK( ss_set_ss_code_gavp(&tmp_gavp, ss_cd), "SS-Code set.\n", "Failed to Set SS-Code.\n");
+	SS_CHECK( ss_set_ss_code( (avp_or_msg **)&tmp_gavp, ss_cd), "SS-Code set.\n", "Failed to Set SS-Code.\n");
 	
 	/*Set SS-Status AVP*/
-	SS_CHECK( ss_set_ss_status(&tmp_gavp, ss_sts), "SS-Status set.\n", "Failed to Set SS-Status.\n");
+	SS_CHECK( ss_set_ss_status( &tmp_gavp, ss_sts), "SS-Status set.\n", "Failed to Set SS-Status.\n");
 
 	/*Add MO-LR group AVP*/
-	SS_CHECK( ss_add_avp( (msg_or_avp **)gavp, tmp_gavp), "MO-LR added.\n", "Failed to add MO-LR.\n");
+	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "MO-LR added.\n", "Failed to add MO-LR.\n");
 }
 
 /*Set LCS-Info*/
@@ -865,18 +865,18 @@ static void set_lcs_info(struct avp **gavp, char * imsi){
 		
 		/* Set GMLC-Number AVPs (only 3 AVPs for testing purpose)*/
 		if(row[1])
-			SS_CHECK( ss_set_gmlc_number(&tmp_gavp, (octetstring *)row[1]), "GMLC-Number 1 set.\n", "Failed to Set GMLC-Number 1.\n");
+			SS_CHECK( ss_set_gmlc_number( &tmp_gavp, (octetstring *)row[1]), "GMLC-Number 1 set.\n", "Failed to Set GMLC-Number 1.\n");
 		if(row[2])
-			SS_CHECK( ss_set_gmlc_number(&tmp_gavp, (octetstring *)row[2]), "GMLC-Number 2 set.\n", "Failed to Set GMLC-Number 2.\n");
+			SS_CHECK( ss_set_gmlc_number( &tmp_gavp, (octetstring *)row[2]), "GMLC-Number 2 set.\n", "Failed to Set GMLC-Number 2.\n");
 		if(row[3])
-			SS_CHECK( ss_set_gmlc_number(&tmp_gavp, (octetstring *)row[3]), "GMLC-Number 3 set.\n", "Failed to Set GMLC-Number 3.\n");
+			SS_CHECK( ss_set_gmlc_number( &tmp_gavp, (octetstring *)row[3]), "GMLC-Number 3 set.\n", "Failed to Set GMLC-Number 3.\n");
 
 		/* Set MO-LR group AVP (only 3 AVPs for testing purpose)*/
-		set_mo_lr(&tmp_gavp, (octetstring *) row[4], (octetstring *) row[5]);
-		set_mo_lr(&tmp_gavp, (octetstring *) row[6], (octetstring *) row[7]);
-		set_mo_lr(&tmp_gavp, (octetstring *) row[8], (octetstring *) row[9]);
+		set_mo_lr( &tmp_gavp, (octetstring *) row[4], (octetstring *) row[5]);
+		set_mo_lr( &tmp_gavp, (octetstring *) row[6], (octetstring *) row[7]);
+		set_mo_lr( &tmp_gavp, (octetstring *) row[8], (octetstring *) row[9]);
 
-		SS_CHECK( ss_add_avp( (msg_or_avp **)&gavp, tmp_gavp), "LCS-Info added.\n", "Failed to add LCS-Info.\n");
+		SS_CHECK( ss_add_avp( (avp_or_msg **)&gavp, tmp_gavp), "LCS-Info added.\n", "Failed to add LCS-Info.\n");
 	}
 
 	mysql_free_result(res);
@@ -917,54 +917,54 @@ static void set_subsc_data(struct msg ** msg, char * imsi, unsigned32 ulr_flg, s
 						
 		/* Set Subscriber-Status*/
 		if(row[1])
-			SS_SET_I32( ss_set_subscriber_status(&tmp_gavp, tmp_i), tmp_i, row[1], "Subscriber-Status AVP.\n", "Failed to set Subscriber-Status AVP.\n");
+			SS_SET_I32( ss_set_subscriber_status( &tmp_gavp, tmp_i), tmp_i, row[1], "Subscriber-Status AVP.\n", "Failed to set Subscriber-Status AVP.\n");
 		
 		/* Set MSISDN*/
 		if(row[2])
-			SS_CHECK( ss_set_msisdn(&tmp_gavp, (octetstring *)row[2]), "MSISDN set.\n", "Failed to set MSISDN AVP.\n");
+			SS_CHECK( ss_set_msisdn( &tmp_gavp, (octetstring *)row[2]), "MSISDN set.\n", "Failed to set MSISDN AVP.\n");
 
 		/* Set A-MSISDN*/
 		if(row[3])
-			SS_CHECK( ss_set_msisdn(&tmp_gavp, (octetstring *)row[3]), "A_MSISDN set.\n", "Failed to set A_MSISDN AVP.\n");
+			SS_CHECK( ss_set_msisdn( &tmp_gavp, (octetstring *)row[3]), "A_MSISDN set.\n", "Failed to set A_MSISDN AVP.\n");
 
 		/* Set STN-SR*/
 		if(row[4])
-			SS_CHECK( ss_set_stn_sr(&tmp_gavp, (octetstring *)row[4]), "STN-SR set.\n", "Failed to set STN-SR AVP.\n");
+			SS_CHECK( ss_set_stn_sr( &tmp_gavp, (octetstring *)row[4]), "STN-SR set.\n", "Failed to set STN-SR AVP.\n");
 
 		/* Set ICS-Indicator*/
 		if(row[5])
-			SS_SET_I32( ss_set_ics_indicator(&tmp_gavp, tmp_i), tmp_i, row[5], "ICS-Indicator set.\n", "Failed to set ICS-Indicator AVP.\n");
+			SS_SET_I32( ss_set_ics_indicator( &tmp_gavp, tmp_i), tmp_i, row[5], "ICS-Indicator set.\n", "Failed to set ICS-Indicator AVP.\n");
 	
 		/* Set Network-Access-Mode*/
 		if(row[6])
-			SS_SET_I32( ss_set_network_access_mode(&tmp_gavp, tmp_i), tmp_i, row[6], "Network-Access-Mode set.\n", "Failed to set Network-Access-Mode AVP.\n");
+			SS_SET_I32( ss_set_network_access_mode( &tmp_gavp, tmp_i), tmp_i, row[6], "Network-Access-Mode set.\n", "Failed to set Network-Access-Mode AVP.\n");
 	
 		/* Set Operator-Determined-Barring*/
 		if(row[7])
-			SS_SET_U32( ss_set_operator_determined_barring(&tmp_gavp, tmp_u), tmp_u, row[7], "Operator-Determined-Barring set.\n", "Failed to set Operator-Determined-Barring AVP.\n");
+			SS_SET_U32( ss_set_operator_determined_barring( &tmp_gavp, tmp_u), tmp_u, row[7], "Operator-Determined-Barring set.\n", "Failed to set Operator-Determined-Barring AVP.\n");
 
 		/* Set HPLMN-ODB*/
 		if(row[8])
-			SS_SET_U32( ss_set_hplmn_odb(&tmp_gavp, tmp_u), tmp_u, row[8], "Operator-Determined-Barring set.\n", "Failed to set Operator-Determined-Barring AVP.\n");
+			SS_SET_U32( ss_set_hplmn_odb( &tmp_gavp, tmp_u), tmp_u, row[8], "Operator-Determined-Barring set.\n", "Failed to set Operator-Determined-Barring AVP.\n");
 	
 		/* Set Regional-Subscription-Zone-Code*/
 		if(row[9])
-			SS_CHECK( ss_set_regional_subscription_zone_code(&tmp_gavp, (octetstring *)row[9]), "Regional-Subscription-Zone-Code set.\n", "Failed to set Regional-Subscription-Zone-Code AVP.\n");
+			SS_CHECK( ss_set_regional_subscription_zone_code( &tmp_gavp, (octetstring *)row[9]), "Regional-Subscription-Zone-Code set.\n", "Failed to set Regional-Subscription-Zone-Code AVP.\n");
 		if(row[10])
-			SS_CHECK( ss_set_regional_subscription_zone_code(&tmp_gavp, (octetstring *)row[10]), "Regional-Subscription-Zone-Code 2 set.\n", "Failed to set Regional-Subscription-Zone-Code 2 AVP.\n");
+			SS_CHECK( ss_set_regional_subscription_zone_code( &tmp_gavp, (octetstring *)row[10]), "Regional-Subscription-Zone-Code 2 set.\n", "Failed to set Regional-Subscription-Zone-Code 2 AVP.\n");
 		if(row[11])
-			SS_CHECK( ss_set_regional_subscription_zone_code(&tmp_gavp, (octetstring *)row[11]), "Regional-Subscription-Zone-Code 3 set.\n", "Failed to set Regional-Subscription-Zone-Code 3 AVP.\n");						
+			SS_CHECK( ss_set_regional_subscription_zone_code( &tmp_gavp, (octetstring *)row[11]), "Regional-Subscription-Zone-Code 3 set.\n", "Failed to set Regional-Subscription-Zone-Code 3 AVP.\n");						
 
 		/* Set Access-Restriction-Data*/
 		if(row[12])
-			SS_SET_U32( ss_set_access_restriction_data(&tmp_gavp, tmp_u), tmp_u, row[12], "Restriction-Data set.\n", "Failed to set Access-Restriction-Data AVP.\n");
+			SS_SET_U32( ss_set_access_restriction_data( &tmp_gavp, tmp_u), tmp_u, row[12], "Restriction-Data set.\n", "Failed to set Access-Restriction-Data AVP.\n");
 		
 		/* Set APN-OI-Replacement */
 		if(row[13])
-			SS_CHECK( ss_set_apn_oi_replacement(&tmp_gavp, (utf8string *)row[13]), "APN-OI-Replacement set.\n", "Failed to set APN-OI-Replacement AVP.\n");
+			SS_CHECK( ss_set_apn_oi_replacement( &tmp_gavp, (utf8string *)row[13]), "APN-OI-Replacement set.\n", "Failed to set APN-OI-Replacement AVP.\n");
 	
 		/*Set LCS-Info*/
-		set_lcs_info(&tmp_gavp, imsi);
+		set_lcs_info( &tmp_gavp, imsi);
 					
 		/* Create Teleservice-List*/
 		set_teleserv_list( &tmp_gavp, (octetstring *) row[14], (octetstring *) row[15], (octetstring *) row[16]);
@@ -981,14 +981,14 @@ static void set_subsc_data(struct msg ** msg, char * imsi, unsigned32 ulr_flg, s
 			
 		/*Set APN-Configuration-Profile group AVP*/
 		if(row[20])					
-			set_apn_conf_prof(&tmp_gavp, imsi, row[20]);				
+			set_apn_conf_prof( &tmp_gavp, imsi, row[20]);				
 	
 		/* Set RAT-Frequency-Selection-Priority-ID(u32)*/
 		if(row[21])
 			SS_SET_U32( ss_set_rat_frequency_selection_priority_id( &tmp_gavp, tmp_u), tmp_u, row[21], "RAT-Frequency-Selection-Priority-ID set.\n", "Failed to set RAT-Frequency-Selection-Priority-ID.\n");
 	
 		/*Set Trace-Data group Avp*/
-		set_trace_data(&tmp_gavp, imsi);
+		set_trace_data( &tmp_gavp, imsi);
 	
 		/* Set GPRS-Subscription-Data*/
 		if(CHECK_ULR_GPRS_DATA_IND(ulr_flg))					
@@ -1047,13 +1047,13 @@ static void set_subsc_data(struct msg ** msg, char * imsi, unsigned32 ulr_flg, s
 	
 		/* Set ProSe-Permission in ProSe-Subscription-Data*/
 		if(row[29])
-			set_prose_subsc(&tmp_gavp, row[29]);
+			set_prose_subsc( &tmp_gavp, row[29]);
 	
 		/* Set Subscription-Data-Flags*/		
 		if(row[30])
-			SS_SET_U32( ss_set_subscription_data_flags(&tmp_gavp, tmp_u), tmp_u, row[30], "Subscription-Data-Flags set.\n", "Failed to set Subscription-Data-Flags.\n");
+			SS_SET_U32( ss_set_subscription_data_flags( &tmp_gavp, tmp_u), tmp_u, row[30], "Subscription-Data-Flags set.\n", "Failed to set Subscription-Data-Flags.\n");
 	
-		SS_CHECK( ss_add_avp( (msg_or_avp **) msg, tmp_gavp), "Subscription-Data added to messge.\n", "Failed to add Subscription-Data.\n");
+		SS_CHECK( ss_add_avp( (avp_or_msg **)msg, tmp_gavp), "Subscription-Data added to messge.\n", "Failed to add Subscription-Data.\n");
 	}
 
 	mysql_free_result(res);
@@ -1297,6 +1297,282 @@ static void check_update_active_apn(struct msg *msg, char * imsi, MYSQL * conn){
 	}
 }
 
+/*Set Request Authentication info values to their parent AVP*/
+static int get_req_auth_info(struct avp *gavp, unsigned32 *num_req_vect, unsigned32 *immd_resp_pref, octetstring **re_sync_inf){
+
+	if(!gavp) return EINVAL;
+
+	if((!num_req_vect) && (!immd_resp_pref) && (!re_sync_inf)) return EINVAL;
+
+	/*Set Number-Of-Requested-Vectors*/
+	if(num_req_vect)
+		SS_WCHECK( ss_get_number_of_requested_vectors(gavp, num_req_vect), "Number-Of-Requested-Vectors value retrieved.\n", "failed to retrieve Number-Of-Requested-Vectors.\n", NULL);
+
+	/*Set Immediate-Response-Preferred*/
+	if(immd_resp_pref)
+		SS_WCHECK( ss_get_immediate_response_preferred(gavp, immd_resp_pref), "Immediate-Response-Preferred value retrieved.\n", "failed to retrieve Immediate-Response-Preferred.\n", NULL);
+
+	/*Set Re-synchronization-Info*/
+	if(re_sync_inf)
+		SS_WCHECK( ss_get_re_synchronization_info(gavp, re_sync_inf), "Re-synchronization-Info value retrieved.\n", "failed to retrieve Re-synchronization-Info.\n", NULL);
+
+	return 0;
+	
+}
+
+/*Get Requested-EUTRAN-Authentication-Info AVP */
+static int get_req_eutran_auth_info(struct msg *msg, unsigned32 *num_req_vect, unsigned32 *immd_resp_pref, octetstring **re_sync_inf){
+
+	struct avp *tmp_gavp = NULL;
+
+	if(!msg) return EINVAL;
+
+	/*Set Requested-EUTRAN-Authentication-Info AVP*/
+	SS_WCHECK( ss_get_gavp_requested_eutran_authentication_info(msg, &tmp_gavp), "Requested-EUTRAN-Authentication-Info AVP retrieved.\n", "failed to retrieve Requested-EUTRAN-Authentication-Info AVP.\n", return 1;);
+
+	/*Get Requested-EUTRAN-Authentication-Info AVP child AVP values and add it to Requested-EUTRAN-Authentication-Info AVP*/
+	SS_WCHECK( get_req_auth_info(tmp_gavp, num_req_vect, immd_resp_pref, re_sync_inf), "Requested-EUTRAN-Authentication-Info AVP child AVP values retrieved.\n", "failed to retreive Requested-EUTRAN-Authentication-Info AVP child AVP values.\n", return 1;);
+
+	return 0;
+}
+
+/*Get Requested-UTRAN-GERAN-Authentication-Info AVP */
+static int get_req_utran_geran_auth_info(struct msg *msg, unsigned32 *num_req_vect, unsigned32 *immd_resp_pref, octetstring **re_sync_inf){
+
+	struct avp *tmp_gavp = NULL;
+
+	if(!msg) return EINVAL;
+
+	/*Get Requested-UTRAN-GERAN-Authentication-Info AVP*/
+	SS_WCHECK( ss_get_gavp_requested_utran_geran_authentication_info(msg, &tmp_gavp), "Requested-UTRAN-GERAN-Authentication-Info AVP retrieved.\n", "failed to get Requested-UTRAN-GERAN-Authentication-Info AVP.\n", return 1;);
+
+	/*Get Requested-UTRAN-GERAN-Authentication-Info AVP child AVP values and add it to Requested-UTRAN-GERAN-Authentication-Info AVP*/
+	SS_WCHECK( get_req_auth_info(tmp_gavp, num_req_vect, immd_resp_pref, re_sync_inf), "Requested-UTRAN-GERAN-Authentication-Info AVP child AVP values retrieved.\n", "failed to retrieve Requested-UTRAN-GERAN-Authentication-Info AVP child AVP values.\n", return 1;);
+
+	return 0;
+}
+
+/*Get  UTRAN auth vector from db and set UTRAN-Vector*/
+static int get_set_utran_vect(struct avp **gavp, char * imsi, unsigned32 num_req_vect_utran){
+
+	struct avp *tmp_gavp = NULL;
+	unsigned32 tmp_u = 0;
+	char buf[70] = {0};
+	int i = 0;
+	MYSQL *conn = NULL;
+	MYSQL_RES *res = NULL;
+  	MYSQL_ROW row;
+
+	if((!gavp) || (0 == num_req_vect_utran) || (!imsi))
+		return EINVAL;
+	
+	/*connect to database*/
+	connect_db(&conn);
+
+	/*Prepare mysql statement to subscription data*/	
+	sprintf(buf,"select * from UTRANVector where imsi='%.15s'",imsi);
+
+	/*Query databse*/
+	SS_CHECK(get_qry_res(conn, buf, &res), "UTRANVector data retrieved from db.\n", "Failed to retrieve UTRANVector data from database.\n"); 
+	
+	if((row = mysql_fetch_row(res))!= NULL){
+	
+		for(i = 0; i < num_req_vect_utran; i++){
+		
+		/*create UTRAN-Vector AVP*/
+		SS_CHECK( ss_create_utran_vector(&tmp_gavp), "UTRAN-Vector created.\n", "Failed to create UTRAN-Vector.\n");
+
+		/*Set Item-Number*/
+			if(row[1])
+				SS_SET_U32( ss_set_item_number( &tmp_gavp, tmp_u), tmp_u, row[1], "Item-Number set.\n", "failed to set Item-Number.\n");
+
+			/*set RAND*/
+			if(row[2])
+				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2]),"RAND set.\n", "failed to set RAND.\n");
+
+			/*set XRES*/
+			if(row[3])
+				SS_CHECK( ss_set_xres( &tmp_gavp, (octetstring *)row[3]),"XRES set.\n", "failed to set XRES.\n");
+
+			/*set AUTN*/
+			if(row[4])
+				SS_CHECK( ss_set_autn( &tmp_gavp, (octetstring *)row[4]),"AUTN set.\n", "failed to set AUTN.\n");
+
+			/*set Confidentiality-Key*/
+			if(row[5])
+				SS_CHECK( ss_set_confidentiality_key( &tmp_gavp, (octetstring *)row[5]),"Confidentiality-Key set.\n", "failed to set Confidentiality-Key.\n");
+	
+			/*set Integrity-Key*/
+			if(row[6])
+				SS_CHECK( ss_set_integrity_key( &tmp_gavp, (octetstring *)row[6]),"Integrity-Key set.\n", "failed to set Integrity-Key.\n");	
+
+			/*Add UTRAN-Vector AVP*/
+			SS_CHECK( ss_add_avp((avp_or_msg **)gavp, tmp_gavp), "UTRAN-Vector added.\n", "Failed to add UTRAN-Vector.\n");	
+		}
+
+		mysql_free_result(res);
+	}
+	else{
+
+		mysql_close(conn);
+		return 1;	
+	}
+	
+	return 0;
+}
+/*Get  GERAN auth vector from db set GERAN-Vector*/
+static int get_set_geran_vect(struct avp **gavp, char * imsi, unsigned32 num_req_vect_geran){
+
+	struct avp *tmp_gavp = NULL;
+	unsigned32 tmp_u = 0;
+	char buf[70] = {0};
+	int i = 0;
+	MYSQL *conn = NULL;
+	MYSQL_RES *res = NULL;
+  	MYSQL_ROW row;
+
+	if((!gavp) || (0 == num_req_vect_geran) || (!imsi))
+		return EINVAL;
+	
+	/*connect to database*/
+	connect_db(&conn);
+
+	/*Prepare mysql statement to subscription data*/	
+	sprintf(buf,"select * from GERANVector where imsi='%.15s'",imsi);
+
+	/*Query databse*/
+	SS_CHECK(get_qry_res(conn, buf, &res), "GERANVector data retrieved from db.\n", "Failed to retrieve GERANVector data from database.\n"); 
+	
+	if((row = mysql_fetch_row(res))!= NULL){
+	
+		for(i = 0; i < num_req_vect_geran; i++){
+		
+			/*GERAN-Vector*/
+			SS_CHECK( ss_create_geran_vector(&tmp_gavp), "GERAN-Vector AVP created.\n", "Failed to create GERAN-Vector.\n");
+
+			/*Set Item-Number*/
+			if(row[1])
+				SS_SET_U32( ss_set_item_number( &tmp_gavp, tmp_u), tmp_u, row[1], "Item-Number set.\n", "failed to set Item-Number.\n");
+
+			/*set RAND*/
+			if(row[2])
+				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2]),"RAND set.\n", "failed to set RAND.\n");
+
+			/*set SRES*/
+			if(row[3])
+				SS_CHECK( ss_set_sres( &tmp_gavp, (octetstring *)row[3]),"SRES set.\n", "failed to set SRES.\n");
+
+			/*set Kc*/
+			if(row[4])
+				SS_CHECK( ss_set_kc( &tmp_gavp, (octetstring *)row[4]),"Kc set.\n", "failed to set Kc.\n");
+
+			/*Add GERAN-Vector */
+			SS_CHECK( ss_add_avp((avp_or_msg **)gavp, tmp_gavp), "GERAN-Vector added\n", "Fail to add GERAN-Vector.\n");
+		}
+
+		mysql_free_result(res);
+	}
+	else{
+
+		mysql_close(conn);
+		return 1;	
+	}
+	
+	return 0;
+}
+
+/*Get  EUTRAN auth vector from db and set E-UTRAN-Vector*/
+static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_req_vect_eutran){
+
+	struct avp *tmp_gavp = NULL;
+	unsigned32 tmp_u = 0;
+	char buf[70] = {0};
+	int i = 0;
+	MYSQL *conn = NULL;
+	MYSQL_RES *res = NULL;
+  	MYSQL_ROW row;
+
+	if((!gavp) || (0 == num_req_vect_eutran) || (!imsi))
+		return EINVAL;
+	
+	/*connect to database*/
+	connect_db(&conn);
+
+	/*Prepare mysql statement to subscription data*/	
+	sprintf(buf,"select * from EUTRANVector where imsi='%.15s'",imsi);
+
+	/*Query databse*/
+	SS_CHECK(get_qry_res(conn, buf, &res), "EUTRANVector data retrieved from db.\n", "Failed to retrieve EUTRANVector data from database.\n"); 
+	
+	if((row = mysql_fetch_row(res))!= NULL){
+	
+		for(i = 0; i <num_req_vect_eutran; i++){
+		
+		/*Create E-UTRAN-Vector AVP*/
+		SS_CHECK( ss_create_e_utran_vector(&tmp_gavp), "E-UTRAN-Vector created.\n", "Failed to create E-UTRAN-Vector AVP.\n");
+		
+		/*Set Item-Number*/
+			if(row[1])
+				SS_SET_U32( ss_set_item_number( &tmp_gavp, tmp_u), tmp_u, row[1], "Item-Number set.\n", "failed to set Item-Number.\n");
+
+			/*set RAND*/
+			if(row[2])
+				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2]),"RAND set.\n", "failed to set RAND.\n");
+
+			/*set XRES*/
+			if(row[3])
+				SS_CHECK( ss_set_xres( &tmp_gavp, (octetstring *)row[3]),"XRES set.\n", "failed to set XRES.\n");
+
+			/*set AUTN*/
+			if(row[4])
+				SS_CHECK( ss_set_autn( &tmp_gavp, (octetstring *)row[4]),"AUTN set.\n", "failed to set AUTN.\n");
+
+			/*set KASME*/
+			if(row[4])
+				SS_CHECK( ss_set_kasme( &tmp_gavp, (octetstring *)row[4]),"KASME set.\n", "failed to set KASME.\n");
+
+			/*Add E-UTRAN-Vector AVP*/
+			SS_CHECK( ss_add_avp((avp_or_msg **)gavp, tmp_gavp), "E-UTRAN-Vector added.\n", "Failed to add E-UTRAN-Vector.\n");
+		}
+
+		mysql_free_result(res);
+	}
+	else{
+
+		mysql_close(conn);
+		return 1;	
+	}
+	
+	return 0;
+}
+
+/*Set Authentication-Info*/
+static void set_auth_info(struct msg **msg, char *imsi, unsigned32 num_req_vect_utran, unsigned32 num_req_vect_eutran){
+
+	struct avp *tmp_gavp = NULL;
+	
+	if((!msg) || (!imsi)) return;	
+
+	/*Create Authentication-Info AVP*/
+	SS_CHECK( ss_create_authentication_info(&tmp_gavp), "Authentication-Info AVP created.\n", "failed to create Authentication-Info AVP.\n");
+
+	/*Set UTRAN-GERAN auth-vectors requested*/
+	if(0 != num_req_vect_utran){
+
+		/*Set UTRAN auth vector*/
+		SS_CHECK( get_set_utran_vect(&tmp_gavp, imsi, num_req_vect_utran), "UTRAN-Vector set.\n", "Failed to set UTRAN-Vector.\n");	
+
+		/*Set  GERAN auth vector */
+		SS_CHECK( get_set_geran_vect(&tmp_gavp, imsi, num_req_vect_utran), "GERAN-Vector set.\n", "Failed to set GERAN-Vector.\n");			
+	}
+
+	/*Set EUTRAN auth-vectors requested*/
+	if(0 != num_req_vect_eutran)
+		SS_CHECK( get_set_eutran_vect(&tmp_gavp, imsi, num_req_vect_eutran), "E-UTRAN-Vector set.\n", "Failed to set E-UTRAN-Vector.\n");	
+
+	SS_CHECK( ss_add_avp((avp_or_msg *)msg, tmp_gavp), "Authentication-Info AVP added.\n", "faile to add Authentication-Info AVP.\n");	
+	
+}
 
 
 /*Callback function used when Update-Location-Request message is received*/
@@ -1316,7 +1592,8 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 	octetstring * meid = NULL;
 	integer32 ue_srvcc_capability = -1;
 	integer32 rat_type = -1;
-	unsigned32 feature_list = 0;
+	unsigned32 *feature_list = NULL;
+	size_t size = 0; /*used to store number of feature list values*/
 	unsigned char * tmp_ustr = NULL;
 	
 	MYSQL *conn = NULL;
@@ -1330,8 +1607,9 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 	SS_CHECK( ss_get_origin_host( *msg, &origin_host), "\n", "Failed to extract Origin-Host.\n");
 	fprintf(stdout, COLOR_GREEN"MESSAGE RECEIVED : ULR message received from '%s'"ANSI_COLOR_RESET"\n", (char *)origin_host);	
 	
-	/* Create answer message header from the request */
-	SS_CHECK( ss_create_answer( msg, &req), "Answer message header created from request.\n", "Failed to create answer message header.\n");	
+	/* Create answer message header from the request, copy the request before creating answer */
+	req = *msg;
+	SS_CHECK( ss_msg_create_answer( msg), "Answer message header created from request.\n", "Failed to create answer message header.\n");	
 
 	/* Extract imsi from request message*/
 	SS_CHECK( ss_get_user_name(req, &tmp_ustr), "IMSI extracted from request.\n", "Failed to extract IMSI from request.\n");
@@ -1383,14 +1661,11 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*free data from mysql query*/
 	mysql_free_result(res);
 		
-	/*Retrieve supported feature group avp (only 1 avp is expected for testing) from request*/
-	SS_CHECK( ss_get_gavp_supported_features(req, &tmp_gavp), "Supported feature AVP retrieved from request.\n", "Failed to retrieve supported feature from request.\n");
-
-	/*Retrieve feature list from supported feature group AVP*/
-	SS_CHECK( ss_get_feature_list(tmp_gavp, &feature_list), "feature list value retrieved.\n", "Failed to retrieve feature list.\n");
+	/*Retrieve Feature-List AVP value (only 1 avp is expected for testing) from request*/
+	test_get_supported_features(req, NULL, &feature_list, &size);
 
 	/* Check if mme supports ODB_HPLMN_APN*/
-	if(!CHECK_SUPPORT_ODB_HPLMN_APN(feature_list)){
+	if((feature_list) && (!CHECK_SUPPORT_ODB_HPLMN_APN(*feature_list))){
 
 		fprintf(stdout,COLOR_GREEN"OK : ERROR MESSAGE 'DIAMETER_ERROR_ROAMING_NOT_ALLOWED' with error diagnostic value 'ODB_HPLMN_APN' to be sent."ANSI_COLOR_RESET"\n");
 
@@ -1432,7 +1707,7 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 						
 			/* Send cancel location to old mme*/
 			printf("Sending CLR to old mme ...\n");
-			test_send_clr((diameterid *)row[1], (diameterid *)row[2], (utf8string *)imsi, MME_UPDATE_PROCEDUR, 1); 
+			test_util_send_clr((diameterid *)row[1], (diameterid *)row[2], (utf8string *)imsi, MME_UPDATE_PROCEDUR, /*CLR msg sent on S6a*/1); 
 			
 			/*Update the mme table with the new mme info*/
 			SS_WCHECK( insert_update_mme(conn, imsi, (char *)origin_host, (char *)origin_realm, "", (char *)mme_nm_mt_sms), "insert/update mme table.\n", "insert/update mme table failed.\n", NULL);
@@ -1480,10 +1755,114 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 send:
 	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "ULA Response sent\n", "Failed to set ULA Response");*/
 	fprintf(stdout,"OK : Answer message passed to routing module.\n");
-	*act == DISP_ACT_SEND;
+	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
 
 	return 0;
 
 /*error:
 	return EINVAL;*/
+}
+
+/*Callback function used when Update-Location-Request message is received*/
+int test_req_cb_clr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act){
+
+	unsigned char *tmp_ustr = NULL;
+	unsigned char *origin_host = NULL;
+	char imsi[15] = {0};
+	unsigned32 *feature_list_id = NULL;
+	unsigned32 *feature_list = NULL;
+	size_t size = 0;
+
+	if(NULL == msg)
+		return EINVAL;
+
+	/* Message Received */
+	SS_CHECK( ss_get_origin_host( *msg, &origin_host), "\n", "Failed to extract Origin-Host.\n");
+	fprintf(stdout, COLOR_GREEN"MESSAGE RECEIVED : CLR message received from '%s'"ANSI_COLOR_RESET"\n", (char *)origin_host);	
+	
+	
+
+	/* Extract imsi from request message*/
+	SS_CHECK( ss_get_user_name(*msg, &tmp_ustr), "IMSI extracted from request.\n", "Failed to extract IMSI from request.\n");
+	strncpy(imsi,(char *)tmp_ustr,15);
+
+	/*Extract Supported-Features child AVPs' values*/
+	test_get_supported_features(*msg, &feature_list_id, &feature_list, &size);
+	
+	/* Create answer message header from the request*/
+	SS_CHECK( ss_msg_create_answer( msg), "CLA Answer message header created from request.\n", "Failed to create CLA answer message header.\n");	
+
+	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
+	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");
+
+	/*Set two Supported-Freatures AVP*/
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+	
+	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "CLA Response sent\n", "Failed to set CLA Response");*/
+	fprintf(stdout,"OK : CLA Answer message passed to routing module.\n");
+	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
+
+	return 0;
+}
+
+/*Callback function used when Authentication-Information-Request message is received*/
+int test_req_cb_air(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act){
+
+	unsigned char *tmp_ustr = NULL;
+	unsigned char *origin_host = NULL;
+	char imsi[15] = {0};
+	unsigned32 *feature_list_id = NULL;
+	unsigned32 *feature_list = NULL;
+	size_t size = 0;
+	unsigned32 num_req_vect_eutran = 0;
+	unsigned32 num_req_vect_utran = 0;
+	unsigned32 immd_resp_pref = 0;
+	octetstring * re_sync_inf = NULL;
+	octetstring * visited_plmn_id = NULL;
+	
+
+	if(NULL == msg)
+		return EINVAL;
+
+	/* Message Received */
+	SS_CHECK( ss_get_origin_host( *msg, &origin_host), "\n", "Failed to extract Origin-Host.\n");
+	fprintf(stdout, COLOR_GREEN"MESSAGE RECEIVED : AIR message received from '%s'"ANSI_COLOR_RESET"\n", (char *)origin_host);	
+	
+	
+
+	/* Extract imsi from request message*/
+	SS_CHECK( ss_get_user_name(*msg, &tmp_ustr), "IMSI extracted from request.\n", "Failed to extract IMSI from request.\n");
+	strncpy(imsi,(char *)tmp_ustr,15);
+
+	/*Extract Supported-Features child AVPs' values*/
+	test_get_supported_features(*msg, &feature_list_id, &feature_list, &size);
+	
+	/*Get Requested-EUTRAN-Authentication-Info */
+	SS_WCHECK( get_req_eutran_auth_info(*msg, &num_req_vect_eutran, &immd_resp_pref,&re_sync_inf), "Requested-EUTRAN-Authentication-Info retrieved.\n","Failed to retrieve Requested-EUTRAN-Authentication-Info.\n", NULL);
+	
+	/*Get Requested-UTRAN-GERAN-Authentication-Info */
+	SS_WCHECK(get_req_utran_geran_auth_info(*msg, &num_req_vect_utran, &immd_resp_pref,&re_sync_inf), "Requested-UTRAN-Authentication-Info retrieved.\n","Failed to retrieve Requested-UTRAN-Authentication-Info.\n", NULL);
+
+	/*Get Visited-PLMN-Id*/
+	SS_CHECK( ss_get_visited_plmn_id(*msg, &visited_plmn_id), "Visited-PLMN-Id retrieved.\n", "failed to retrieve Visited-PLMN-Id.\n");	
+
+	/* Create answer message header from the request*/
+	SS_CHECK( ss_msg_create_answer( msg), "AIA Answer message header created from request.\n", "Failed to create AIA answer message header.\n");	
+
+	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
+	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");
+
+	/*Set two Supported-Freatures AVP*/
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+
+	/*Set Authentication-Info*/
+	set_auth_info(msg, imsi, num_req_vect_utran, num_req_vect_eutran);
+
+	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "CLA Response sent\n", "Failed to set CLA Response");*/
+	fprintf(stdout,"OK : AIA Answer message passed to routing module.\n\n");
+	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
+
+	return 0;
 }

@@ -1945,12 +1945,18 @@ RAN-Authentication-Info  child AVPs*/
 
 
 	/*Creates rules for S6a command objects.*/
-	if(create_cmd_rule() != 0)
+	if( 0 != create_cmd_rule()){
+
 		fprintf(stderr, "ERROR : Error has occured in function 'create_cmd_rule'\n");
+		return 1;
+	}
 	
 	/*Create rules for grouped AVPs*/
-	if(create_gavp_rule() != 0)
+	if( 0 != create_gavp_rule()){
+
 		fprintf(stderr, "ERROR : Error has occured in function 'create_gavp_rule'\n");
+		return 1;
+	}
 
 	return 0;
 

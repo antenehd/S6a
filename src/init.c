@@ -2,41 +2,29 @@
 #include "ssix_interface.h"
 #include "internal.h"
 
-/*Initailize diameter protocol*/
+/*define the default path for the configuration file*/
+char * ss_diameter_conffile_name = NULL;
+
+/*Initailize diameter protocol application*/
 int ss_init(){
 
-	int ret;	
-
 	/* Initialize the core library */
-	ret = fd_core_initialize();
-	if (ret != 0) {
-		fprintf(stderr, "Error occurred Diameter initialization.\n");
-		return ret;
-	}
+	SS_CHECK( fd_core_initialize());
 
 	/* Parse the configuration file */
-	CHECK_FCT_DO( fd_core_parseconf(diameter_conffile_name), return 1 );
+	SS_CHECK( fd_core_parseconf(ss_diameter_conffile_name));
 
 	/*Initialize the required avp dictionary*/
-	CHECK_FCT_DO( ss_dict_init(), return 1);
+	SS_CHECK( ss_dict_init());
 
 	/* Start the servers */
-	CHECK_FCT_DO( fd_core_start(), return 1 );	
+	SS_CHECK( fd_core_start());	
 
 	/* Block until the framework has completed its initialization*/
-	CHECK_FCT_DO(fd_core_waitstartcomplete(), return 1);
+	SS_CHECK(fd_core_waitstartcomplete());
 
 	/* Advertise the support for the s6 interface application in the peer */
-	CHECK_FCT_DO( fd_disp_app_support ( ss_app, ss_vendor, 1, 0 ), return 1 );	
+	SS_CHECK( fd_disp_app_support ( ss_app, ss_vendor, 1, 0 ));	
 	
 	return 0;
 }
-
-int  ss_wait_shutdown(){
-
-	/* Wait for termination */
-	CHECK_FCT_DO( fd_core_wait_shutdown_complete(), return 1);
-	return 0;
-}
-
-

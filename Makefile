@@ -4,19 +4,22 @@ OBJ_DIR=OBJECTS
 BIN_DIR=bin
 TEST_DIR=test
 TARGET=$(BIN_DIR)/libssixa.so
-CFLAGS:= -Wall 
+CFLAGS:= -Wall -Winline
 LDFLAG:= -L . -lfdproto -lfdcore 
 
 SOURCE=$(shell find $(SRC) -name '*.c')
 OBJS:=$(patsubst $(SRC)/%.c,$(OBJ_DIR)/%.o,$(SOURCE))
 
-.PHONY: all test clean
+.PHONY: all test debug clean
 
 all: OBJDIR BINDIR $(TARGET)
 
 test: MAKETEST
 
 testclean: MAKETESTCLEAN
+
+debug: CFLAGS += -DDEBUG -g
+debug: OBJDIR BINDIR $(TARGET)
 
 $(TARGET): $(OBJS)
 	gcc $(OBJS) $(LDFLAG) -g -shared -o $(TARGET)

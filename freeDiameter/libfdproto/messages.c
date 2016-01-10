@@ -632,7 +632,7 @@ int fd_msg_search_avp ( struct msg * msg, struct dict_object * what, struct avp 
 		CHECK_FCT_DO( fd_msg_parse_dict( nextavp, dict, NULL ), /* nothing */ );
 	}
 
-	/*MODIFIED: Reason for modification is that b/c the original implementation returns '0' in two cases. one case is 	    when the AVP is found. And another case is when the AVP is not found and the value of the parameter 'avp' is 		  NULL. This creates confusion unless the 'avp' parameter is tested to NULL after function return.
+	/*MODIFIED: Reason for modification is that b/c the original implementation returns '0' in two cases. one case is 	    when the AVP is found. And another case is when the AVP is not found and the value of the parameter 'avp' is 		  NULL. This creates problem unless the 'avp' parameter is tested to NULL after function return.
 	*/
 
 	/*ORIGINAL
@@ -651,9 +651,9 @@ int fd_msg_search_avp ( struct msg * msg, struct dict_object * what, struct avp 
 		return ENOENT;
 }
 
-/*MODIFIED*/
-/* Search a given AVP model in a AVP */
-/* Modified from function  fd_msg_search_avp*/
+/*MODIFIED: Modified from function  fd_msg_search_avpReason for adding this function is that it gives the ability to search in any direction  by specifing direction of search 'dir', unlike the 'fd_msg_search_avp' which searchs only for child AVPs. 
+ */
+/* Search a given AVP model in a AVP*/
 int fd_avp_search_avp ( struct avp * reference, struct dict_object * what, struct avp ** avp, enum msg_brw_dir dir )
 {
 	struct avp * nextavp;

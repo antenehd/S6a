@@ -2,7 +2,7 @@ SRC=src
 OBJ_DIR=OBJECTS
 BIN_DIR=bin
 TARGET=$(BIN_DIR)/testapp
-CFLAGS:= -Wall $(shell  mysql_config --cflags) 
+CFLAGS:= -Wall -Winline $(shell  mysql_config --cflags) 
 HEADER:= -I ../inc/ -I ./inc/
 LDFLAG:= -L ../bin -lssixa -lfdproto -lfdcore $(shell mysql_config --libs)
 

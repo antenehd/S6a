@@ -84,7 +84,7 @@ CREATE TABLE userId(
 /* A maximum of 3 Service-Selection AVPs is allowed in this configuration*/
 DROP TABLE IF EXISTS csgData;
 CREATE TABLE csgData(
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   csgId int(10) unsigned,
   expirDate binary(4),
   serviceSelection0 varbinary(63),
@@ -96,7 +96,7 @@ CREATE TABLE csgData(
 /* Create table structure PDP-Context*/
 DROP TABLE IF EXISTS pdpContext;
 CREATE TABLE pdpContext(
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   contextId int(10) unsigned,
   pdpType binary(1),
   pdpAddr varbinary(16),
@@ -152,7 +152,7 @@ CREATE TABLE traceData(
 /* Create table structure for Area-Scope*/
 DROP TABLE IF EXISTS areaScope;
 CREATE TABLE areaScope(
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   cgi binary(7),
   eutranCgi binary(7),
   rai binary(6),
@@ -197,7 +197,7 @@ CREATE TABLE apnConf (
 /* The contextId is used to relate this with the corresponding APN-Configuration*/
 DROP TABLE IF EXISTS specificApnInfo;
 CREATE TABLE specificApnInfo (
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   contextId int(10) unsigned,
   serviceSelection varbinary(63),   
   mipHomeAgntAddr0 varbinary(16),
@@ -226,7 +226,7 @@ CREATE TABLE lcsInfo (
 /* Create table structure for Call-Barring-Info*/
 DROP TABLE IF EXISTS callBaringInfo;
 CREATE TABLE callBaringInfo (
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   ssCode binary(1) NOT NULL,
   ssStatus binary(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -234,7 +234,7 @@ CREATE TABLE callBaringInfo (
 /* Create table structure for E-UTRAN-VECTOR*/
 DROP TABLE IF EXISTS EUTRANVector;
 CREATE TABLE EUTRANVector (
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   itemNumb int(10) unsigned NOT NULL,
   rand binary(16) NOT NULL,
   xres varbinary(16) NOT NULL,
@@ -245,7 +245,7 @@ CREATE TABLE EUTRANVector (
 /* Create table structure for UTRAN-VECTOR*/
 DROP TABLE IF EXISTS UTRANVector;
 CREATE TABLE UTRANVector (
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   ItemNumb int(10) unsigned NOT NULL,
   rand binary(16) NOT NULL,
   xres varbinary(16) NOT NULL,
@@ -257,7 +257,7 @@ CREATE TABLE UTRANVector (
 /* Create table structure for UTRAN-VECTOR */
 DROP TABLE IF EXISTS GERANVector;
 CREATE TABLE GERANVector (
-  imsi varchar(15),
+  imsi varchar(15) NOT NULL,
   ItemNumb int(10) unsigned NOT NULL,
   rand binary(16) NOT NULL,
   xres varbinary(16) NOT NULL,

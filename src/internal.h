@@ -4,6 +4,34 @@
 #include <freeDiameter/freeDiameter-host.h>
 #include <freeDiameter/libfdcore.h>
 
+#ifdef DEBUG
+
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
+#define SS_CHECK(__fnc__) {																	\
+    int ret = __fnc__;																		\
+	if(0 != ret){																			\
+		fprintf(stderr, "\x1b[33m""Error : '%s' , call to function %s returns : '%s'""\x1b[0m""\n", strerror(ret), #__fnc__, strerror(ret));	\
+		return ret;																			\
+	}																						\
+}
+
+#else
+
+#define SS_CHECK(__fnc__) {																	\
+	int ret = __fnc__;																		\
+	if(0 != ret) return ret;																\
+}
+
+#endif
+
+
+#define NO_STATE_MAINTAINED 1			/*Auth-Session-State AVP value for all S6a messages*/
+#define VENDOR_ID_3GPP 		10415		/*Vendor-Id AVP value for 3gpp*/
+#define SSIX_APPLICATION_ID 16777251	/*Auth-Application-Id AVP value for S6a interface application*/
+
 /*Dictionary objects for AVPs*/
 extern struct dict_object * ss_origin_host;
 extern struct dict_object * ss_origin_realm;

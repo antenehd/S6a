@@ -14,7 +14,7 @@
 	The details of the APIs of this library can be found in the documentaion. The documentaion is generated using
    	doxygen, to generate the documentation on your terminal navigate to the main directory and run this: 
 	
-	# doxygen doc_gen 
+	   # doxygen doc_gen 
 
 	This will create an html documentation in 'doc' directory.
 		

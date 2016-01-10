@@ -71,7 +71,7 @@
 
 	The other  APIs can be generally described as follows:  
 
-	   'ss_create_msg_<cmd>':
+	   'ss_create_msg_&lt;cmd&gt;':
 
 		  To create a specific request message. This will create a new message of the 'cmd' type
         	and it creates a new session id and set Session-Id AVP, sets the Vendor-Sepecific-Application-Id AVP and
@@ -86,55 +86,55 @@
 		    Checks the connection state with a remote peer. To successful send message to a remote peer
 	   		the state of the connection should be open state.
 
-	   'ss_set_<AVPname>' : 
+	   'ss_set_&lt;AVPname&gt;' : 
 		    
 		    To set the value of an AVP and add it to it's parent which could be a message or an AVP 
 	 		of typed grouped. The AVP should be of not type grouped since AVPs of typed group do not have a value 
  			rather they have other AVPs as a child in their data field.	   		
 
-	   'ss_get_<AVPname>' : 
+	   'ss_get_&lt;AVPname&gt;' : 
 
 		    To fetch the value of an AVP which is found in a message. The AVP should be a direct child
       		of the message. If the AVP is a child AVP of other AVP which is a direct child of the message the parent
-           	AVP should be fetched first using 'ss_get_gavp_<AVPname>'('AVPname' is the name of the parent AVP) and
- 			then use 'ss_get_<AVPname>_gavp'('AVPname' is the name of the child AVP) to fetch the value. The AVP 
+           	AVP should be fetched first using 'ss_get_gavp_&lt;AVPname&gt;'('AVPname' is the name of the parent AVP) and
+ 			then use 'ss_get_&lt;AVPname&gt;_gavp'('AVPname' is the name of the child AVP) to fetch the value. The AVP 
 	 		should be of not type grouped since AVPs of typed group do not have a value rather they have other AVPs 
 	     	as a child in their data field.
 	
-	   'ss_get_<AVPname>_gavp' : 
+	   'ss_get_&lt;AVPname&gt;_gavp' : 
 
 		    To fetch the value of an AVP which is found in another AVP of typed grouped. The AVP 
 		  	it's value is fetched should be a direct child of the AVP of typed grouped. The AVP should be of not type 
            	grouped since AVPs of typed group do not have a value rather they have other AVPs as a child in their 
 		    data field.
 
-	   'ss_get_<AVPname>_array': 
+	   'ss_get_&lt;AVPname&gt;_array': 
 
 		    To fetch an multiple values of an AVP found in a message. This API is used if the AVP
         	is a direct child of the message and if the AVP is one of the AVPs that can appear in the message more 
 	 		than once. The AVP should be of not type grouped since AVPs of typed group do not have a value 
  			rather they have other AVPs as a child in their data field.
 
-	   'ss_get_<AVPname>_gavp_array' :
+	   'ss_get_&lt;AVPname&gt;_gavp_array' :
 	
 		    To fetch an multiple values of an AVP in an AVP of typed grouped. The AVP 
 		  	it's value is fetched should be a direct child of the AVP of typed grouped and if the AVP is one of the 
      		AVPs that can appear in the AVP of type grouped more than once. The AVP should be of not type grouped 
 	 		since AVPs of typed group do not have a value rather they have other AVPs as a child in their data field.
 
-	   'ss_create_<AVPname>' : 
+	   'ss_create_&lt;AVPname&gt;' : 
 
 		    To create an empty AVP structure of a specific AVP of typed grouped.  For AVPs which 
- 			are not of typed grouped, 'ss_set_<AVPname>' does the trick for both creating the AVP setting it's value 
+ 			are not of typed grouped, 'ss_set_&lt;AVPname&gt;' does the trick for both creating the AVP setting it's value 
 	 		and adding it to it's parent.
 
-	   'ss_add_<AVPname>' : 
+	   'ss_add_&lt;AVPname&gt;' : 
 
 		    To add an AVP of typed grouped into it's parent, which could be a message or an AVP of 
- 	 		typed grouped. For AVPs which are not of typed grouped, 'ss_set_<AVPname>' does the trick for both 
+ 	 		typed grouped. For AVPs which are not of typed grouped, 'ss_set_&lt;AVPname>' does the trick for both 
 	 		creating the AVP setting it's value and adding it to it's parent.
 
-	   'ss_get_gavp_<AVPname>' : 
+	   'ss_get_gavp_&lt;AVPname&gt;' : 
 
 	 	    To fetch an AVP of typed grouped from it's parent. This API is mainly used	to fetch 
 		 	parent AVPs of typed grouped before fetching their children values.
@@ -168,8 +168,9 @@
 		    Blocks untill the diameter module is shut down.
 
 		
-	   Note : 'cmd' is abbreviated name of request command message(eg. rsr for Reset-Request).
-		      'AVPname' is name of the AVP all in small letters and the hyphens(-) substituded by underscore
+	   Note : '&lt;cmd&gt;' is abbreviated name of request command message(eg. rsr for Reset-Request). 
+
+		      '&lt;AVPname&gt;' is name of the AVP all in small letters and the hyphens(-) substituded by underscore
 			   eg. for AVP Active-APN, AVPname would be 'active_apn'.
 
 	

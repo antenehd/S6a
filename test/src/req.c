@@ -1,14 +1,13 @@
 
 #include <unistd.h>
 
-#include "ssix_interface.h"
 #include "test.h"
 
 /*Set Terminal-Information group AVP and its child AVPs*/
-static void set_terminal_info(struct msg ** msg, utf8string *imei, utf8string *soft_ver, octetstring *meid){
+static void set_terminal_info(struct msg ** msg, utf8string *imei, utf8string *soft_ver, octetstring *meid, size_t meid_len){
 
 	struct avp * tmp_gavp;
-
+	
 	if(!msg)
 		return;
 
@@ -20,59 +19,62 @@ static void set_terminal_info(struct msg ** msg, utf8string *imei, utf8string *s
 
 	/*Set IMEI AVP*/
 	if(imei)
-		SS_CHECK( ss_set_imei( &tmp_gavp, imei), "IMEI AVP set.\n","Failed to set IMEI AVP\n");
+		SS_CHECK( ss_set_imei( &tmp_gavp, imei, strlen((char *)imei)), "IMEI AVP set.\n","Failed to set IMEI AVP\n");
 
 	/*Set Software-Version AVP*/
 	if(soft_ver)
-		SS_CHECK( ss_set_software_version( &tmp_gavp, soft_ver), "Software-Version AVP set.\n","Failed to set Software-Version AVP\n");
+		SS_CHECK( ss_set_software_version( &tmp_gavp, soft_ver, strlen((char *)soft_ver)), "Software-Version AVP set.\n","Failed to set Software-Version AVP\n");
 
 	/*Set 3GPP2-MEID AVP*/
 	if(meid)
-		SS_CHECK( ss_set_3gpp2_meid( &tmp_gavp, meid), "3GPP2-MEID AVP set.\n","Failed to set 3GPP2-MEID AVP\n");	
+		SS_CHECK( ss_set_3gpp2_meid( &tmp_gavp, meid, strlen((char *)meid)), "3GPP2-MEID AVP set.\n","Failed to set 3GPP2-MEID AVP\n");	
 	
 	/*Add Terminal-Information group AVP in to message*/ 	
 	SS_CHECK( ss_add_avp(  (avp_or_msg **)msg, tmp_gavp), "Terminal-Information group AVP added in to message\n", "Failed to add Terminal-Information group AVP in to message\n");
 }
 
 /*Set Equivalent-PLMN-List group AVP and its child AVPs*/
-static void set_eqv_plmn_lst(struct msg ** msg, octetstring * vis_plmn_id){
+static void set_eqv_plmn_lst(struct msg ** msg, octetstring vis_plmn_id[][4], size_t arr_size){
 
 	struct avp * tmp_gavp = NULL;
 
-	if((!msg) || (!vis_plmn_id))
-		return;
+	if((!msg) || (!vis_plmn_id)) return;
 
 	/*Create Equivalent-PLMN-List group AVP*/
 	SS_CHECK( ss_create_equivalent_plmn_list(&tmp_gavp), "Equivalent-PLMN-List group AVP created.\n", "Failed to create Equivalent-PLMN-List AVP\n");
 
 	/*Set Visited-PLMN-Id AVP*/
-	SS_CHECK( ss_set_visited_plmn_id( (avp_or_msg **)&tmp_gavp, vis_plmn_id), "Visited-PLMN-Id AVP set into Equivalent-PLMN-List.\n","Failed to set Visited-PLMN-Id AVP into Equivalent-PLMN-List\n");
+	while(arr_size){
+	 
+		SS_CHECK( ss_set_visited_plmn_id( (avp_or_msg **)&tmp_gavp, vis_plmn_id[arr_size-1], strlen((char *)vis_plmn_id[arr_size-1])), "Visited-PLMN-Id AVP set into Equivalent-PLMN-List.\n","Failed to set Visited-PLMN-Id AVP into Equivalent-PLMN-List\n");
+	
+		arr_size --;
+	}
 
 	/*Add Equivalent-PLMN-List into message*/ 	
 	SS_CHECK( ss_add_avp(  (avp_or_msg **)msg, tmp_gavp), "Equivalent-PLMN-List AVP into into Update-Location-Request message\n", "Failed to add Equivalent-PLMN-List AVP into Update-Location-Request message\n");
 }
 
 /*Set Specific-APN-Info group AVP (only 3 AVPs for testing) and its child AVPs*/
-static void set_spec_apn_info(struct avp ** gavp, utf8string * serv_sel, address * ipv4, address * ipv6, diameterid * host, diameterid * realm, octetstring * vis_net_id){
+static void set_spec_apn_info(struct avp **gavp, utf8string *serv_sel, address *ipv4, address *ipv6, diameterid *host, diameterid *realm, octetstring *vis_net_id){
 
 	struct avp * tmp_gavp = NULL;
 
-	if((!gavp) || (serv_sel))
-		return;
-	if((!ipv4) && (!ipv6) && (!host) && (!realm))
-		return;
+	if((!gavp) || (serv_sel)) return;
+
+	if((!ipv4) && (!ipv6) && (!host) && (!realm)) return;
 
 	/*Create Specific-APN-Info group AVP*/
 	SS_CHECK( ss_create_specific_apn_info(&tmp_gavp), "Specific-APN-Info group AVP created.\n", "Failed to create Specific-APN-Info AVP\n");
 	
 	/*Set Service-Selection AVP*/
-	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel), "Service-Selection AVP set in Specific-APN-Info AVP.\n","Failed to set Service-Selection AVP in Specific-APN-Info AVP\n");
+	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel, strlen((char *)serv_sel)), "Service-Selection AVP set in Specific-APN-Info AVP.\n","Failed to set Service-Selection AVP in Specific-APN-Info AVP\n");
 
 	/*Add MIP6-Agent-Info group AVP in to Specific-APN-Info*/ 	
 	test_set_mip6( &tmp_gavp, ipv4, ipv6, host, realm);
 
 	/*Set Visited-Network-Identifier AVP*/	
-	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id), "Visited-Network-Identifier AVP set in Specific-APN-Info.\n","Failed to set Visited-Network-Identifier AVP in Specific-APN-Info.\n");
+	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id, strlen((char *) vis_net_id)), "Visited-Network-Identifier AVP set in Specific-APN-Info.\n","Failed to set Visited-Network-Identifier AVP in Specific-APN-Info.\n");
 
 	/*Add Specific-APN-Info into Active-APN AVP*/ 	
 	SS_CHECK( ss_add_avp( (avp_or_msg **)&gavp, tmp_gavp), "Specific-APN-Info AVP added into Active-APN AVP\n", "Failed to add Specific-APN-Info AVP into Active-APN AVP\n");
@@ -96,13 +98,13 @@ static void set_active_apn(struct msg **msg, unsigned32 context_id, utf8string *
 	SS_CHECK( ss_set_context_identifier( (avp_or_msg **)&tmp_gavp, context_id), "context identifier set in Active-APN.\n", "Failed to set Context-Identifier in Active-APN.\n");
 
 	/*Set Service-Selection AVP*/
-	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel), "Service-Selection AVP set in Active-APN AVP.\n","Failed to set Service-Selection AVP in Active-APN AVP\n");
+	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel, strlen((char *)serv_sel)), "Service-Selection AVP set in Active-APN AVP.\n","Failed to set Service-Selection AVP in Active-APN AVP\n");
 
 	/*Set MIP6-Agent-Info group AVP and its child AVPs*/
 	test_set_mip6( &tmp_gavp, ipv4, ipv6, host, realm);
 
 	/*Set Visited-Network-Identifier AVP*/	
-	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id), "Visited-Network-Identifier AVP set in Active-APN AVP.\n","Failed to set Visited-Network-Identifier AVP in Active-APN AVP.\n");
+	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id, strlen((char *)vis_net_id)), "Visited-Network-Identifier AVP set in Active-APN AVP.\n","Failed to set Visited-Network-Identifier AVP in Active-APN AVP.\n");
 
 	/*Set Specific-APN-Info group AVP (only 3 AVPs for testing) and its child AVPs*/
 	for (i = 1 ; i<3 ; i++)		
@@ -129,7 +131,7 @@ static int set_req_auth_info(struct avp **gavp, unsigned32 *num_req_vect, unsign
 
 	/*Set Re-synchronization-Info*/
 	if(re_sync_inf)
-		SS_WCHECK( ss_set_re_synchronization_info(gavp, re_sync_inf), "Re-synchronization-Info value set.\n", "failed to set Re-synchronization-Info.\n", NULL);
+		SS_WCHECK( ss_set_re_synchronization_info(gavp, re_sync_inf, strlen((char *)re_sync_inf)), "Re-synchronization-Info value set.\n", "failed to set Re-synchronization-Info.\n", NULL);
 
 	return 0;
 	
@@ -200,11 +202,12 @@ int test_req_ulr(char * dest_host, int test_type){
 	utf8string * software_version = (utf8string *)"22";
 	octetstring * meid = (octetstring *)"2345";
 	enum rat_type rat_type = UTRAN;	
-	unsigned32 ulr_flags = 0;
+	unsigned32 ulr_flags = 8;
 	enum ue_srvcc_capability ue_srvcc_capability = UE_SRVCC_SUPPORTED;
-	octetstring visited_plmn_id[]= {0x00,0x10,0x01}; /*MCC = 001, MNC = 001*/	
+	const size_t size = 2;
+	octetstring visited_plmn_id[2][4]= {{0x01,0x10,0x01,'\0'},{0x01,0x10,0x01,'\0'}}; /*MCC = 011, MNC = 001*/	
 	octetstring  sgsn_number [] = {0x25,0x14,0x56};
-	enum homogeneous_support_ims_voice_over_ps_sessions homogeneous_support_ims_voice_over_ps_sessions = SUPPORTED;
+	enum homogeneous_support_of_ims_voice_over_ps_sessions homogeneous_support_ims_voice_over_ps_sessions = HOMO_IMS_VOICE_OVER_PS_NOT_SUPPORTED;
 	address * gmlc_address = (address *)"gmlc.local";
 	unsigned32 context_identifier = 1;
 	utf8string * service_selection = (utf8string *)"serviceSelection";
@@ -249,19 +252,19 @@ int test_req_ulr(char * dest_host, int test_type){
 	SS_CHECK( ss_msg_create_ulr(&ulr), "Update-Location-Request message Created.\n", "Error in creating Update-Location-Request message.\n");
 
 	/*Set Destination-Host AVP*/	
-	SS_CHECK( ss_set_destination_host( (avp_or_msg **)&ulr, destination_host), "Destination-Host AVP set.\n","Failed to set Destination-Host AVP\n");
+	SS_CHECK( ss_set_destination_host( (avp_or_msg **)&ulr, destination_host,strlen((char *)destination_host)), "Destination-Host AVP set.\n","Failed to set Destination-Host AVP\n");
 	
 	/*Set Destination-Realm AVP*/
-	SS_CHECK( ss_set_destination_realm( (avp_or_msg **)&ulr, destination_realm), "Destination-Realm AVP set.\n","Failed to set Destination-Realm AVP\n");
+	SS_CHECK( ss_set_destination_realm( (avp_or_msg **)&ulr, destination_realm,strlen((char *)destination_realm)), "Destination-Realm AVP set.\n","Failed to set Destination-Realm AVP\n");
 
 	/*Set User-Name AVP*/
-	SS_CHECK( ss_set_user_name( &ulr, user_name), "User-Name AVP set.\n","Failed to set User-Name AVP\n");
+	SS_CHECK( ss_set_user_name( &ulr, user_name, strlen((char *)user_name)), "User-Name AVP set.\n","Failed to set User-Name AVP\n");
 	
 	/*Set Supported-Features group AVP and its child AVPs*/
 	test_set_supported_features(&ulr, (unsigned32)VENDOR_ID_3GPP, feature_list_id, feature_list);
 
 	/*Set Terminal-Information group AVP and its child AVPs*/
-	set_terminal_info( &ulr, imei, software_version, meid);
+	set_terminal_info( &ulr, imei, software_version, meid, strlen((char *)meid));
 	
 	/*Set RAT-Type AVP*/
 	SS_CHECK( ss_set_rat_type( &ulr, rat_type), "RAT-Type AVP set.\n","Failed to set RAT-Type AVP\n");
@@ -273,32 +276,32 @@ int test_req_ulr(char * dest_host, int test_type){
 	SS_CHECK( ss_set_ue_srvcc_capability( &ulr, ue_srvcc_capability), "UE-SRVCC-Capability AVP set.\n","Failed to set UE-SRVCC-Capability AVP\n");
 
 	/*Set Visited-PLMN-Id AVP*/
-	SS_CHECK( ss_set_visited_plmn_id( (avp_or_msg **)&ulr, visited_plmn_id), "Visited-PLMN-Id AVP set.\n","Failed to set Visited-PLMN-Id AVP\n");
+	SS_CHECK( ss_set_visited_plmn_id( (avp_or_msg **)&ulr, visited_plmn_id[0],3), "Visited-PLMN-Id AVP set.\n","Failed to set Visited-PLMN-Id AVP\n");
 
 	/*Set SGSN-Number AVP*/
-	SS_CHECK( ss_set_sgsn_number( &ulr, sgsn_number), "SGSN-Number AVP set.\n","Failed to set SGSN-Number AVP\n");
+	SS_CHECK( ss_set_sgsn_number( &ulr, sgsn_number, strlen((char *)sgsn_number)), "SGSN-Number AVP set.\n","Failed to set SGSN-Number AVP\n");
 	
 	/*Set Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP*/
-	SS_CHECK( ss_set_homogeneous_support_ims_vop_sessions( &ulr, (int)homogeneous_support_ims_voice_over_ps_sessions), "Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP set.\n","Failed to set Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP\n");
+	SS_CHECK( ss_set_homogeneous_support_of_ims_voice_over_ps_sessions( &ulr, (int32_t)homogeneous_support_ims_voice_over_ps_sessions), "Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP set.\n","Failed to set Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP\n");
 
 	/*Set GMLC-Address AVP*/
-	SS_CHECK( ss_set_gmlc_address( &ulr, gmlc_address), "GMLC-Address AVP set.\n","Failed to set GMLC-Address AVP\n");	
+	SS_CHECK( ss_set_gmlc_address( &ulr, gmlc_address, strlen((char *)gmlc_address)), "GMLC-Address AVP set.\n","Failed to set GMLC-Address AVP\n");	
 
 	/*Set Active-APN AVP*/
 	for(i = 1; i<3 ; i++)
 		set_active_apn(&ulr, context_identifier, service_selection, home_agent_address_v4, home_agent_address_v6, home_agent_host_host, home_agent_host_realm, visited_network_identifier);
 
 	/*Set Equivalent-PLMN-List group AVP and its child AVPs*/
-	set_eqv_plmn_lst(&ulr, visited_plmn_id);
+	set_eqv_plmn_lst(&ulr, visited_plmn_id, size);
 	
 	/*Set MME-Number-for-MT-SMS AVP*/
-	SS_CHECK( ss_set_mme_number_for_mt_sms( &ulr, mme_number_for_mt_sms), "MME-Number-for-MT-SMS AVP set.\n","Failed to set MME-Number-for-MT-SMS AVP.\n");
+	SS_CHECK( ss_set_mme_number_for_mt_sms( &ulr, mme_number_for_mt_sms, strlen((char *)mme_number_for_mt_sms)), "MME-Number-for-MT-SMS AVP set.\n","Failed to set MME-Number-for-MT-SMS AVP.\n");
 
 	/*Set SMS-Register-Request AVP*/
 	SS_CHECK( ss_set_sms_register_request( &ulr, sms_register_request), "SMS-Register-Request AVP set.\n","Failed to set SMS-Register-Request AVP.\n");
 
 	/*Set Coupled-Node-Diameter-ID AVP*/
-	SS_CHECK( ss_set_coupled_node_diameter_id( &ulr, coupled_node_diameter_id), "Coupled-Node-Diameter-ID AVP set.\n","Failed to set Coupled-Node-Diameter-ID AVP.\n");
+	SS_CHECK( ss_set_coupled_node_diameter_id( &ulr, coupled_node_diameter_id, strlen((char*)coupled_node_diameter_id)), "Coupled-Node-Diameter-ID AVP set.\n","Failed to set Coupled-Node-Diameter-ID AVP.\n");
 
 	/*send request*/
 	SS_CHECK( fd_msg_send( &ulr, test_ans_cb_ulr, NULL), "ULR message sent.\n", "Failed to send ULR message.\n");
@@ -328,7 +331,7 @@ int test_req_clr(char * dest_host){
 		sleep(2);
 
 	/*Prepare the message and send CLR message, two Supported-Feature AVPs set inside this function*/
- 	test_util_send_clr(destination_host, destination_realm, user_name, cancel_type, clr_flags);
+ 	test_send_clr(destination_host, destination_realm, user_name, cancel_type, clr_flags);
 
 	return 0;
 }
@@ -347,7 +350,7 @@ int test_req_air(char * dest_host){
 	utf8string *user_name = (utf8string *)"244444123456789";	
 	unsigned32 num_req_vect = 2;
 	unsigned32 immd_resp_pref = 1;
-	octetstring re_sync_inf[] = {0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11, 0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11};
+	octetstring re_sync_inf[] = {0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11, 0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11, 0x00};
 	unsigned32 feature_list_id[] = {1,2};
 	unsigned32 feature_list[] = {3,2};
 	octetstring visited_plmn_id[]= {0x00,0x10,0x01}; /*MCC = 001, MNC = 001*/
@@ -363,13 +366,13 @@ int test_req_air(char * dest_host){
 	SS_CHECK( ss_msg_create_air(&air), "Authentication-Information-Request message Created.\n", "Error in creating Authentication-Information-Request message.\n");
 
 	/*Set Destination-Host AVP*/
-	SS_CHECK( ss_set_destination_host((avp_or_msg **) &air, destination_host), "Destination-Host AVP set.\n", "failed to set Destination-Host AVP.\n");
+	SS_CHECK( ss_set_destination_host((avp_or_msg **) &air, destination_host, strlen((char *)destination_host)), "Destination-Host AVP set.\n", "failed to set Destination-Host AVP.\n");
 
 	/*Set Destination-Realm AVP*/
-	SS_CHECK( ss_set_destination_realm( (avp_or_msg **) &air, destination_realm), "Destination-Realm AVP set.\n", "failed to set Destination-Realm AVP.\n");
+	SS_CHECK( ss_set_destination_realm( (avp_or_msg **) &air, destination_realm, strlen((char *)destination_realm)), "Destination-Realm AVP set.\n", "failed to set Destination-Realm AVP.\n");
 
 	/* Set User-Name (imsi)*/
-	SS_CHECK( ss_set_user_name(&air, user_name), "User-Name set.\n", "failed to set User-Name.\n");
+	SS_CHECK( ss_set_user_name(&air, user_name, strlen((char *)user_name)), "User-Name set.\n", "failed to set User-Name.\n");
 
 	/* Set Supported-Features AVP (two AVPs will be set)*/
 	test_set_supported_features(&air, (unsigned32)VENDOR_ID_3GPP, feature_list_id[0], feature_list[0]);
@@ -382,7 +385,7 @@ int test_req_air(char * dest_host){
 	SS_WCHECK(set_req_utran_geran_auth_info(&air, &num_req_vect, &immd_resp_pref,re_sync_inf), "Requested-UTRAN-Authentication-Info set.\n","Failed to set Requested-UTRAN-Authentication-Info.\n", NULL);
 
 	/*Set Visited-PLMN-Id*/
-	SS_CHECK( ss_set_visited_plmn_id((avp_or_msg **)&air, visited_plmn_id), "Visited-PLMN-Id set.\n", "failed to set Visited-PLMN-Id.\n");
+	SS_CHECK( ss_set_visited_plmn_id((avp_or_msg **)&air, visited_plmn_id, strlen((char *)visited_plmn_id)), "Visited-PLMN-Id set.\n", "failed to set Visited-PLMN-Id.\n");
 
 	/*Send AIR message*/
 	SS_CHECK( fd_msg_send( &air, test_ans_cb_air, NULL), "AIR message sent.\n", "Failed to send AIR message.\n");
@@ -390,4 +393,60 @@ int test_req_air(char * dest_host){
 	return 0;
 }
 
+/*Sends Insert-Subscriber-Data-Request message for testing*/
+int test_req_idr(char * dest_host){
+	
+	int len = 0;
+	struct msg *idr = NULL;	
+
+	if(!dest_host)
+		return EINVAL;
+
+	diameterid *destination_host= (diameterid *) dest_host;
+	diameterid *destination_realm = (diameterid *)"localdomain";
+	utf8string *user_name = (utf8string *)"244444123456789";	
+	unsigned32 feature_list_id[] = {1,2};
+	unsigned32 feature_list[] = {3,2};
+	unsigned32 idr_flags = 1;
+	octetstring *reset_id[] = {(octetstring *)"244444", (octetstring *)"244445", (octetstring *)"244446"}; 
+
+	/*waite until remote peer state is open*/
+	len = strlen(dest_host);
+	if(ss_peer_state( dest_host, len) != 1)
+		fprintf(stdout, "Waiting until connection to remote peer is estabilished ...\n");	
+	while(ss_peer_state( dest_host, len) != 1)
+		sleep(2);
+
+	/*Create AIR message*/
+	SS_CHECK( ss_msg_create_idr(&idr), "Authentication-Information-Request message Created.\n", "Error in creating Authentication-Information-Request message.\n");
+
+	/*Set Destination-Host AVP*/
+	SS_CHECK( ss_set_destination_host((avp_or_msg **) &idr, destination_host, strlen((char *)destination_host)), "Destination-Host AVP set.\n", "failed to set Destination-Host AVP.\n");
+
+	/*Set Destination-Realm AVP*/
+	SS_CHECK( ss_set_destination_realm( (avp_or_msg **) &idr, destination_realm, strlen((char *)destination_realm)), "Destination-Realm AVP set.\n", "failed to set Destination-Realm AVP.\n");
+
+	/* Set User-Name (imsi)*/
+	SS_CHECK( ss_set_user_name(&idr, user_name, strlen((char *)user_name)), "User-Name set.\n", "failed to set User-Name.\n");
+
+	/* Set Supported-Features AVP (two AVPs will be set)*/
+	test_set_supported_features(&idr, (unsigned32)VENDOR_ID_3GPP, feature_list_id[0], feature_list[0]);
+	test_set_supported_features(&idr, (unsigned32)VENDOR_ID_3GPP, feature_list_id[1], feature_list[1]);
+
+	/*Set Subscriber-Data*/
+	test_set_subsc_data(&idr, (char *)user_name, /*Set GPRS-DATA*/8, NULL);
+
+	/*Set IDR-Flags*/
+	SS_CHECK( ss_set_idr_flags(&idr, idr_flags), "IDR-Flags set.\n", "Failed to set IDR-Flags.\n");
+	
+	/*Set Reset-Id, (only 3 AVPs set for testing)*/
+	SS_CHECK( ss_set_reset_id(&idr, reset_id[0], strlen((char *)reset_id[0])), "Reset-Id set.\n", "Failed to set Reset-Id.\n");
+	SS_CHECK( ss_set_reset_id(&idr, reset_id[1], strlen((char *)reset_id[1])), "Reset-Id 2 set.\n", "Failed to set Reset-Id 2.\n");
+	SS_CHECK( ss_set_reset_id(&idr, reset_id[2], strlen((char *)reset_id[2])), "Reset-Id 3 set.\n", "Failed to set Reset-Id 3.\n");
+
+	/*Send AIR message*/
+	SS_CHECK( fd_msg_send( &idr, test_ans_cb_idr, NULL), "AIR message sent.\n", "Failed to send AIR message.\n");
+
+	return 0;
+}
 

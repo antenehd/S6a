@@ -79,8 +79,12 @@ This implementation of the S6a interface is meant to be used as a shared library
  	 		typed grouped. For AVPs which are not of typed grouped, 'ss_set_<AVPname>' does the trick for both 
 	 		creating the AVP setting it's value and adding it to it's parent.
 
-  <B>'ss_get_gavp_<AVPname>' : </B>To fetch an AVP of typed grouped from it's parent. This API is mainly used	to 
-			fetch parent AVPs of typed grouped before fetching their children values.
+  <B>'ss_get_gavp_&lt;AVPname&gt;' : </B>To fetch an AVP of typed grouped from it's parent. This API returns the 
+	 	    first AVP with the name 'AVPname'.
+
+  <B>'ss_get_gavp_next_&lt;AVPname&gt;' : </B>To fetch the next AVP of typed grouped with name 'AVPname'. This API is 
+	 		used when there are multiple similar AVPs of typed grouped. After fetching the first AVP with 
+	 		'ss_get_gavp_<AVPname>' the rest of the	AVPs with similar name are fetched with API.
 
   <B>'ss_msg_create_answer' :</B> To create an answer message from a received request message. This will extract and 
 			add	all the necessary values like the end-to-end identifier from the request message and  set it in the 
@@ -233,6 +237,21 @@ This will create two new directories 'OBJECTS' and 'bin'. And the library is pla
 		# ./testapp air peer1.localdomain
 
 	 	Now you should see the test running on both terminals. 
+
+      Test Insert-Subscriber-Data-Request/Answer : 
+
+	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	    command to simulate an MME server which is waiting for S6a interface messages:
+
+		# ./testapp mme
+
+	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
+       	waiting for Upadate-Location-Answer:
+
+		# ./testapp idr peer1.localdomain
+
+	 	Now you should see the test running on both terminals
 
 	    Note : 'Warnings' messages in the terminal are just notifications that an optional AVP is not present which 
 	    is could be normal. The 'ERROR' messages immediatly following or preceding the 'warning' messages is caused 

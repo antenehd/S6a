@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/antt/raw_freedia/freeDiameter-090390e89b1d/extensions/dict_dcca_3gpp/dict_dcca_3gpp.c
+/home/antt/freediam/freeDiameter/extensions/dict_dcca_3gpp/dict_dcca_3gpp.c
 freeDiameter/extension.h
 -
 
-/home/antt/raw_freedia/freeDiameter-090390e89b1d/include/freeDiameter/extension.h
+/home/antt/freediam/freeDiameter/include/freeDiameter/extension.h
 freeDiameter/freeDiameter-host.h
 -
 freeDiameter/libfdcore.h
 -
 
-/home/antt/raw_freedia/freeDiameter-090390e89b1d/include/freeDiameter/libfdcore.h
+/home/antt/freediam/freeDiameter/include/freeDiameter/libfdcore.h
 freeDiameter/libfdproto.h
 -
 gnutls/gnutls.h
@@ -24,7 +24,7 @@ gnutls/gnutls.h
 gnutls/x509.h
 -
 
-/home/antt/raw_freedia/freeDiameter-090390e89b1d/include/freeDiameter/libfdproto.h
+/home/antt/freediam/freeDiameter/include/freeDiameter/libfdproto.h
 pthread.h
 -
 sched.h

@@ -8720,18 +8720,18 @@ static int dict_dcca_3gpp_entry(char * conffile)
 		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
 	};
 
-	/* SS-Status */
+	/* SS-Status , COMMENTED OUT B/C IN S6A this AVP is defined as type octetstring
 	{
 		struct dict_avp_data data = {
-			1477,	/* Code */
-			10415,	/* Vendor */
-			"SS-Status",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
+			1477,	// Code 
+			10415,	// Vendor 
+			"SS-Status",	// Name 
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	// Fixed flags
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	// Fixed flag values 
+			AVP_TYPE_GROUPED	// base type of data 
 		};
 		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
-	};
+	};*/
 
 	/* Notification-To-UE-User */
 	{

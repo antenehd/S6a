@@ -1,4 +1,4 @@
-# Install script for directory: /home/antt/raw_freedia/freeDiameter-090390e89b1d/extensions/dict_dcca_3gpp
+# Install script for directory: /home/antt/freediam/freeDiameter/extensions/dict_dcca_3gpp
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "freeDia
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/freeDiameter/dict_dcca_3gpp.fdx"
          RPATH "")
   ENDIF()
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/freeDiameter" TYPE MODULE FILES "/home/antt/raw_freedia/fd/extensions/dict_dcca_3gpp.fdx")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/freeDiameter" TYPE MODULE FILES "/home/antt/freediam/fd/extensions/dict_dcca_3gpp.fdx")
   IF(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/freeDiameter/dict_dcca_3gpp.fdx" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/freeDiameter/dict_dcca_3gpp.fdx")
     IF(CMAKE_INSTALL_DO_STRIP)

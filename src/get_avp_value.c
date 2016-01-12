@@ -5,16 +5,16 @@
 #include "internal.h"
 
 /*Retrieve string value from AVP*/
-static inline int avp_str_value(struct avp *avp, unsigned char **val){
+static inline int avp_str_value(struct avp *avp, unsigned char **val, size_t *len){
 
 	struct avp_hdr *hdr = NULL;
 	
-	if(!val) return EINVAL;
+	if((!val) || (!len)) return EINVAL;
 
 	/*extract value from AVP structure*/
 	SS_CHECK( fd_msg_avp_hdr( avp, &hdr ));
     *val = hdr->avp_value->os.data;
-
+	*len = hdr->avp_value->os.len;
 	return 0;
 }
 
@@ -47,7 +47,7 @@ static inline int avp_uint_value(struct avp *avp, uint32_t *val){
 }
 
 /*Retrieves string value of the first avp indicated by 'dict' with in  message 'msg' and store the resulting pointer to 'target'*/
-static inline int get_str_value(struct msg *msg, struct dict_object *dict, unsigned char **val){
+static inline int get_str_value(struct msg *msg, struct dict_object *dict, unsigned char **val, size_t *len){
 
 	struct avp *avp = NULL;	
 
@@ -55,7 +55,7 @@ static inline int get_str_value(struct msg *msg, struct dict_object *dict, unsig
 	SS_CHECK( fd_msg_search_avp( msg, dict, &avp) );
 
 	/*returns 0 if value is found otherwise EINVAL*/
-	return avp_str_value(avp, val);	
+	return avp_str_value(avp, val, len);	
 
 }
 
@@ -84,7 +84,7 @@ static inline int get_uint_value(struct msg *msg, struct dict_object *dict, uint
 }
 
 /*Retrieves string value of the first avp indicated by 'dict' with in group avp 'gavp' and store the resulting pointer to 'target'*/
-static inline int get_str_value_gavp(struct avp *gavp, struct dict_object *dict, unsigned char **val){
+static inline int get_str_value_gavp(struct avp *gavp, struct dict_object *dict, unsigned char **val, size_t *len){
 
 	struct avp *avp = NULL;
 
@@ -92,7 +92,7 @@ static inline int get_str_value_gavp(struct avp *gavp, struct dict_object *dict,
 	SS_CHECK(fd_avp_search_avp ( gavp, dict, &avp, MSG_BRW_FIRST_CHILD ));
 
 	/*returns 0 if value is found otherwise EINVAL*/
-	return avp_str_value(avp, val);
+	return avp_str_value(avp, val, len);
 }
 
 /*Retrieves string value of the first avp indicated by 'dict' with in group avp 'gavp' and store the resulting pointer to 'target'*/
@@ -121,14 +121,15 @@ static inline int get_int_value_gavp(struct avp *gavp, struct dict_object *dict,
 
 /*Retrieves multiple string values of multiple similar AVPs found in a message 'msg'. It retrieves those that are 
 found on top level(i.e. direct children of 'msg')*/
-static inline int get_str_array(struct msg * msg, struct dict_object * dict, unsigned char *** array_val, size_t *array_size){
+static inline int get_str_array(struct msg * msg, struct dict_object * dict, unsigned char ***array_val, size_t **len, size_t *array_size){
 
 	struct avp *avp = NULL;
 	struct avp *avp2 = NULL;
-	unsigned char **temp = NULL;
+	unsigned char **tmp_val = NULL;
+	size_t *tmp_len = NULL;
 	size_t num = 0;
 
-	if((!array_val) || (!array_size)) return EINVAL;
+	if((!array_val) || (!array_size) || (!len)) return EINVAL;
 			
 
 	*array_size = 0;
@@ -138,38 +139,44 @@ static inline int get_str_array(struct msg * msg, struct dict_object * dict, uns
 	while(avp){
 
 		/*allocate memory for the values*/
-		if(NULL == (temp = realloc(temp, sizeof(char *) * (num + 1))))	return ENOMEM;
+		tmp_val = realloc(tmp_val, sizeof(char *) * (num + 1));
+		tmp_len = realloc(tmp_len, sizeof(size_t)* (num + 1));
+		if((NULL == tmp_val) || (NULL == tmp_len))	return ENOMEM;
 		
 		/*retrieves value from AVP 'avp' and write it to location pointed by 'temp + num'*/
-		if( avp_str_value(avp, temp + num) != 0){
+		if( avp_str_value(avp, tmp_val + num, tmp_len + num) != 0){
 			
 			/*if value retrieval fails free memory*/
-			free(temp);
+			free(tmp_val);
+			free(tmp_len);
 			return EINVAL;
 		}
 			
 		/*search for the first AVP of type 'dict' which is found after 'avp' at the same level (i.e no child or parent)*/
-		SS_CHECK(fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT ));
+		fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT );
 		avp = avp2;
+		avp2 = NULL;
 
 		num ++;
 	}
 		
 	*array_size = num;
-	*array_val = temp;
+	*len = tmp_len; 
+	*array_val = tmp_val;
 
 	return 0;
 }
 
 /*Retrieves multiple string values of multiple similar AVPs found in a group AVP 'gavp'*/
-static inline int get_str_gavp_array(struct avp * gavp, struct dict_object * dict, unsigned char *** array_val, size_t *array_size){
+static inline int get_str_gavp_array(struct avp * gavp, struct dict_object * dict, unsigned char *** array_val, size_t **len, size_t *array_size){
 
 	struct avp *avp = NULL;
 	struct avp *avp2 = NULL;
-	unsigned char **temp = NULL;
+	unsigned char **tmp_val = NULL;
+	size_t *tmp_len = NULL;
 	size_t num = 0;
 
-	if((!array_val) || (!array_size)) return EINVAL;
+	if((!array_val) || (!array_size) || (!len)) return EINVAL;
 
 	*array_size = 0;
 
@@ -178,24 +185,29 @@ static inline int get_str_gavp_array(struct avp * gavp, struct dict_object * dic
 	while(avp){
 		
 		/*allocate memory for the values*/
-		if( NULL == (temp = realloc(temp, sizeof(char *) * (num + 1)))) return ENOMEM;
+		tmp_val = realloc(tmp_val, sizeof(char *) * (num + 1));
+		tmp_len = realloc(tmp_len, sizeof(size_t) * (num + 1));
+		if( (NULL == tmp_val) || (NULL == tmp_len)) return ENOMEM;
 
 		/*retrieves value from AVP 'avp' and write it to location pointed by 'temp + num'*/
-		if( 0 != avp_str_value(avp, temp + num)){
+		if( 0 != avp_str_value(avp, tmp_val + num, tmp_len + num)){
 
-			free(temp);
+			free(tmp_val);
+			free(tmp_len);
 			return EINVAL;
 		}
 
 		/*search for the first AVP of type 'dict' which is found after 'avp' at the same level (i.e no child or parent)*/
-		SS_CHECK(fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT ));
+		fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT );
 		avp = avp2;
+		avp2 = NULL;
 
 		num ++;
 	}
 		
 	*array_size = num;
-	*array_val = temp;
+	*len = tmp_len;
+	*array_val = tmp_val;
 
 	return 0;
 }
@@ -227,8 +239,9 @@ static inline int get_int_gavp_array(struct avp * gavp, struct dict_object * dic
 		}
 
 		/*search for the first AVP of type 'dict' which is found after 'avp' at the same level (i.e no child or parent)*/		
-		SS_CHECK(fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT ));
+		fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT );
 		avp = avp2;
+		avp2 = NULL;
 
 		num ++;
 	}
@@ -266,8 +279,9 @@ static inline int get_uint_array(struct msg * msg, struct dict_object * dict, ui
 		}
 		
 		/*search for the first AVP of type 'dict' which is found after 'avp' at the same level (i.e no child or parent)*/
-		SS_CHECK(fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT ));
+		fd_avp_search_avp ( avp, dict, &avp2, MSG_BRW_NEXT );
 		avp = avp2;
+		avp2 = NULL;
 
 		num ++;
 	}
@@ -279,181 +293,175 @@ static inline int get_uint_array(struct msg * msg, struct dict_object * dict, ui
 }
 
 /*Retrieves Destination-Host avp value from message */
-int ss_get_destination_host(struct msg *msg, unsigned char **ret){	
+int ss_get_destination_host_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_destination_host, ret);
+	return get_str_value(msg, ss_destination_host, ret, len);
 }
 
 /*Retrieves Destination-Host avp value from message */
-int ss_get_destination_host_gavp(struct avp *gavp, unsigned char **ret){	
+int ss_get_destination_host(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_destination_host, ret);
+	return get_str_value_gavp(gavp, ss_destination_host, ret, len);
 }
 
 /*Retrieves originating host avp value from message */
-int ss_get_origin_host(struct msg *msg, unsigned char **ret){	
+int ss_get_origin_host_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_origin_host, ret);
+	return get_str_value(msg, ss_origin_host, ret, len);
 }
 
 /*Retrieves Destination-Realm avp value from message*/
-int ss_get_destination_realm(struct msg *msg, unsigned char **ret){	
+int ss_get_destination_realm_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_destination_realm, ret);
+	return get_str_value(msg, ss_destination_realm, ret, len);
 }
 
 /*Retrieves Destination-Realm avp value from group AVP */
-int ss_get_destination_realm_gavp(struct avp *gavp, unsigned char **ret){	
+int ss_get_destination_realm(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_destination_realm, ret);
+	return get_str_value_gavp(gavp, ss_destination_realm, ret, len);
 }
 
 /*Retrieves originating realm avp value from message */
-int ss_get_origin_realm(struct msg *msg, unsigned char **ret){	
+int ss_get_origin_realm_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_origin_realm, ret);
+	return get_str_value(msg, ss_origin_realm, ret, len);
 }
 
 /*Retrieves User-Name (imsi) avp value from message*/
-int ss_get_user_name(struct msg *msg, unsigned char **ret){	
+int ss_get_user_name_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_user_name, ret);
+	return get_str_value(msg, ss_user_name, ret, len);
 }
 
 /*Retrieves RAT-Type avp value from message*/
-int ss_get_rat_type(struct msg *msg, int32_t *ret){	
+int ss_get_rat_type_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_rat_type, ret);
 }
 
 /*Retrieves ULR-Flags avp value from message */
-int ss_get_ulr_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_ulr_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_ulr_flags, ret);
 }
 
 /*Retrieves UE-SRVCC-Capability avp value from message*/
-int ss_get_ue_srvcc_capability(struct msg *msg, int32_t *ret){	
+int ss_get_ue_srvcc_capability_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_ue_srvcc_capability, ret);
 }
 
 /*Retrieves Visited-PLMN-Id avp value from message */
-int ss_get_visited_plmn_id(struct msg *msg, unsigned char **ret){	
+int ss_get_visited_plmn_id_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_visited_plmn_id, ret);
+	return get_str_value(msg, ss_visited_plmn_id, ret, len);
 }
 
 /*Retrieves SGSN-Number avp value from message */
-int ss_get_sgsn_number(struct msg *msg, unsigned char **ret){	
+int ss_get_sgsn_number_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_sgsn_number, ret);
-}
-
-/*Retrieves Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions avp value from message */
-int ss_get_homogeneous_support_ims(struct msg *msg, int32_t *ret){	
-
-	return get_int_value(msg, ss_homogeneous_support_of_ims_voice_over_ps_sessions, ret);
+	return get_str_value(msg, ss_sgsn_number, ret, len);
 }
 
 /*Retrieves GMLC-Address avp value from message*/
-int ss_get_gmlc_address(struct msg *msg, unsigned char **ret){	
+int ss_get_gmlc_address_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_gmlc_address, ret);
+	return get_str_value(msg, ss_gmlc_address, ret, len);
 }
 
 /*Retrieves MME-Number-for-MT-SMS avp value from message*/
-int ss_get_mme_number_for_mt_sms(struct msg *msg, unsigned char **ret){	
+int ss_get_mme_number_for_mt_sms_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_mme_number_for_mt_sms, ret);
+	return get_str_value(msg, ss_mme_number_for_mt_sms, ret, len);
 }
 
 /*Retrieves SMS-Register-Request avp value from message*/
-int ss_get_sms_register_request(struct msg *msg, int32_t *ret){	
+int ss_get_sms_register_request_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_sms_register_request, ret);
 }
 
 /*Retrieves Coupled-Node-Diameter-ID avp value from message*/
-int ss_get_coupled_node_diameter_id(struct msg *msg, unsigned char **ret){	
+int ss_get_coupled_node_diameter_id_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_coupled_node_diameter_id, ret);
+	return get_str_value(msg, ss_coupled_node_diameter_id, ret, len);
 }
 
 /*Retrieves imei avp value from group avp*/
-int ss_get_imei(struct avp *gavp, unsigned char **ret){	
+int ss_get_imei(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_imei, ret);
+	return get_str_value_gavp(gavp, ss_imei, ret, len);
 }
 
 /*Retrieves Software-Version avp value from group avp */
-int ss_get_software_version(struct avp *gavp, unsigned char **ret){	
+int ss_get_software_version(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_software_version, ret);
+	return get_str_value_gavp(gavp, ss_software_version, ret, len);
 }
 
 /*Retrieves 3gpp2-meid avp value from group avp*/
-int ss_get_3gpp2_meid(struct avp *gavp, unsigned char **ret){	
+int ss_get_3gpp2_meid(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_3gpp2_meid, ret);
+	return get_str_value_gavp(gavp, ss_3gpp2_meid, ret, len);
 }
 
 /*Retrieves Context-Identifier avp value from group avp*/
-int ss_get_context_identifier_gavp(struct avp *gavp, uint32_t *ret){	
+int ss_get_context_identifier(struct avp *gavp, uint32_t *ret){	
 
 	return get_uint_value_gavp(gavp, ss_context_identifier, ret);
 }
 
 /*Retrieves Service-Selection avp value from group avp */
-int ss_get_service_selection_gavp(struct avp *gavp, unsigned char **ret){	
+int ss_get_service_selection(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_service_selection, ret);
+	return get_str_value_gavp(gavp, ss_service_selection, ret, len);
 }
 
 /*Retrieves multiple Service-Selection AVPs' values from group avp*/
-int ss_get_service_selection_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_service_selection_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_service_selection, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_service_selection, array_ret, len, array_size);		
 }
 
 /*Retrieves Visited-Network-Identifier avp value from group avp */
-int ss_get_visited_network_identifier_gavp(struct avp *gavp, unsigned char **ret){	
+int ss_get_visited_network_identifier(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_visited_network_identifier, ret);
+	return get_str_value_gavp(gavp, ss_visited_network_identifier, ret, len);
 }
 
 /*Retrieves multiple MIP-Home-Agent-Address AVPs' values from group avp */
-int ss_get_mip_home_agent_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_mip_home_agent_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_mip_home_agent_address, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_mip_home_agent_address, array_ret, len, array_size);		
 }
 
 /*Retrieves Visited-PLMN-Id avp value from group avp */
-int ss_get_visited_plmn_id_gavp(struct avp *gavp, unsigned char **ret){	
+int ss_get_visited_plmn_id(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_visited_plmn_id, ret);
+	return get_str_value_gavp(gavp, ss_visited_plmn_id, ret, len);
 }
 
 /*Retrieves multiple Visited-PLMN-Id AVPs' values from group avp*/
-int ss_get_visited_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_visited_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_visited_plmn_id, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_visited_plmn_id, array_ret, len, array_size);		
 }
 
 /*Retrieves Result-Code avp value from message*/
-int ss_get_result_code(struct msg *msg, uint32_t *ret){	
+int ss_get_result_code_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_result_code, ret);
 }
 
 /*Retrieves Error-Diagnostic avp value from message */
-int ss_get_error_diagnostic(struct msg *msg, int32_t *ret){	
+int ss_get_error_diagnostic_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_error_diagnostic, ret);
 }
 
 /*Retrieves ULA-Flags avp value from message*/
-int ss_get_ula_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_ula_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_ula_flags, ret);
 }
@@ -477,21 +485,21 @@ int ss_get_subscriber_status(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves MSISDN avp value from group avp*/
-int ss_get_msisdn(struct avp *gavp, unsigned char **ret){	
+int ss_get_msisdn(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_msisdn, ret);
+	return get_str_value_gavp(gavp, ss_msisdn, ret, len);
 }
 
 /*Retrieves A-MSISDN avp value from group avp*/
-int ss_get_a_msisdn(struct avp *gavp, unsigned char **ret){	
+int ss_get_a_msisdn(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_a_msisdn, ret);
+	return get_str_value_gavp(gavp, ss_a_msisdn, ret, len);
 }
 
 /*Retrieves STN-SR avp value from group avp*/
-int ss_get_stn_sr(struct avp *gavp, unsigned char **ret){	
+int ss_get_stn_sr(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_stn_sr, ret);
+	return get_str_value_gavp(gavp, ss_stn_sr, ret, len);
 }
 
 /*Retrieves ICS-Indicator avp value from group avp*/
@@ -519,9 +527,9 @@ int ss_get_hplmn_odb(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves Regional-Subscription-Zone-Code avp value from group avp*/
-int ss_get_regional_subscription_zone_code(struct avp *gavp, unsigned char **ret){	
+int ss_get_regional_subscription_zone_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 
-	return get_str_value_gavp(gavp, ss_regional_subscription_zone_code, ret);
+	return get_str_gavp_array(gavp, ss_regional_subscription_zone_code, array_ret, len, array_size);
 }
 
 /*Retrieves Access-Restriction-Data avp value from group avp */
@@ -531,15 +539,15 @@ int ss_get_access_restriction_data(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves APN-OI-Replacement avp value from group avp*/
-int ss_get_apn_oi_replacement(struct avp *gavp, unsigned char **ret){	
+int ss_get_apn_oi_replacement(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_apn_oi_replacement, ret);
+	return get_str_value_gavp(gavp, ss_apn_oi_replacement, ret, len);
 }
 
 /*Retrieves 3GPP-Charging-Characteristics avp value from group avp*/
-int ss_get_3gpp_charging_characteristics(struct avp *gavp, unsigned char **ret){	
+int ss_get_3gpp_charging_characteristics(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_3gpp_charging_characteristics, ret);
+	return get_str_value_gavp(gavp, ss_3gpp_charging_characteristics, ret, len);
 }
 
 /*Retrieves RAT-Frequency-Selection-Priority-ID avp value from group avp*/
@@ -597,21 +605,21 @@ int ss_get_subscription_data_flags(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves multiple GMLC-Number AVPs value from group avp */
-int ss_get_gmlc_number_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_gmlc_number_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_gmlc_number, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_gmlc_number, array_ret, len, array_size);		
 }
 
 /*Retrieves SS-Code avp value from group avp*/
-int ss_get_ss_code_gavp(struct avp *gavp, unsigned char **ret){	
+int ss_get_ss_code(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_ss_code, ret);
+	return get_str_value_gavp(gavp, ss_ss_code, ret, len);
 }
 
 /*Retrieves SS-Status avp value from group avp*/
-int ss_get_ss_status(struct avp *gavp, unsigned char **ret){	
+int ss_get_ss_status(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_ss_status, ret);
+	return get_str_value_gavp(gavp, ss_ss_status, ret, len);
 }
 
 /*Retrieves Notification-To-UE-User avp value from group avp*/
@@ -621,9 +629,9 @@ int ss_get_notification_ue_user(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves Client-Identity avp value from group avp*/
-int ss_get_client_identity(struct avp *gavp, unsigned char **ret){	
+int ss_get_client_identity(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_client_identity, ret);
+	return get_str_value_gavp(gavp, ss_client_identity, ret, len);
 }
 
 /*Retrieves GMLC-Restriction avp value from group avp*/
@@ -644,9 +652,9 @@ int ss_get_serviceTypeIdentity(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves multiple TS-Code AVPs value from group avp*/
-int ss_get_ts_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_ts_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_ts_code, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_ts_code, array_ret, len, array_size);		
 }
 
 /*Retrieves Max-Requested-Bandwidth-UL avp value from group avp */
@@ -703,9 +711,9 @@ int ss_get_sipto_local_network_permission(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves multiple Served-Party-IP-Address AVPs' values from group avp*/
-int ss_get_served_party_ip_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_served_party_ip_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_served_party_ip_address, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_served_party_ip_address, array_ret, len, array_size);		
 }
 
 /*Retrieves QoS-Class-Identifier avp value from group avp*/
@@ -742,9 +750,9 @@ int ss_get_wlan_offloadability_utran(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves Trace-Reference avp value from group avp*/
-int ss_get_trace_reference_gavp(struct avp *gavp, unsigned char **ret){	
+int ss_get_trace_reference(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_trace_reference, ret);
+	return get_str_value_gavp(gavp, ss_trace_reference, ret, len);
 }
 
 /*Retrieves Trace-Depth avp value from group avp */
@@ -753,33 +761,33 @@ int ss_get_trace_depth(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves Trace-NE-Type-List avp value from group avp*/
-int ss_get_trace_ne_type_list(struct avp *gavp, unsigned char **ret){	
+int ss_get_trace_ne_type_list(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_trace_ne_type_list, ret);
+	return get_str_value_gavp(gavp, ss_trace_ne_type_list, ret, len);
 }
 
 /*Retrieves Trace-Interface-List avp value from group avp*/
-int ss_get_trace_interface_list(struct avp *gavp, unsigned char **ret){	
+int ss_get_trace_interface_list(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_trace_interface_list, ret);
+	return get_str_value_gavp(gavp, ss_trace_interface_list, ret, len);
 }
 
 /*Retrieves Trace-Event-List avp value from group avp*/
-int ss_get_trace_event_list(struct avp *gavp, unsigned char **ret){	
+int ss_get_trace_event_list(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_trace_event_list, ret);
+	return get_str_value_gavp(gavp, ss_trace_event_list, ret, len);
 }
 
 /*Retrieves OMC-Id avp value from group avp */
-int ss_get_omc_id(struct avp *gavp, unsigned char **ret){	
+int ss_get_omc_id(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_omc_id, ret);
+	return get_str_value_gavp(gavp, ss_omc_id, ret, len);
 }
 
 /*Retrieves Trace-Collection-Entity avp value from group avp*/
-int ss_get_trace_collection_entity(struct avp *gavp, unsigned char **ret){	
+int ss_get_trace_collection_entity(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_trace_collection_entity, ret);
+	return get_str_value_gavp(gavp, ss_trace_collection_entity, ret, len);
 }
 
 /*Retrieves Job-Type avp value from group avp*/
@@ -788,33 +796,44 @@ int ss_get_job_type(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves multiple Cell-Global-Identity AVPs' values from group avp */
-int ss_get_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_cell_global_identity, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_cell_global_identity, array_ret, len, array_size);		
+}
+
+/*Retrieves E-UTRAN-Cell-Global-Identity avp value from group avp*/
+int ss_get_e_utran_cell_global_identity(struct avp *gavp, unsigned char **ret, size_t *len){	
+
+	return get_str_value_gavp(gavp, ss_e_utran_cell_global_identity, ret, len);
 }
 
 /*Retrieves multiple E-UTRAN-Cell-Global-Identity AVPs' values from group avp */
-int ss_get_e_utran_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
-	
-	return get_str_gavp_array(gavp, ss_e_utran_cell_global_identity, array_ret, array_size);		
+int ss_get_e_utran_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){		
+	return get_str_gavp_array(gavp, ss_e_utran_cell_global_identity, array_ret, len, array_size);		
 }
 
 /*Retrieves multiple Routing-Area-Identity AVPs' values from group avp*/
-int ss_get_routing_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_routing_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_routing_area_identity, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_routing_area_identity, array_ret, len, array_size);		
 }
 
 /*Retrieves multiple Location-Area-Identity AVPs' values from group avp*/
-int ss_get_location_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_location_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_location_area_identity, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_location_area_identity, array_ret, len, array_size);		
+}
+
+/*Retrieves Tracking-Area-Identity avp value from group avp*/
+int ss_get_tracking_area_identity(struct avp *gavp, unsigned char **ret, size_t *len){	
+
+	return get_str_value_gavp(gavp, ss_tracking_area_identity, ret, len);
 }
 
 /*Retrieves multiple Tracking-Area-Identity AVPs' values from group avp*/
-int ss_get_tracking_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_tracking_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_tracking_area_identity, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_tracking_area_identity, array_ret, len, array_size);		
 }
 
 /*Retrieves List-Of-Measurements avp value from group avp*/
@@ -882,15 +901,15 @@ int ss_get_collection_period_rmm_umts(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves Positioning-Method avp value from group avp */
-int ss_get_positioning_method(struct avp *gavp, unsigned char **ret){	
+int ss_get_positioning_method(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_positioning_method, ret);
+	return get_str_value_gavp(gavp, ss_positioning_method, ret, len);
 }
 
 /*Retrieves Measurement-Quantity avp value from group avp*/
-int ss_get_measurement_quantity(struct avp *gavp, unsigned char **ret){	
+int ss_get_measurement_quantity(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_measurement_quantity, ret);
+	return get_str_value_gavp(gavp, ss_measurement_quantity, ret, len);
 }
 
 /*Retrieves Event-Threshold-Event-1F avp value from group avp*/
@@ -906,9 +925,9 @@ int ss_get_event_threshold_event_1i(struct avp *gavp, uint32_t *ret){
 }	
 
 /*Retrieves multiple MDT-Allowed-PLMN-Id AVPs' values from group avp*/
-int ss_get_mdt_allowed_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_mdt_allowed_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_gavp_array(gavp, ss_mdt_allowed_plmn_id, array_ret, array_size);		
+	return get_str_gavp_array(gavp, ss_mdt_allowed_plmn_id, array_ret, len, array_size);		
 }
 
 /*Retrieves Complete-Data-List-Included-Indicator avp value from group avp*/
@@ -917,33 +936,33 @@ int ss_get_complete_data_list_included_indicator(struct avp *gavp, int32_t *ret)
 }
 
 /*Retrieves PDP-Type avp value from group avp*/
-int ss_get_pdp_type(struct avp *gavp, unsigned char **ret){	
+int ss_get_pdp_type(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_pdp_type, ret);
+	return get_str_value_gavp(gavp, ss_pdp_type, ret, len);
 }
 
 /*Retrieves PDP-Address avp value from group avp*/
-int ss_get_pdp_address(struct avp *gavp, unsigned char **ret){	
+int ss_get_pdp_address(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_pdp_address, ret);
+	return get_str_value_gavp(gavp, ss_pdp_address, ret, len);
 }
 
 /*Retrieves QoS-Subscribed avp value from group avp */
-int ss_get_qos_subscribed(struct avp *gavp, unsigned char **ret){	
+int ss_get_qos_subscribed(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_qos_subscribed, ret);
+	return get_str_value_gavp(gavp, ss_qos_subscribed, ret, len);
 }
 
 /*Retrieves Ext-PDP-Type avp value from group avp*/
-int ss_get_ext_pdp_type(struct avp *gavp, unsigned char **ret){	
+int ss_get_ext_pdp_type(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_ext_pdp_type, ret);
+	return get_str_value_gavp(gavp, ss_ext_pdp_type, ret, len);
 }
 
 /*Retrieves Ext-PDP-Address avp value from group avp*/
-int ss_get_ext_pdp_address(struct avp *gavp, unsigned char **ret){	
+int ss_get_ext_pdp_address(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_ext_pdp_address, ret);
+	return get_str_value_gavp(gavp, ss_ext_pdp_address, ret, len);
 }
 
 /*Retrieves CSG-Id avp value from group avp */
@@ -953,9 +972,9 @@ int ss_get_csg_id(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves Expiration-Date avp value from group avp*/
-int ss_get_expiration_date(struct avp *gavp, unsigned char **ret){	
+int ss_get_expiration_date(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_expiration_date, ret);
+	return get_str_value_gavp(gavp, ss_expiration_date, ret, len);
 }
 
 /*Retrieves ProSe-Permission avp value from group avp*/
@@ -965,9 +984,9 @@ int ss_get_prose_permission(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves multiple Reset-ID AVPs' values from group avp*/
-int ss_get_reset_id_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_reset_id_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_array(msg, ss_reset_id, array_ret, array_size);		
+	return get_str_array(msg, ss_reset_id, array_ret, len, array_size);		
 }
 
 /*Retrieves Number-Of-Requested-Vectors avp value from group avp*/
@@ -983,9 +1002,9 @@ int ss_get_immediate_response_preferred(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves Re-synchronization-Info avp value from group avp*/
-int ss_get_re_synchronization_info(struct avp *gavp, unsigned char **ret){	
+int ss_get_re_synchronization_info(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_re_synchronization_info, ret);
+	return get_str_value_gavp(gavp, ss_re_synchronization_info, ret, len);
 }
 
 /*Retrieves Item-Number avp value from group avp*/
@@ -995,85 +1014,85 @@ int ss_get_item_number(struct avp *gavp, uint32_t *ret){
 }
 
 /*Retrieves RAND avp value from group avp*/
-int ss_get_rand(struct avp *gavp, unsigned char **ret){	
+int ss_get_rand(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_rand, ret);
+	return get_str_value_gavp(gavp, ss_rand, ret, len);
 }
 
 /*Retrieves XRES avp value from group avp*/
-int ss_get_xres(struct avp *gavp, unsigned char **ret){	
+int ss_get_xres(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_xres, ret);
+	return get_str_value_gavp(gavp, ss_xres, ret, len);
 }
 
 /*Retrieves AUTN avp value from group avp*/
-int ss_get_autn(struct avp *gavp, unsigned char **ret){	
+int ss_get_autn(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_autn, ret);
+	return get_str_value_gavp(gavp, ss_autn, ret, len);
 }
 
 /*Retrieves KASME avp value from group avp*/
-int ss_get_kasme(struct avp *gavp, unsigned char **ret){	
+int ss_get_kasme(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_kasme, ret);
+	return get_str_value_gavp(gavp, ss_kasme, ret, len);
 }
 
 /*Retrieves Confidentiality-Key avp value from group avp*/
-int ss_get_confidentiality_key(struct avp *gavp, unsigned char **ret){	
+int ss_get_confidentiality_key(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_confidentiality_key, ret);
+	return get_str_value_gavp(gavp, ss_confidentiality_key, ret, len);
 }
 
 /*Retrieves Integrity-Key avp value from group avp*/
-int ss_get_integrity_key(struct avp *gavp, unsigned char **ret){	
+int ss_get_integrity_key(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_integrity_key, ret);
+	return get_str_value_gavp(gavp, ss_integrity_key, ret, len);
 }
 
 /*Retrieves Kc avp value from group avp*/
-int ss_get_kc(struct avp *gavp, unsigned char **ret){	
+int ss_get_kc(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_kc, ret);
+	return get_str_value_gavp(gavp, ss_kc, ret, len);
 }
 
 /*Retrieves SRES avp value from group avp*/
-int ss_get_sres(struct avp *gavp, unsigned char **ret){	
+int ss_get_sres(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_sres, ret);
+	return get_str_value_gavp(gavp, ss_sres, ret, len);
 }
 
 /*Retrieves Cancellation-Type avp value from message*/
-int ss_get_cancellation_type(struct msg *msg, int32_t *ret){	
+int ss_get_cancellation_type_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_cancellation_type, ret);
 }
 
 /*Retrieves CLR-Flags avp value from message*/
-int ss_get_clr_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_clr_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_clr_flags, ret);
 }
 
 /*Retrieves IDR- Flags avp value from message*/
-int ss_get_idr_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_idr_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_idr_flags, ret);
 }
 
 /*Retrieves IMS-Voice-Over-PS-Sessions-Supported avp value from message*/
-int ss_get_ims_voice_over_ps_sessions_supported(struct msg *msg, int32_t *ret){	
+int ss_get_ims_voice_over_ps_sessions_supported_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_ims_voice_over_ps_sessions_supported, ret);
 }
 
 /*Retrieves Last-UE-Activity-Time avp value from message*/
-int ss_get_last_ue_activity_time(struct msg *msg, unsigned char **ret){	
+int ss_get_last_ue_activity_time_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_last_ue_activity_time, ret);
+	return get_str_value(msg, ss_last_ue_activity_time, ret, len);
 }
 
 /*Retrieves IDA- Flags avp value from message*/
-int ss_get_ida_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_ida_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_ida_flags, ret);
 }
@@ -1084,15 +1103,15 @@ int ss_get_user_state(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves Geographical-Information avp value from group avp*/
-int ss_get_geographical_information(struct avp *gavp, unsigned char **ret){	
+int ss_get_geographical_information(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_geographical_information, ret);
+	return get_str_value_gavp(gavp, ss_geographical_information, ret, len);
 }
 
 /*Retrieves Geodetic-Information avp value from group avp*/
-int ss_get_geodetic_information(struct avp *gavp, unsigned char **ret){	
+int ss_get_geodetic_information(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_geodetic_information, ret);
+	return get_str_value_gavp(gavp, ss_geodetic_information, ret, len);
 }
 
 /*Retrieves Current-Location-Retrieved avp value from group avp*/
@@ -1117,9 +1136,9 @@ int ss_get_csg_membership_indication(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves Time-Zone avp value from group avp*/
-int ss_get_time_zone(struct avp *gavp, unsigned char **ret){	
+int ss_get_time_zone(struct avp *gavp, unsigned char **ret, size_t *len){	
 
-	return get_str_value_gavp(gavp, ss_time_zone, ret);
+	return get_str_value_gavp(gavp, ss_time_zone, ret, len);
 }
 
 /*Retrieves Daylight-Saving-Time avp value from group avp*/
@@ -1128,13 +1147,13 @@ int ss_get_daylight_saving_time(struct avp *gavp, int32_t *ret){
 }
 
 /*Retrieves DSR-Flags avp value from message*/
-int ss_get_dsr_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_dsr_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_dsr_flags, ret);
 }
 
 /*Retrieves Context-Identifier avp value from message*/
-int ss_get_context_identifier(struct msg *msg, uint32_t *ret){	
+int ss_get_context_identifier_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_context_identifier, ret);
 }
@@ -1145,73 +1164,73 @@ int ss_get_context_identifier_array(struct msg *msg, uint32_t **array_ret, size_
 	return get_uint_array(msg, ss_context_identifier, array_ret, array_size);		
 }
 /*Retrieves Trace-Reference avp value from from message*/
-int ss_get_trace_reference(struct msg *msg, unsigned char **ret){	
+int ss_get_trace_reference_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_trace_reference, ret);
+	return get_str_value(msg, ss_trace_reference, ret, len);
 }
 
 /*Retrieves multiple TS-Code AVPs value from message*/
-int ss_get_ts_code_msg_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_ts_code_msg_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_array(msg, ss_ts_code, array_ret, array_size);		
+	return get_str_array(msg, ss_ts_code, array_ret, len, array_size);		
 }
 
 /*Retrieves multiple SS-Code AVPs value from message*/
-int ss_get_ss_code_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_ss_code_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_array(msg, ss_ss_code, array_ret, array_size);		
+	return get_str_array(msg, ss_ss_code, array_ret, len, array_size);		
 }
 
 /*Retrieves DSA-Flags avp value from message*/
-int ss_get_dsa_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_dsa_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_dsa_flags, ret);
 }
 
 /*Retrieves PUR-Flags avp value from message*/
-int ss_get_pur_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_pur_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_pur_flags, ret);
 }
 
 /*Retrieves PUA-Flags avp value from message*/
-int ss_get_pua_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_pua_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_pua_flags, ret);
 }
 
 /*Retrieves multiple User-Id AVPs value from message*/
-int ss_get_user_id_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size){	
+int ss_get_user_id_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
-	return get_str_array(msg, ss_user_id, array_ret, array_size);		
+	return get_str_array(msg, ss_user_id, array_ret, len, array_size);		
 }
 
 /*Retrieves Visited-Network-Identifier avp value from message*/
-int ss_get_visited_network_identifier(struct msg *msg, unsigned char **ret){	
+int ss_get_visited_network_identifier_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_visited_network_identifier, ret);
+	return get_str_value(msg, ss_visited_network_identifier, ret, len);
 }
 
 /*Retrieves Service-Selection avp value from message*/
-int ss_get_service_selection(struct msg *msg, unsigned char **ret){	
+int ss_get_service_selection_msg(struct msg *msg, unsigned char **ret, size_t *len){	
 
-	return get_str_value(msg, ss_service_selection, ret);
+	return get_str_value(msg, ss_service_selection, ret, len);
 }
 
 /*Retrieves Alert-Reason avp value from message */
-int ss_get_alert_reason(struct msg *msg, int32_t *ret){	
+int ss_get_alert_reason_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_alert_reason, ret);
 }
 
 /*Retrieves NOR-Flags avp value from message*/
-int ss_get_nor_flags(struct msg *msg, uint32_t *ret){	
+int ss_get_nor_flags_msg(struct msg *msg, uint32_t *ret){	
 
 	return get_uint_value(msg, ss_nor_flags, ret);
 }
 
 /*Retrieves Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions avp value from message*/
-int ss_get_homogeneous_support_ims_vop_sessions(struct msg *msg, int32_t *ret){	
+int ss_get_homogeneous_support_of_ims_voice_over_ps_sessions_msg(struct msg *msg, int32_t *ret){	
 
 	return get_int_value(msg, ss_homogeneous_support_of_ims_voice_over_ps_sessions, ret);
 }

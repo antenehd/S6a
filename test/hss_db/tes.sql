@@ -265,11 +265,11 @@ CREATE TABLE GERANVector (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Insert subscriber data*/
-INSERT INTO subscriptionData VALUES ('244444123456789', /*'SERVICE_GRANTED'*/'0', x'00358441234567', x'00358441234568', x'00358449999999',/*'TRUE'*/'1', '0', '1','0',x'0001',x'0002',x'0003', '0','apn.oi.repl',x'01',x'02', x'03','cccccc','10','5','1','1','0','1','1','0','0', NULL,'0','1','0',/*UTRAN*/'1000');
+INSERT INTO subscriptionData VALUES ('244444123456789', /*'SERVICE_GRANTED'*/'0', x'00358441234567', x'00358441234568', x'00358449999999',/*'TRUE'*/'1', '0', '1','0',x'0001',x'0002',x'0003', '0','apn.oi.repl',x'01',x'02', x'03','cccccc','10','5','1','1','0','1','1','0','0', /*consent_given*/'1','0','1','0',/*UTRAN*/'1000');
 INSERT INTO resetId VALUES ('244444');
 INSERT INTO pdpContext VALUES('244444123456789','1','1','abcd','001','0', 'service.select', 'cccccc','01','abcd','10','5','apn.oi.repl','0','0','1','1');
 INSERT INTO userId VALUES('24444');
-INSERT INTO csgData VALUES('244444123456789', '1','0001','service.select','service.select2','service.select3','ddd');
+INSERT INTO csgData VALUES('244444123456789', '1','0001','service.select','service.select2','service.select3',x'011001');
 INSERT INTO traceData VALUES('244444123456789','123456','0','1','01','01','omcid','abcd','0','1','1','0', '0', '1', '1', '0', '0','0','0','0','0', '1','1','-1','-1',x'244001', x'244002', x'244003');
 INSERT INTO areaScope VALUES('244444123456789',x'24400100010001', x'24400100010002',x'244001000101',x'2440010001', x'2440010002');
 INSERT INTO apnConf VALUES('244444123456789','1','abcdabcdabcdabcd',NULL, 'IPv6','service.select','1','1', '0', '0','0', 'abcdabcdabcdabcd',NULL,'test.localhost','localhost','net.visited.id', '1'/*DYNAMIC*/, 'cccccc', '10', '5', 'apn.oi.repl', '0', '0', '1','1','1','1');

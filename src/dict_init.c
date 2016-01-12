@@ -373,6 +373,22 @@ static int additional_dict(){
 		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
 	}
 
+	/* Define 'SS-Status' AVP , this AVP is defined as type grouped in 'dict_dcca_3gpp' extension found in 	
+	 * freediameter which contradicts with '3GPP TS 29.272 version 12.8.0 Release 12' document which define it as 	
+	 * type octetstring
+	 */
+	{
+		struct dict_avp_data data = {
+			1477,	/* Code */
+			10415,	/* Vendor */
+			"SS-Status",	/* Name */
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
+			AVP_FLAG_VENDOR ,	/* Fixed flag values */
+			AVP_TYPE_OCTETSTRING	/* base type of data */
+		};		
+		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
+	}
+
 	/*Define 'Restoration-Priority' AVP */
 	{
 		struct dict_avp_data data = {
@@ -978,13 +994,13 @@ static int create_gavp_rule(){
 				{/*ICS-Indicator*/ ss_ics_indicator,RULE_OPTIONAL,0,0,1},
 				{/*Network-Access-Mode*/ ss_network_access_mode,RULE_OPTIONAL,0,0,1},
 				{/*Operator-Determined-Barring*/ ss_operator_determined_barring,RULE_OPTIONAL,0,0,1},
-				{/*HPLMN-ODB*/ ss_hplmn_odb,0,1,RULE_OPTIONAL},
+				{/*HPLMN-ODB*/ ss_hplmn_odb,RULE_OPTIONAL,0,0,1},
 				{/*Regional-Subscription-Zone-Code*/ ss_regional_subscription_zone_code,RULE_OPTIONAL,0,0,10},
 				{/*Access-Restriction-Data*/ ss_access_restriction_data,RULE_OPTIONAL,0,0,1},
 				{/*APN-OI-Replacement*/ ss_apn_oi_replacement,RULE_OPTIONAL,0,0,1},
 				{/*LCS-Info*/ ss_lcs_info,RULE_OPTIONAL,0,0,1},
 				{/*Teleservice-List*/ ss_teleservice_list,RULE_OPTIONAL,0,0,1},
-				{/*Call-Barring-Infor-List*/  ss_call_barring_info,RULE_OPTIONAL,0,0,-1},
+				{/*Call-Barring-Info*/  ss_call_barring_info,RULE_OPTIONAL,0,0,-1},
 				{/*3GPP-Charging-Characteristics*/ ss_3gpp_charging_characteristics,RULE_OPTIONAL,0,0,1},
 				{/*AMBR*/ ss_ambr,RULE_OPTIONAL,0,0,1},
 				{/*APN-Configuration-Profile*/ ss_apn_configuration_profile,RULE_OPTIONAL,0,0,1},
@@ -1188,7 +1204,7 @@ static int create_gavp_rule(){
 				{/*PDP-Address*/ ss_pdp_address,RULE_OPTIONAL,0,0,1},
 				{/*QoS-Subscribed*/ ss_qos_subscribed,RULE_REQUIRED,0,1,1},
 				{/*VPLMN-Dynamic-Address-Allowed*/ ss_vplmn_dynamic_address_allowed,RULE_OPTIONAL,0,0,1},
-				{/*Service-Selection*/ ss_service_selection,1,1,RULE_REQUIRED},
+				{/*Service-Selection*/ ss_service_selection,RULE_REQUIRED,0,1,1},
 				{/*3GPP-Charging-Characteristics*/ ss_3gpp_charging_characteristics,RULE_OPTIONAL,0,0,1},
 				{/*Ext-PDP-Type*/ ss_ext_pdp_type,RULE_OPTIONAL,0,0,1},
 				{/*Ext-PDP-Address*/ ss_ext_pdp_address,RULE_OPTIONAL,0,0,1},
@@ -1283,7 +1299,7 @@ static int create_gavp_rule(){
 			set_rule(ss_teleservice_list,rules);
 		}
 	
-		/*Rules for Call-Barring-Infor-list AVP*/
+		/*Rules for Call-Barring-Info AVP*/
 		{
 			struct dict_rule_data rules[]={
 				{/*SS-Code*/ ss_ss_code,RULE_REQUIRED,0,1,1},
@@ -1675,7 +1691,7 @@ RAN-Authentication-Info  child AVPs*/
 	CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_AVP, AVP_BY_NAME_AND_VENDOR, &vn, &ss_lcs_info, ENOENT));
 	vn.avp_name = "Teleservice-List";	 	
 	CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_AVP, AVP_BY_NAME_AND_VENDOR, &vn, &ss_teleservice_list, ENOENT));
-	vn.avp_name = "Call-Barring-Infor-List";		
+	vn.avp_name = "Call-Barring-Info";		
 	CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_AVP, AVP_BY_NAME_AND_VENDOR, &vn, &ss_call_barring_info, ENOENT));
 	vn.avp_name = "3GPP-Charging-Characteristics";		
 	CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_AVP, AVP_BY_NAME_AND_VENDOR, &vn, &ss_3gpp_charging_characteristics, ENOENT));
@@ -1843,7 +1859,7 @@ RAN-Authentication-Info  child AVPs*/
 	CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_AVP, AVP_BY_NAME_AND_VENDOR, &vn, &ss_sgsn_user_state, ENOENT));
 
 	/*Initialize EPS-Location-Information AVP child AVPs*/
-	vn.avp_name = "MME-LocationInformation";	
+	vn.avp_name = "MME-Location-Information";	
 	CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_AVP, AVP_BY_NAME_AND_VENDOR, &vn, &ss_mme_location_information, ENOENT));
 	vn.avp_name = "SGSN-Location-Information";	
 	CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_AVP, AVP_BY_NAME_AND_VENDOR, &vn, &ss_sgsn_locationinformation, ENOENT));

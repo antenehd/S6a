@@ -1,7 +1,6 @@
 
 #include <unistd.h>
 
-#include "ssix_interface.h"
 #include "test.h"
 
 /*Initialize the configuratin file path to default path*/
@@ -15,6 +14,7 @@ int main(int argc, char **argv){
 	char * ulr = "ulr";
 	char * clr = "clr";
 	char * air = "air";
+	char * idr = "idr";
 	SS_CHECK( ss_init(),"Test application Initialized.\n", "Failed to initialize test application.\n"); ;
 
 	if(argc == 3){
@@ -43,7 +43,6 @@ int main(int argc, char **argv){
 
 			/*Prepare and send CLR message*/
 			test_req_clr(argv[2]);
-			sleep(3);
 		}
 
 		/*Test Authentication-Information-Request message*/
@@ -51,7 +50,13 @@ int main(int argc, char **argv){
 
 			/*Prepare and send AIR message*/
 			test_req_air(argv[2]);
-			sleep(3);
+		}
+
+		/*Test Insert-Subscriber-Data-Request message*/
+		else if(  0 == strncmp(argv[1], idr, 3)){
+
+			/*Prepare and send AIR message*/
+			test_req_idr(argv[2]);
 		}
 
 		else
@@ -76,6 +81,9 @@ int main(int argc, char **argv){
 
 			/*Register callback for CLR*/
 			SS_CHECK( ss_reg_cb_clr(test_req_cb_clr), "Call back for CLR registerd.\n", "Failed to register callback for CLR.\n");
+
+			/*Register callback for IDR*/
+			SS_CHECK( ss_reg_cb_idr(test_req_cb_idr), "Call back for IDR registerd.\n", "Failed to register callback for IDR.\n");
 		}
 
 		else

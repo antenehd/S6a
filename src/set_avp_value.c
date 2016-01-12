@@ -14,15 +14,15 @@
 	SS_CHECK(fd_msg_avp_setvalue(avp,&v));			\
 }
 
-#define SS_SET_OCTET( value, avp)  {				\
+#define SS_SET_OCTET( value, avp, len)  {			\
 	union avp_value v;								\
 	v.os.data = value;								\
-	v.os.len = strlen((char *)(value));				\
-	SS_CHECK(fd_msg_avp_setvalue(avp,&v));		\
+	v.os.len = len;									\
+	SS_CHECK(fd_msg_avp_setvalue(avp,&v));			\
 }
 
 /*Sets string values in AVP of type 'dict' and add it to a message 'msg'*/
-static inline int set_str_value(avp_or_msg **msg_avp, struct dict_object *dict, unsigned char *val){
+static inline int set_str_value(avp_or_msg **msg_avp, struct dict_object *dict, unsigned char *val, size_t len){
 
 	struct avp *avp = NULL;	
 
@@ -32,7 +32,7 @@ static inline int set_str_value(avp_or_msg **msg_avp, struct dict_object *dict, 
 	if (avp){ 	
 
 		/*Set the value 'val' in to 'avp'*/
-		SS_SET_OCTET( val, avp);
+		SS_SET_OCTET( val, avp, len);
 
 		/*Add 'avp' in to the message 'msg'*/
 		SS_CHECK(fd_msg_avp_add(*msg_avp,MSG_BRW_LAST_CHILD,avp));	
@@ -80,33 +80,33 @@ static inline  int set_uint_value(avp_or_msg **msg_avp, struct dict_object *dict
 }
 
 /*Sets Destination-Host avp value to message */
-int ss_set_destination_host(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_destination_host(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 
-	return set_str_value(msg_avp, ss_destination_host, val);
+	return set_str_value(msg_avp, ss_destination_host, val, len);
 }
 
 /*Sets originating host avp value to message */
-int ss_set_origin_host(struct msg **msg, unsigned char *val){	
+int ss_set_origin_host(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_origin_host, val);
+	return set_str_value((avp_or_msg **)msg, ss_origin_host, val, len);
 }
 
 /*Sets Destination-Realm avp value to message */
-int ss_set_destination_realm(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_destination_realm(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 
-	return set_str_value(msg_avp, ss_destination_realm, val);
+	return set_str_value(msg_avp, ss_destination_realm, val, len);
 }
 
 /*Sets originating realm avp value to message */
-int ss_set_origin_realm(struct msg **msg, unsigned char *val){	
+int ss_set_origin_realm(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_origin_realm, val);
+	return set_str_value((avp_or_msg **)msg, ss_origin_realm, val, len);
 }
 
 /*Sets User-Name (imsi) avp value to message */
-int ss_set_user_name(struct msg **msg, unsigned char *val){	
+int ss_set_user_name(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_user_name, val);
+	return set_str_value((avp_or_msg **)msg, ss_user_name, val, len);
 }
 
 /*Sets RAT-Type avp value to message */
@@ -128,33 +128,33 @@ int ss_set_ue_srvcc_capability(struct msg **msg,  int32_t val){
 }
 
 /*Sets Visited-PLMN-Id avp value to message */
-int ss_set_visited_plmn_id(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_visited_plmn_id(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 
-	return set_str_value(msg_avp, ss_visited_plmn_id, val);
+	return set_str_value(msg_avp, ss_visited_plmn_id, val, len);
 }
 
 /*Sets SGSN-Number avp value to message */
-int ss_set_sgsn_number(struct msg **msg, unsigned char *val){	
+int ss_set_sgsn_number(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_sgsn_number, val);
+	return set_str_value((avp_or_msg **)msg, ss_sgsn_number, val, len);
 }
 
 /*Sets Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions avp value to message */
-int ss_set_homogeneous_support_ims_vop_sessions(struct msg **msg,  int32_t val){	
+int ss_set_homogeneous_support_of_ims_voice_over_ps_sessions(struct msg **msg,  int32_t val){	
 
 	return set_int_value((avp_or_msg **)msg, ss_homogeneous_support_of_ims_voice_over_ps_sessions, val);
 }
 
 /*Sets GMLC-Address avp value to message*/
-int ss_set_gmlc_address(struct msg **msg, unsigned char *val){	
+int ss_set_gmlc_address(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_gmlc_address, val);
+	return set_str_value((avp_or_msg **)msg, ss_gmlc_address, val, len);
 }
 
 /*Sets MME-Number-for-MT-SMS avp value to message */
-int ss_set_mme_number_for_mt_sms(struct msg **msg, unsigned char *val){	
+int ss_set_mme_number_for_mt_sms(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_mme_number_for_mt_sms, val);
+	return set_str_value((avp_or_msg **)msg, ss_mme_number_for_mt_sms, val, len);
 }
 
 /*Sets SMS-Register-Request avp value to message*/
@@ -164,39 +164,39 @@ int ss_set_sms_register_request(struct msg **msg,  int32_t val){
 }
 
 /*Sets Coupled-Node-Diameter-ID avp value to message*/
-int ss_set_coupled_node_diameter_id(struct msg **msg, unsigned char *val){	
+int ss_set_coupled_node_diameter_id(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_coupled_node_diameter_id, val);
+	return set_str_value((avp_or_msg **)msg, ss_coupled_node_diameter_id, val, len);
 }
 
 /*Sets imei avp value to group avp*/
-int ss_set_imei(struct avp **gavp, unsigned char *val){	
+int ss_set_imei(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_imei, val);
+	return set_str_value((avp_or_msg **)gavp, ss_imei, val, len);
 }
 
 /*Sets Software-Version avp value to group avp */
-int ss_set_software_version(struct avp **gavp, unsigned char *val){	
+int ss_set_software_version(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_software_version, val);
+	return set_str_value((avp_or_msg **)gavp, ss_software_version, val, len);
 }
 
 /*Sets 3gpp2-meid avp value to group avp*/
-int ss_set_3gpp2_meid(struct avp **gavp, unsigned char *val){	
+int ss_set_3gpp2_meid(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_3gpp2_meid, val);
+	return set_str_value((avp_or_msg **)gavp, ss_3gpp2_meid, val, len);
 }
 
 /*Sets MIP-Home-Agent-Address avp value to group avp*/
-int ss_set_mip_home_agent_address(struct avp **gavp, unsigned char *val){	
+int ss_set_mip_home_agent_address(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_mip_home_agent_address, val);
+	return set_str_value((avp_or_msg **)gavp, ss_mip_home_agent_address, val, len);
 }
 
 /*Sets MIP-Home-Agent-Host avp value to group avp */
-int ss_set_mip_home_agent_host(struct avp **gavp, unsigned char *val){	
+int ss_set_mip_home_agent_host(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_mip_home_agent_host, val);
+	return set_str_value((avp_or_msg **)gavp, ss_mip_home_agent_host, val, len);
 }
 
 /*Sets Result-Code avp value to message*/
@@ -241,21 +241,21 @@ int ss_set_subscriber_status(struct avp **gavp,  int32_t val){
 }
 
 /*Sets MSISDN avp value to group avp*/
-int ss_set_msisdn(struct avp **gavp, unsigned char *val){	
+int ss_set_msisdn(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_msisdn, val);
+	return set_str_value((avp_or_msg **)gavp, ss_msisdn, val, len);
 }
 
 /*Sets A-MSISDN avp value to group avp */
-int ss_set_a_msisdn(struct avp **gavp, unsigned char *val){	
+int ss_set_a_msisdn(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_a_msisdn, val);
+	return set_str_value((avp_or_msg **)gavp, ss_a_msisdn, val, len);
 }
 
 /*Sets STN-SR avp value to group avp*/
-int ss_set_stn_sr(struct avp **gavp, unsigned char *val){	
+int ss_set_stn_sr(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_stn_sr, val);
+	return set_str_value((avp_or_msg **)gavp, ss_stn_sr, val, len);
 }
 
 /*Sets ICS-Indicator avp value to group avp */
@@ -283,9 +283,9 @@ int ss_set_hplmn_odb(struct avp **gavp, uint32_t val){
 }
 
 /*Sets Regional-Subscription-Zone-Code avp value to group avp*/
-int ss_set_regional_subscription_zone_code(struct avp **gavp, unsigned char *val){	
+int ss_set_regional_subscription_zone_code(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_regional_subscription_zone_code, val);
+	return set_str_value((avp_or_msg **)gavp, ss_regional_subscription_zone_code, val, len);
 }
 
 /*Sets Access-Restriction-Data avp value to group avp */
@@ -295,15 +295,15 @@ int ss_set_access_restriction_data(struct avp **gavp, uint32_t val){
 }
 
 /*Sets APN-OI-Replacement avp value to group avp */
-int ss_set_apn_oi_replacement(struct avp **gavp, unsigned char *val){	
+int ss_set_apn_oi_replacement(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_apn_oi_replacement, val);
+	return set_str_value((avp_or_msg **)gavp, ss_apn_oi_replacement, val, len);
 }
 
 /*Sets 3GPP-Charging-Characteristics avp value to group avp */
-int ss_set_3gpp_charging_characteristics(struct avp **gavp, unsigned char *val){	
+int ss_set_3gpp_charging_characteristics(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_3gpp_charging_characteristics, val);
+	return set_str_value((avp_or_msg **)gavp, ss_3gpp_charging_characteristics, val, len);
 }
 
 /*Sets RAT-Frequency-Selection-Priority-ID avp value to group avp */
@@ -361,15 +361,15 @@ int ss_set_subscription_data_flags(struct avp **gavp, uint32_t val){
 }
 
 /*Sets multiple GMLC-Number AVPs value to group avp */
-int ss_set_gmlc_number(struct avp **gavp, unsigned char *val){	
+int ss_set_gmlc_number(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_gmlc_number, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_gmlc_number, val, len);		
 }
 
 /*Sets SS-Status avp value to group avp*/
-int ss_set_ss_status(struct avp **gavp, unsigned char *val){	
+int ss_set_ss_status(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_ss_status, val);
+	return set_str_value((avp_or_msg **)gavp, ss_ss_status, val, len);
 }
 
 /*Sets Notification-To-UE-User avp value to group avp*/
@@ -379,9 +379,9 @@ int ss_set_notification_ue_user(struct avp **gavp,  int32_t val){
 }
 
 /*Sets Client-Identity avp value to group avp*/
-int ss_set_client_identity(struct avp **gavp, unsigned char *val){	
+int ss_set_client_identity(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_client_identity, val);
+	return set_str_value((avp_or_msg **)gavp, ss_client_identity, val, len);
 }
 
 /*Sets GMLC-Restriction avp value to group avp*/
@@ -402,13 +402,13 @@ int ss_set_serviceTypeIdentity(struct avp **gavp, uint32_t val){
 }
 
 /*Sets Max-Requested-Bandwidth-UL avp value to group avp*/
-int ss_set_max_requested_bw_ul(struct avp **gavp, uint32_t val){	
+int ss_set_max_requested_bandwidth_ul(struct avp **gavp, uint32_t val){	
 
 	return set_uint_value((avp_or_msg **)gavp, ss_max_requested_bandwidth_ul, val);
 }
 
 /*Sets Max-Requested-Bandwidth-DL avp value to group avp*/
-int ss_set_max_requested_bw_dl(struct avp **gavp, uint32_t val){	
+int ss_set_max_requested_bandwidth_dl(struct avp **gavp, uint32_t val){	
 
 	return set_uint_value((avp_or_msg **)gavp, ss_max_requested_bandwidth_dl, val);
 }
@@ -455,9 +455,9 @@ int ss_set_sipto_local_network_permission(struct avp **gavp,  int32_t val){
 }
 
 /*Sets multiple Served-Party-IP-Address AVPs' values to group avp*/
-int ss_set_served_party_ip_address(struct avp **gavp, unsigned char *val){	
+int ss_set_served_party_ip_address(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_served_party_ip_address, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_served_party_ip_address, val, len);		
 }
 
 /*Sets QoS-Class-Identifier avp value to group avp*/
@@ -499,33 +499,33 @@ int ss_set_trace_depth(struct avp **gavp,  int32_t val){
 }
 
 /*Sets Trace-NE-Type-List avp value to group avp*/
-int ss_set_trace_ne_type_list(struct avp **gavp, unsigned char *val){	
+int ss_set_trace_ne_type_list(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_trace_ne_type_list, val);
+	return set_str_value((avp_or_msg **)gavp, ss_trace_ne_type_list, val, len);
 }
 
 /*Sets Trace-Interface-List avp value to group avp */
-int ss_set_trace_interface_list(struct avp **gavp, unsigned char *val){	
+int ss_set_trace_interface_list(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_trace_interface_list, val);
+	return set_str_value((avp_or_msg **)gavp, ss_trace_interface_list, val, len);
 }
 
 /*Sets Trace-Event-List avp value to group avp */
-int ss_set_trace_event_list(struct avp **gavp, unsigned char *val){	
+int ss_set_trace_event_list(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_trace_event_list, val);
+	return set_str_value((avp_or_msg **)gavp, ss_trace_event_list, val, len);
 }
 
 /*Sets OMC-Id avp value to group avp */
-int ss_set_omc_id(struct avp **gavp, unsigned char *val){	
+int ss_set_omc_id(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_omc_id, val);
+	return set_str_value((avp_or_msg **)gavp, ss_omc_id, val, len);
 }
 
 /*Sets Trace-Collection-Entity avp value to group avp */
-int ss_set_trace_collection_entity(struct avp **gavp, unsigned char *val){	
+int ss_set_trace_collection_entity(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_trace_collection_entity, val);
+	return set_str_value((avp_or_msg **)gavp, ss_trace_collection_entity, val, len);
 }
 
 /*Sets Job-Type avp value to group avp */
@@ -534,33 +534,33 @@ int ss_set_job_type(struct avp **gavp,  int32_t val){
 }
 
 /*Sets Cell-Global-Identity AVPs' values to group avp*/
-int ss_set_cell_global_identity(struct avp **gavp, unsigned char *val){	
+int ss_set_cell_global_identity(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_cell_global_identity, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_cell_global_identity, val, len);		
 }
 
 /*Sets E-UTRAN-Cell-Global-Identity AVPs' values to group avp */
-int ss_set_e_utran_cell_global_identity(struct avp **gavp, unsigned char *val){	
+int ss_set_e_utran_cell_global_identity(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_e_utran_cell_global_identity, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_e_utran_cell_global_identity, val, len);		
 }
 
 /*Sets Routing-Area-Identity AVPs' values to group avp */
-int ss_set_routing_area_identity(struct avp **gavp, unsigned char *val){	
+int ss_set_routing_area_identity(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_routing_area_identity, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_routing_area_identity, val, len);		
 }
 
 /*Sets Location-Area-Identity AVPs' values to group avp*/
-int ss_set_location_area_identity(struct avp **gavp, unsigned char *val){	
+int ss_set_location_area_identity(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_location_area_identity, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_location_area_identity, val, len);		
 }
 
 /*Sets Tracking-Area-Identity AVPs' values to group avp*/
-int ss_set_tracking_area_identity(struct avp **gavp, unsigned char *val){	
+int ss_set_tracking_area_identity(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_tracking_area_identity, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_tracking_area_identity, val, len);		
 }
 
 /*Sets List-Of-Measurements avp value to group avp*/
@@ -628,15 +628,15 @@ int ss_set_collection_period_rmm_umts(struct avp **gavp,  int32_t val){
 }
 
 /*Sets Positioning-Method avp value to group avp*/
-int ss_set_positioning_method(struct avp **gavp, unsigned char *val){	
+int ss_set_positioning_method(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_positioning_method, val);
+	return set_str_value((avp_or_msg **)gavp, ss_positioning_method, val, len);
 }
 
 /*Sets Measurement-Quantity avp value to group avp*/
-int ss_set_measurement_quantity(struct avp **gavp, unsigned char *val){	
+int ss_set_measurement_quantity(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_measurement_quantity, val);
+	return set_str_value((avp_or_msg **)gavp, ss_measurement_quantity, val, len);
 }
 
 /*Sets Event-Threshold-Event-1F avp value to group avp*/
@@ -652,9 +652,9 @@ int ss_set_event_threshold_event_1i(struct avp **gavp, uint32_t val){
 }	
 
 /*Sets multiple MDT-Allowed-PLMN-Id AVPs' values to group avp*/
-int ss_set_mdt_allowed_plmn_id(struct avp **gavp, unsigned char *val){	
+int ss_set_mdt_allowed_plmn_id(struct avp **gavp, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)gavp, ss_mdt_allowed_plmn_id, val);		
+	return set_str_value((avp_or_msg **)gavp, ss_mdt_allowed_plmn_id, val, len);		
 }
 
 /*Sets Complete-Data-List-Included-Indicator avp value to group avp*/
@@ -663,33 +663,33 @@ int ss_set_complete_data_list_included_indicator(struct avp **gavp,  int32_t val
 }
 
 /*Sets PDP-Type avp value to group avp*/
-int ss_set_pdp_type(struct avp **gavp, unsigned char *val){	
+int ss_set_pdp_type(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_pdp_type, val);
+	return set_str_value((avp_or_msg **)gavp, ss_pdp_type, val, len);
 }
 
 /*Sets PDP-Address avp value to group avp*/
-int ss_set_pdp_address(struct avp **gavp, unsigned char *val){	
+int ss_set_pdp_address(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_pdp_address, val);
+	return set_str_value((avp_or_msg **)gavp, ss_pdp_address, val, len);
 }
 
 /*Sets QoS-Subscribed avp value to group avp*/
-int ss_set_qos_subscribed(struct avp **gavp, unsigned char *val){	
+int ss_set_qos_subscribed(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_qos_subscribed, val);
+	return set_str_value((avp_or_msg **)gavp, ss_qos_subscribed, val, len);
 }
 
 /*Sets Ext-PDP-Type avp value to group avp*/
-int ss_set_ext_pdp_type(struct avp **gavp, unsigned char *val){	
+int ss_set_ext_pdp_type(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_ext_pdp_type, val);
+	return set_str_value((avp_or_msg **)gavp, ss_ext_pdp_type, val, len);
 }
 
 /*Sets Ext-PDP-Address avp value to group avp*/
-int ss_set_ext_pdp_address(struct avp **gavp, unsigned char *val){	
+int ss_set_ext_pdp_address(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_ext_pdp_address, val);
+	return set_str_value((avp_or_msg **)gavp, ss_ext_pdp_address, val, len);
 }
 
 /*Sets CSG-Id avp value to group avp*/
@@ -699,9 +699,9 @@ int ss_set_csg_id(struct avp **gavp, uint32_t val){
 }
 
 /*Sets Expiration-Date avp value to group avp*/
-int ss_set_expiration_date(struct avp **gavp, unsigned char *val){	
+int ss_set_expiration_date(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_expiration_date, val);
+	return set_str_value((avp_or_msg **)gavp, ss_expiration_date, val, len);
 }
 
 /*Sets ProSe-Permission avp value to group avp */
@@ -711,9 +711,9 @@ int ss_set_prose_permission(struct avp **gavp, uint32_t val){
 }
 
 /*Sets Reset-ID AVPs' values to group avp*/
-int ss_set_reset_id(struct msg **msg, unsigned char *val){	
+int ss_set_reset_id(struct msg **msg, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)msg, ss_reset_id, val);		
+	return set_str_value((avp_or_msg **)msg, ss_reset_id, val, len);		
 }
 
 /*Sets Number-Of-Requested-Vectors avp value to group avp*/
@@ -729,9 +729,9 @@ int ss_set_immediate_response_preferred(struct avp **gavp, uint32_t val){
 }
 
 /*Sets Re-synchronization-Info avp value to group avp*/
-int ss_set_re_synchronization_info(struct avp **gavp, unsigned char *val){	
+int ss_set_re_synchronization_info(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_re_synchronization_info, val);
+	return set_str_value((avp_or_msg **)gavp, ss_re_synchronization_info, val, len);
 }
 
 /*Sets Item-Number avp value to group avp*/
@@ -741,51 +741,51 @@ int ss_set_item_number(struct avp **gavp, uint32_t val){
 }
 
 /*Sets RAND avp value to group avp*/
-int ss_set_rand(struct avp **gavp, unsigned char *val){	
+int ss_set_rand(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_rand, val);
+	return set_str_value((avp_or_msg **)gavp, ss_rand, val, len);
 }
 
 /*Sets XRES avp value to group avp*/
-int ss_set_xres(struct avp **gavp, unsigned char *val){	
+int ss_set_xres(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_xres, val);
+	return set_str_value((avp_or_msg **)gavp, ss_xres, val, len);
 }
 
 /*Sets AUTN avp value to group avp*/
-int ss_set_autn(struct avp **gavp, unsigned char *val){	
+int ss_set_autn(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_autn, val);
+	return set_str_value((avp_or_msg **)gavp, ss_autn, val, len);
 }
 
 /*Sets KASME avp value to group avp*/
-int ss_set_kasme(struct avp **gavp, unsigned char *val){	
+int ss_set_kasme(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_kasme, val);
+	return set_str_value((avp_or_msg **)gavp, ss_kasme, val, len);
 }
 
 /*Sets Confidentiality-Key avp value to group avp*/
-int ss_set_confidentiality_key(struct avp **gavp, unsigned char *val){	
+int ss_set_confidentiality_key(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_confidentiality_key, val);
+	return set_str_value((avp_or_msg **)gavp, ss_confidentiality_key, val, len);
 }
 
 /*Sets Integrity-Key avp value to group avp*/
-int ss_set_integrity_key(struct avp **gavp, unsigned char *val){	
+int ss_set_integrity_key(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_integrity_key, val);
+	return set_str_value((avp_or_msg **)gavp, ss_integrity_key, val, len);
 }
 
 /*Sets Kc avp value to group avp*/
-int ss_set_kc(struct avp **gavp, unsigned char *val){	
+int ss_set_kc(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_kc, val);
+	return set_str_value((avp_or_msg **)gavp, ss_kc, val, len);
 }
 
 /*Sets SRES avp value to group avp*/
-int ss_set_sres(struct avp **gavp, unsigned char *val){	
+int ss_set_sres(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_sres, val);
+	return set_str_value((avp_or_msg **)gavp, ss_sres, val, len);
 }
 
 /*Sets Cancellation-Type avp value to message*/
@@ -813,9 +813,9 @@ int ss_set_ims_voice_over_ps_sessions_supported(struct msg **msg,  int32_t val){
 }
 
 /*Sets Last-UE-Activity-Time avp value to message*/
-int ss_set_last_ue_activity_time(struct msg **msg, unsigned char *val){	
+int ss_set_last_ue_activity_time(struct msg **msg, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)msg, ss_last_ue_activity_time, val);
+	return set_str_value((avp_or_msg **)msg, ss_last_ue_activity_time, val, len);
 }
 
 /*Sets IDA-Flags avp value to message*/
@@ -830,15 +830,15 @@ int ss_set_user_state(struct avp **gavp,  int32_t val){
 }
 
 /*Sets Geographical-Information avp value to group avp*/
-int ss_set_geographical_information( struct avp **gavp, unsigned char *val){	
+int ss_set_geographical_information( struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_geographical_information, val);
+	return set_str_value((avp_or_msg **)gavp, ss_geographical_information, val, len);
 }
 
 /*Sets Geodetic-Information avp value to group avp*/
-int ss_set_geodetic_information(struct avp **gavp, unsigned char *val){	
+int ss_set_geodetic_information(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_geodetic_information, val);
+	return set_str_value((avp_or_msg **)gavp, ss_geodetic_information, val, len);
 }
 
 /*Sets Current-Location-Retrieved avp value to group avp*/
@@ -863,9 +863,9 @@ int ss_set_csg_membership_indication(struct avp **gavp,  int32_t val){
 }
 
 /*Sets Time-Zone avp value to group avp*/
-int ss_set_time_zone(struct avp **gavp, unsigned char *val){	
+int ss_set_time_zone(struct avp **gavp, unsigned char *val, size_t len){	
 
-	return set_str_value((avp_or_msg **)gavp, ss_time_zone, val);
+	return set_str_value((avp_or_msg **)gavp, ss_time_zone, val, len);
 }
 
 /*Sets Daylight-Saving-Time avp value to group avp*/
@@ -886,21 +886,21 @@ int ss_set_context_identifier(avp_or_msg **msg_avp, uint32_t val){
 }
 
 /*Sets Trace-Reference avp value to to message*/
-int ss_set_trace_reference(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_trace_reference(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 
-	return set_str_value(msg_avp, ss_trace_reference, val);
+	return set_str_value(msg_avp, ss_trace_reference, val, len);
 }
 
 /*Sets multiple TS-Code AVPs value to message*/
-int ss_set_ts_code(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_ts_code(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 	
-	return set_str_value(msg_avp, ss_ts_code, val);		
+	return set_str_value(msg_avp, ss_ts_code, val, len);		
 }
 
 /*Sets multiple SS-Code AVPs value to message*/
-int ss_set_ss_code(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_ss_code(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 	
-	return set_str_value(msg_avp, ss_ss_code, val);		
+	return set_str_value(msg_avp, ss_ss_code, val, len);		
 }
 
 /*Sets DSA-Flags avp value to message*/
@@ -922,21 +922,21 @@ int ss_set_pua_flags(struct msg **msg, uint32_t val){
 }
 
 /*Sets multiple User-Id AVPs value to message*/
-int ss_set_user_id(struct msg **msg, unsigned char *val){	
+int ss_set_user_id(struct msg **msg, unsigned char *val, size_t len){	
 	
-	return set_str_value((avp_or_msg **)msg, ss_user_id, val);		
+	return set_str_value((avp_or_msg **)msg, ss_user_id, val, len);		
 }
 
 /*Sets Visited-Network-Identifier avp value to message*/
-int ss_set_visited_network_identifier(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_visited_network_identifier(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 
-	return set_str_value(msg_avp, ss_visited_network_identifier, val);
+	return set_str_value(msg_avp, ss_visited_network_identifier, val, len);
 }
 
 /*Sets Service-Selection avp value to message*/
-int ss_set_service_selection(avp_or_msg **msg_avp, unsigned char *val){	
+int ss_set_service_selection(avp_or_msg **msg_avp, unsigned char *val, size_t len){	
 
-	return set_str_value(msg_avp, ss_service_selection, val);
+	return set_str_value(msg_avp, ss_service_selection, val, len);
 }
 
 /*Sets Alert-Reason avp value to message*/

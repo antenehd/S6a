@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_C
-  "/home/antt/raw_freedia/freeDiameter-090390e89b1d/extensions/dict_dcca_3gpp/dict_dcca_3gpp.c" "/home/antt/raw_freedia/fd/extensions/dict_dcca_3gpp/CMakeFiles/dict_dcca_3gpp.dir/dict_dcca_3gpp.c.o"
+  "/home/antt/freediam/freeDiameter/extensions/dict_dcca_3gpp/dict_dcca_3gpp.c" "/home/antt/freediam/fd/extensions/dict_dcca_3gpp/CMakeFiles/dict_dcca_3gpp.dir/dict_dcca_3gpp.c.o"
   )
 SET(CMAKE_C_COMPILER_ID "GNU")
 

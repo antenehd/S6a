@@ -1341,60 +1341,65 @@ int ss_peer_state(char * diam_id, size_t diam_id_len);
 
   @param msg_avp : pointer to the message structure pointer or an AVP of type gruoped where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set 
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_destination_host(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_destination_host(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets Origin-Host AVP value and add it in to message structure. This function creates an instance of
    Origin-Host AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_origin_host(struct msg **msg, unsigned char *val);
+int ss_set_origin_host(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets Destination-Realm AVP value and add it in to messagestructure. This function creates an instance of
    Destination-Realm AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg_avp : pointer to the message structure pointer or an AVP of type gruoped where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_destination_realm(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_destination_realm(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets Origin-Realm AVP value and add it in to message structure. This function creates an instance of
    Origin-Realm AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_origin_realm(struct msg **msg, unsigned char *val);
+int ss_set_origin_realm(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets User-Name (imsi) AVP value and add it in to message structure. This function creates an instance of
    User-Name AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_user_name(struct msg **msg, unsigned char *val);
+int ss_set_user_name(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets RAT-Type AVP value and add it in to message  structure. This function creates an instance of
    RAT-Type AVP and set the given value in to it and add the AVP into the given message structure.
@@ -1437,24 +1442,26 @@ int ss_set_ue_srvcc_capability(struct msg **msg, int32_t val);
 
   @param msg_avp : pointer to the message structure pointer or an AVP of typed grouped where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_visited_plmn_id(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_visited_plmn_id(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets SGSN-Number AVP value and add it in to message structure. This function creates an instance of
    SGSN-Number AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_sgsn_number(struct msg **msg, unsigned char *val);
+int ss_set_sgsn_number(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP value and add it in to message structure.
    This function creates an instance of Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP and set the given value in to it and add the AVP into the given message structure.
@@ -1466,31 +1473,33 @@ int ss_set_sgsn_number(struct msg **msg, unsigned char *val);
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_homogeneous_support_ims_vop_sessions(struct msg **msg, int32_t val);
+int ss_set_homogeneous_support_of_ims_voice_over_ps_sessions(struct msg **msg, int32_t val);
 
 /**Sets GMLC-Address AVP value and add it in to message structure. This function creates an instance of
    GMLC-Address AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_gmlc_address(struct msg **msg, unsigned char *val);
+int ss_set_gmlc_address(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets MME-Number-for-MT-SMS AVP value and add it in to message structure. This function creates an instance of
    MME-Number-for-MT-SMS AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_mme_number_for_mt_sms(struct msg **msg, unsigned char *val);
+int ss_set_mme_number_for_mt_sms(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets SMS-Register-Request AVP value and add it in to message structure. This function creates an instance of
    SMS-Register-Request AVP and set the given value in to it and add the AVP into the given message structure.
@@ -1509,67 +1518,73 @@ int ss_set_sms_register_request(struct msg **msg, int32_t val);
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_coupled_node_diameter_id(struct msg **msg, unsigned char *val);
+int ss_set_coupled_node_diameter_id(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets IMEI AVP value and add it in to AVP structure that can contain it. This function creates an instance of IMEI AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_imei(struct avp **avp, unsigned char *val);
+int ss_set_imei(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Software-Version AVP value and add it in to AVP structure that can contain it. This function creates an instance of Software-Version AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_software_version(struct avp **avp, unsigned char *val);
+int ss_set_software_version(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets 3GPP2-MEID AVP value and add it in to AVP structure that can contain it. This function creates an instance of 3GPP2-MEID AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_3gpp2_meid(struct avp **avp, unsigned char *val);
+int ss_set_3gpp2_meid(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets MIP-Home-Agent-Address AVP value and add it in to AVP structure that can contain it. This function creates an instance of MIP-Home-Agent-Address AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_mip_home_agent_address(struct avp **avp, unsigned char *val);
+int ss_set_mip_home_agent_address(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets MIP-Home-Agent-Host AVP value and add it in to AVP structure that can contain it. This function creates an instance of MIP-Home-Agent-Host AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_mip_home_agent_host(struct avp **avp, unsigned char *val);
+int ss_set_mip_home_agent_host(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Result-Code AVP value and add it to message structure. This function creates an instance of
    SMS-Register-Request AVP and set the given value in to it and add the AVP into the given message structure.
@@ -1655,34 +1670,37 @@ int ss_set_subscriber_status(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_msisdn(struct avp **avp, unsigned char *val);
+int ss_set_msisdn(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets A-MSISDN AVP value and add it in to AVP structure that can contain it. This function creates an instance of A-MSISDN AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_a_msisdn(struct avp **avp, unsigned char *val);
+int ss_set_a_msisdn(struct avp **avp, unsigned char *val, size_t len);
 
-/**Sets STN-SR AVP value and add it in to AVP structure that can contain it. This function creates an instance of A-MSISDN AVP and set the given value in to it and add the AVP into the given message structure.
+/**Sets STN-SR AVP value and add it in to AVP structure that can contain it. This function creates an instance of STN-SR AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_stn_sr(struct avp **avp, unsigned char *val);
+int ss_set_stn_sr(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets ICS-Indicator AVP value and add it in to AVP structure that can contain it. This function creates an instance of ICS-Indicator AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -1732,12 +1750,13 @@ int ss_set_hplmn_odb(struct avp **avp, uint32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_regional_subscription_zone_code(struct avp **avp, unsigned char *val);
+int ss_set_regional_subscription_zone_code(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Access-Restriction-Data AVP value and add it in to AVP structure that can contain it. This function creates an instance of Access-Restriction-Data AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -1754,23 +1773,25 @@ int ss_set_access_restriction_data(struct avp **avp, uint32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_apn_oi_replacement(struct avp **avp, unsigned char *val);
+int ss_set_apn_oi_replacement(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets 3GPP-Charging-Characteristics AVP value and add it in to AVP structure that can contain it. This function creates an instance of 3GPP-Charging-Characteristics AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_3gpp_charging_characteristics(struct avp **avp, unsigned char *val);
+int ss_set_3gpp_charging_characteristics(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets RAT-Frequency-Selection-Priority-ID AVP value and add it in to AVP structure that can contain it. This function creates an instance of RAT-Frequency-Selection-Priority-ID AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -1875,34 +1896,37 @@ int ss_set_subscription_data_flags(struct avp **avp, uint32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_gmlc_number(struct avp **avp, unsigned char *val);
+int ss_set_gmlc_number(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets SS-Code AVP value and add it in to AVP structure that can contain it. This function creates an instance of SS-Code AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg_avp : pointer to an AVP of type grouped pointer or pointer to a message structure pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_ss_code(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_ss_code(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets SS-Status AVP value and add it in to AVP structure that can contain it. This function creates an instance of SS-Status AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_ss_status(struct avp **avp, unsigned char *val);
+int ss_set_ss_status(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Notification-To-UE-User AVP value and add it in to AVP structure that can contain it. This function creates an instance of Notification-To-UE-User AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -1919,12 +1943,13 @@ int ss_set_notification_ue_user(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_client_identity(struct avp **avp, unsigned char *val);
+int ss_set_client_identity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets GMLC-Restriction AVP value and add it in to AVP structure that can contain it. This function creates an instance of GMLC-Restriction AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -1963,12 +1988,13 @@ int ss_set_serviceTypeIdentity(struct avp **avp, uint32_t val);
 
   @param msg_avp : pointer to an AVP of type grouped pointer message structure pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_ts_code(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_ts_code(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets Max-Requested-Bandwidth-UL AVP value and add it in to AVP structure that can contain it. This function creates an instance of Max-Requested-Bandwidth-UL AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -1979,7 +2005,7 @@ int ss_set_ts_code(avp_or_msg **msg_avp, unsigned char *val);
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_max_requested_bw_ul(struct avp **avp, uint32_t val);
+int ss_set_max_requested_bandwidth_ul(struct avp **avp, uint32_t val);
 
 /**Sets Max-Requested-Bandwidth-DL AVP value and add it in to AVP structure that can contain it. This function creates an instance of Max-Requested-Bandwidth-DL AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -1990,7 +2016,7 @@ int ss_set_max_requested_bw_ul(struct avp **avp, uint32_t val);
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_max_requested_bw_dl(struct avp **avp, uint32_t val);
+int ss_set_max_requested_bandwidth_dl(struct avp **avp, uint32_t val);
 
 /**Sets All-APN-Configurations-Included-Indicator AVP value and add it in to AVP structure that can contain it. This function creates an instance of All-APN-Configurations-Included-Indicator AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2084,12 +2110,13 @@ int ss_set_sipto_local_network_permission(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_served_party_ip_address(struct avp **avp, unsigned char *val);
+int ss_set_served_party_ip_address(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets QoS-Class-Identifier AVP value and add it in to AVP structure that can contain it. This function creates an instance of QoS-Class-Identifier AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2161,12 +2188,13 @@ int ss_set_wlan_offloadability_utran(struct avp **avp, uint32_t val);
 
   @param msg_avp : pointer to an AVP of type grouped pointer or message structure pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_trace_reference(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_trace_reference(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets Trace-Depth AVP value and add it in to AVP structure that can contain it. This function creates an instance of Trace-Depth AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2183,56 +2211,61 @@ int ss_set_trace_depth(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_trace_ne_type_list(struct avp **avp, unsigned char *val);
+int ss_set_trace_ne_type_list(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Trace-Interface-List AVP value and add it in to AVP structure that can contain it. This function creates an instance of Trace-Interface-List AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_trace_interface_list(struct avp **avp, unsigned char *val);
+int ss_set_trace_interface_list(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Trace-Event-List AVP value and add it in to AVP structure that can contain it. This function creates an instance of Trace-Event-List AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_trace_event_list(struct avp **avp, unsigned char *val);
+int ss_set_trace_event_list(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets OMC-Id AVP value and add it in to AVP structure that can contain it. This function creates an instance of OMC-Id AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_omc_id(struct avp **avp, unsigned char *val);
+int ss_set_omc_id(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Trace-Collection-Entity AVP value and add it in to AVP structure that can contain it. This function creates an instance of Trace-Collection-Entity AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_trace_collection_entity(struct avp **avp, unsigned char *val);
+int ss_set_trace_collection_entity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Job-Type AVP value and add it in to AVP structure that can contain it. This function creates an instance of Job-Type AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2249,56 +2282,61 @@ int ss_set_job_type(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_cell_global_identity(struct avp **avp, unsigned char *val);
+int ss_set_cell_global_identity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets E-UTRAN-Cell-Global-Identity AVP values and add it in to AVP structure that can contain it. This function creates an instance of E-UTRAN-Cell-Global-Identity AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_e_utran_cell_global_identity(struct avp **avp, unsigned char *val);
+int ss_set_e_utran_cell_global_identity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Routing-Area-Identity AVP values and add it in to AVP structure that can contain it. This function creates an instance of Routing-Area-Identity AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_routing_area_identity(struct avp **avp, unsigned char *val);
+int ss_set_routing_area_identity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Location-Area-Identity AVP values add it in to AVP structure that can contain it. This function creates an instance of Location-Area-Identity AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_location_area_identity(struct avp **avp, unsigned char *val);
+int ss_set_location_area_identity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Tracking-Area-Identity AVP values and add it in to AVP structure that can contain it. This function creates an instance of Tracking-Area-Identity AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_tracking_area_identity(struct avp **avp, unsigned char *val);
+int ss_set_tracking_area_identity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets List-Of-Measurements AVP value and add it in to AVP structure that can contain it. This function creates an instance of List-Of-Measurements AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2436,23 +2474,25 @@ int ss_set_collection_period_rmm_umts(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_positioning_method(struct avp **avp, unsigned char *val);
+int ss_set_positioning_method(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Measurement-Quantity AVP value and add it in to AVP structure that can contain it. This function creates an instance of Measurement-Quantity AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_measurement_quantity(struct avp **avp, unsigned char *val);
+int ss_set_measurement_quantity(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Event-Threshold-Event-1F AVP value and add it in to AVP structure that can contain it. This function creates an instance of Event-Threshold-Event-1F AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2480,12 +2520,13 @@ int ss_set_event_threshold_event_1i(struct avp **avp, uint32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_mdt_allowed_plmn_id(struct avp **avp, unsigned char *val);
+int ss_set_mdt_allowed_plmn_id(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Complete-Data-List-Included-Indicator AVP value and add it in to AVP structure that can contain it. This function creates an instance of Complete-Data-List-Included-Indicator AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2502,56 +2543,61 @@ int ss_set_complete_data_list_included_indicator(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_pdp_type(struct avp **avp, unsigned char *val);
+int ss_set_pdp_type(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets PDP-Address AVP value and add it in to AVP structure that can contain it. This function creates an instance of PDP-Address AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_pdp_address(struct avp **avp, unsigned char *val);
+int ss_set_pdp_address(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets QoS-Subscribed AVP value and add it in to AVP structure that can contain it. This function creates an instance of QoS-Subscribed AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_qos_subscribed(struct avp **avp, unsigned char *val);
+int ss_set_qos_subscribed(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Ext-PDP-Type AVP value and add it in to AVP structure that can contain it. This function creates an instance of Ext-PDP-Type AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_ext_pdp_type(struct avp **avp, unsigned char *val);
+int ss_set_ext_pdp_type(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Ext-PDP-Address AVP value and add it in to AVP structure that can contain it. This function creates an instance of Ext-PDP-Address AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_ext_pdp_address(struct avp **avp, unsigned char *val);
+int ss_set_ext_pdp_address(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets CSG-Id AVP value and add it in to AVP structure that can contain it. This function creates an instance of Ext-CSG-Id AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2568,12 +2614,13 @@ int ss_set_csg_id(struct avp **avp, uint32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_expiration_date(struct avp **avp, unsigned char *val);
+int ss_set_expiration_date(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets ProSe-Permission AVP value and add it in to AVP structure that can contain it. This function creates an instance of ProSe-Permission AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2590,12 +2637,13 @@ int ss_set_prose_permission(struct avp **avp, uint32_t val);
 
   @param msg : pointer to a message structure pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_reset_id(struct msg **msg, unsigned char *val);
+int ss_set_reset_id(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets Number-Of-Requested-Vectors AVP value and add it in to AVP structure that can contain it. This function creates an instance of Number-Of-Requested-Vectors AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2623,12 +2671,13 @@ int ss_set_immediate_response_preferred(struct avp **avp, uint32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_re_synchronization_info(struct avp **avp, unsigned char *val);
+int ss_set_re_synchronization_info(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Item-Number AVP value and add it in to AVP structure that can contain it. This function creates an instance of Item-Number AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2645,89 +2694,97 @@ int ss_set_item_number(struct avp **avp, uint32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_rand(struct avp **avp, unsigned char *val);
+int ss_set_rand(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets XRES AVP value and add it to in to AVP structure that can contain it. This function creates an instance of XRES AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_xres(struct avp **avp, unsigned char *val);
+int ss_set_xres(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets AUTN AVP value and add it in to AVP structure that can contain it. This function creates an instance of AUTN AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_autn(struct avp **avp, unsigned char *val);
+int ss_set_autn(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets KASME AVP value and add it in to AVP structure that can contain it. This function creates an instance of KASME AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_kasme(struct avp **avp, unsigned char *val);
+int ss_set_kasme(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Confidentiality-Key AVP value and add it in to AVP structure that can contain it. This function creates an instance of Confidentiality-Key AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_confidentiality_key(struct avp **avp, unsigned char *val);
+int ss_set_confidentiality_key(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Integrity-Key AVP value and add it in to AVP structure that can contain it. This function creates an instance of Integrity-Key AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_integrity_key(struct avp **avp, unsigned char *val);
+int ss_set_integrity_key(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Kc AVP value and add it in to AVP structure that can contain it. This function creates an instance of Kc AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_kc(struct avp **avp, unsigned char *val);
+int ss_set_kc(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets SRES AVP value and add it in to AVP structure that can contain it. This function creates an instance of SRES AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_sres(struct avp **avp, unsigned char *val);
+int ss_set_sres(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Cancellation-Type AVP value and add it in to message structure. This function creates an instance of
    Cancellation-Type AVP and set the given value in to it and add the AVP into the given message structure.
@@ -2780,12 +2837,13 @@ int ss_set_ims_voice_over_ps_sessions_supported(struct msg **msg, int32_t val);
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_last_ue_activity_time(struct msg **msg, unsigned char *val);
+int ss_set_last_ue_activity_time(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets IDA-Flags AVP value and add it in to message structure. This function creates an instance of IDA-Flags AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2813,23 +2871,25 @@ int ss_set_user_state(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_geographical_information(struct avp **avp, unsigned char *val);
+int ss_set_geographical_information(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Geodetic-Information AVP value and add it in to AVP structure that can contain it. This function creates an instance of Geodetic-Information AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_geodetic_information(struct avp **avp, unsigned char *val);
+int ss_set_geodetic_information(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Current-Location-retrieved AVP value and add it in to AVP structure that can contain it. This function creates an instance of Current-Location-retrieved AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2879,12 +2939,13 @@ int ss_set_csg_membership_indication(struct avp **avp, int32_t val);
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_time_zone(struct avp **avp, unsigned char *val);
+int ss_set_time_zone(struct avp **avp, unsigned char *val, size_t len);
 
 /**Sets Daylight-Saving-Time AVP value and add it in to AVP structure that can contain it. This function creates an instance of Daylight-Saving-Time AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2956,34 +3017,37 @@ int ss_set_pua_flags(struct msg **msg, uint32_t val);
 
   @param msg : pointer to the message structure pointer where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_user_id(struct msg **msg, unsigned char *val);
+int ss_set_user_id(struct msg **msg, unsigned char *val, size_t len);
 
 /**Sets Visited-Network-Identifier AVP value and add it in to message structure. This function creates an instance of Visited-Network-Identifier AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg_avp : pointer to the message structure pointer or an AVP of typed grouped where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_visited_network_identifier(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_visited_network_identifier(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets Service-Selection AVP value and add it in to message structure. This function creates an instance of Service-Selection AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param msg_avp : pointer to the message structure pointer or an AVP of typed grouped where the AVP will be added after being set
   @param val: the value to be set
+  @param len: length, in bytes, of the value to be set
   @return 0 : AVP value is set and AVP is added (success)
   @return EINVAL : invalid parameter
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_service_selection(avp_or_msg **msg_avp, unsigned char *val);
+int ss_set_service_selection(avp_or_msg **msg_avp, unsigned char *val, size_t len);
 
 /**Sets Alert-Reason AVP value and add it in to message structure. This function creates an instance of Alert-Reason AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -3006,6 +3070,17 @@ int ss_set_alert_reason(struct msg **msg, int32_t val);
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
 int ss_set_nor_flags(struct msg **msg, uint32_t val);
+
+/**Sets IMS-Voice-Over-PS-Sessions-Supported AVP value and add it in to message structure. This function creates an instance of IMS-Voice-Over-PS-Sessions-Supported AVP and set the given value in to it and add the AVP into the given message structure.
+
+  @param msg : pointer to the message structure pointer where the AVP will be added after being set
+  @param val: the value to be set
+  @return 0 : AVP value is set and AVP is added (success)
+  @return EINVAL : invalid parameter
+  @return (other standard errors may be returned, too, with their standard meaning. Example:
+      ENOMEM 	: Memory allocation for the new object element failed.)
+*/
+int ss_set_ims_voice_over_ps_sessions_supported(struct msg **msg,  int32_t val);
 
 /**Sets Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP value and add it in to message structure. This function creates an instance of Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -3050,71 +3125,78 @@ int ss_set_feature_list(struct avp **avp, uint32_t val);
  
   @param msg : a pointer to a message structure which contains  Destination-Host AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_destination_host(struct msg *msg, unsigned char **val);
+int ss_get_destination_host_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves Destination-Host AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of typed grouped which contains  Destination-Host AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_destination_host_gavp(struct avp *gavp, unsigned char **val);
+int ss_get_destination_host(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Origin-Host AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  Origin-Host AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_origin_host(struct msg *msg, unsigned char **val);
+int ss_get_origin_host_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves Destination-Realm AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  Destination-Realm AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_destination_realm(struct msg *msg, unsigned char **val);
+int ss_get_destination_realm_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves Origin-Realm AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  Origin-Realm AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_origin_realm(struct msg *msg, unsigned char **val);
+int ss_get_origin_realm_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves Destination-Realm AVP value from group Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of typed grouped which contains  Destination-Realm AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_destination_realm_gavp(struct avp *gavp, unsigned char **val);
+int ss_get_destination_realm(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves User-Name (imsi) AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  User-Name AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_user_name(struct msg *msg, unsigned char **val);
+int ss_get_user_name_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves RAT-Type AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3124,7 +3206,7 @@ int ss_get_user_name(struct msg *msg, unsigned char **val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_rat_type(struct msg *msg, int32_t *val);
+int ss_get_rat_type_msg(struct msg *msg, int32_t *val);
 
 /**Retrieves ULR-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3134,7 +3216,7 @@ int ss_get_rat_type(struct msg *msg, int32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ulr_flags(struct msg *msg, uint32_t *val);
+int ss_get_ulr_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves UE-SRVCC-Capability AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3144,57 +3226,51 @@ int ss_get_ulr_flags(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ue_srvcc_capability(struct msg *msg, int32_t *val);
+int ss_get_ue_srvcc_capability_msg(struct msg *msg, int32_t *val);
 
 /**Retrieves Visited-PLMN-Id AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  Visited-PLMN-Id AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_visited_plmn_id(struct msg *msg, unsigned char **val);
+int ss_get_visited_plmn_id_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves SGSN-Number AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  ULR-Flags AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_sgsn_number(struct msg *msg, unsigned char **val);
-
-/**Retrieves Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
- 
-  @param msg : a pointer to a message structure which contains  Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP.
-  @param val : the value will be saved in *val. 
-  @return 0 : The AVP has been found an its value is written to *val.
-  @return EINVAL : A parameter is invalid.
-  @return ENOENT : No AVP has been found.
-*/
-int ss_get_homogeneous_support_ims(struct msg *msg, int32_t *val);
+int ss_get_sgsn_number_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves GMLC-Address AVP value from message . Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  GMLC-Address AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_gmlc_address(struct msg *msg, unsigned char **val);
+int ss_get_gmlc_address_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves MME-Number-for-MT-SMS AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  MME-Number-for-MT-SMS AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found an its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_mme_number_for_mt_sms(struct msg *msg, unsigned char **val);
+int ss_get_mme_number_for_mt_sms_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves SMS-Register-Request AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3204,47 +3280,51 @@ int ss_get_mme_number_for_mt_sms(struct msg *msg, unsigned char **val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_sms_register_request(struct msg *msg, int32_t *val);
+int ss_get_sms_register_request_msg(struct msg *msg, int32_t *val);
 
 /**Retrieves Coupled-Node-Diameter-ID AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains  Coupled-Node-Diameter-ID AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_coupled_node_diameter_id(struct msg *msg, unsigned char **val);
+int ss_get_coupled_node_diameter_id_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves IMEI AVP value from AVP of type grouped. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains IMEI AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_imei(struct avp *gavp, unsigned char **val);
+int ss_get_imei(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Software-Version AVP value from AVP of type grouped. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Software-Version AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_software_version(struct avp *gavp, unsigned char **val);
+int ss_get_software_version(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves 3gpp2-meid AVP value from AVP of type grouped. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains 3gpp2-meid AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_3gpp2_meid(struct avp *gavp, unsigned char **val);
+int ss_get_3gpp2_meid(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Context-Identifier AVP value from AVP of type grouped. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3254,73 +3334,79 @@ int ss_get_3gpp2_meid(struct avp *gavp, unsigned char **val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_context_identifier_gavp(struct avp *gavp, uint32_t *val);
+int ss_get_context_identifier(struct avp *gavp, uint32_t *val);
 
 /**Retrieves Service-Selection AVP value from AVP of type grouped. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Service-Selection AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_service_selection_gavp(struct avp *gavp, unsigned char **val);
+int ss_get_service_selection(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves multiple Service-Selection AVPs' values from AVP of type grouped. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple Service-Selection AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_service_selection_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_service_selection_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Visited-Network-Identifier AVP value from AVP of type grouped. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Visited-Network-Identifier AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_visited_network_identifier_gavp(struct avp *gavp, unsigned char **val);
+int ss_get_visited_network_identifier(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves multiple MIP-Home-Agent-Address AVPs' values from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple MIP-Home-Agent-Address AVPs.
-  @param array_ret : the values will be saved in **array_ret. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_mip_home_agent_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_mip_home_agent_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Visited-PLMN-Id AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Visited-PLMN-Id AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_visited_plmn_id_gavp(struct avp *gavp, unsigned char **val);
+int ss_get_visited_plmn_id(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves multiple Visited-PLMN-Id AVPs' values from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple Visited-PLMN-Id AVPs.
-  @param array_ret : the values will be saved in **array_ret. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_visited_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_visited_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Result-Code AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3330,7 +3416,7 @@ int ss_get_visited_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_r
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_result_code(struct msg *msg, uint32_t *val);
+int ss_get_result_code_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves Error-Diagnostic AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3340,7 +3426,7 @@ int ss_get_result_code(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_error_diagnostic(struct msg *msg, int32_t *val);
+int ss_get_error_diagnostic_msg(struct msg *msg, int32_t *val);
 
 /**Retrieves ULA-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3350,7 +3436,7 @@ int ss_get_error_diagnostic(struct msg *msg, int32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ula_flags(struct msg *msg, uint32_t *val);
+int ss_get_ula_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves Vendor-Id AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3386,31 +3472,34 @@ int ss_get_subscriber_status(struct avp *gavp, int32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains MSISDN AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_msisdn(struct avp *gavp, unsigned char **val);
+int ss_get_msisdn(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves A-MSISDN AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains A-MSISDN AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_a_msisdn(struct avp *gavp, unsigned char **val);
+int ss_get_a_msisdn(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves STN-SR AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains STN-SR AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_stn_sr(struct avp *gavp, unsigned char **val);
+int ss_get_stn_sr(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves ICS-Indicator AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3455,12 +3544,14 @@ int ss_get_hplmn_odb(struct avp *gavp, uint32_t *val);
 /**Retrieves Regional-Subscription-Zone-Code AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Regional-Subscription-Zone-Code AVP.
-  @param val : the value will be saved in *val. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
+  @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_regional_subscription_zone_code(struct avp *gavp, unsigned char **val);
+int ss_get_regional_subscription_zone_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Access-Restriction-Data AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3475,22 +3566,24 @@ int ss_get_access_restriction_data(struct avp *gavp, uint32_t *val);
 /**Retrieves APN-OI-Replacement AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains APN-OI-Replacement AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_apn_oi_replacement(struct avp *gavp, unsigned char **val);
+int ss_get_apn_oi_replacement(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves 3GPP-Charging-Characteristics AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains 3GPP-Charging-Characteristics AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_3gpp_charging_characteristics(struct avp *gavp, unsigned char **val);
+int ss_get_3gpp_charging_characteristics(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves RAT-Frequency-Selection-Priority-ID AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3585,34 +3678,37 @@ int ss_get_subscription_data_flags(struct avp *gavp, uint32_t *val);
 /**Retrieves multiple GMLC-Number AVPs value from group AVP . Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple GMLC-Number AVPs.
-  @param array_ret : the values will be saved in **array_ret. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_gmlc_number_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_gmlc_number_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves SS-Code AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains SS-Code AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ss_code_gavp(struct avp *gavp, unsigned char **val);
+int ss_get_ss_code(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves SS-Status AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains SS-Status AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ss_status(struct avp *gavp, unsigned char **val);
+int ss_get_ss_status(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Notification-To-UE-User AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3628,11 +3724,12 @@ int ss_get_notification_ue_user(struct avp *gavp, int32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains Client-Identity AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_client_identity(struct avp *gavp, unsigned char **val);
+int ss_get_client_identity(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves GMLC-Restriction AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3669,14 +3766,15 @@ int ss_get_serviceTypeIdentity(struct avp *gavp, uint32_t *val);
 /**Retrieves multiple TS-Code AVPs value from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple TS-Code AVPs.
-  @param array_ret : the values will be saved in **array_ret. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_ts_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_ts_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Max-Requested-Bandwidth-UL AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3686,7 +3784,7 @@ int ss_get_ts_code_gavp_array(struct avp *gavp, unsigned char ***array_ret, size
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_max_requested_bw_ul(struct avp *gavp, uint32_t *val);
+int ss_get_max_requested_bandwidth_ul(struct avp *gavp, uint32_t *val);
 
 /**Retrieves Max-Requested-Bandwidth-DL AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3696,7 +3794,7 @@ int ss_get_max_requested_bw_ul(struct avp *gavp, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_max_requested_bw_dl(struct avp *gavp, uint32_t *val);
+int ss_get_max_requested_bandwidth_dl(struct avp *gavp, uint32_t *val);
 
 /**Retrieves All-APN-Configurations-Included-Indicator AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3782,13 +3880,14 @@ int ss_get_sipto_local_network_permission(struct avp *gavp, int32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple Served-Party-IP-Address AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_served_party_ip_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_served_party_ip_address_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves QoS-Class-Identifier AVP value from group AVPUpon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3854,11 +3953,12 @@ int ss_get_wlan_offloadability_utran(struct avp *gavp, uint32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains Trace-Reference AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_trace_reference_gavp(struct avp *gavp, unsigned char **val);
+int ss_get_trace_reference(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Trace-Depth AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3873,52 +3973,57 @@ int ss_get_trace_depth(struct avp *gavp, int32_t *val);
 /**Retrieves Trace-NE-Type-List AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Trace-NE-Type-List AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_trace_ne_type_list(struct avp *gavp, unsigned char **val);
+int ss_get_trace_ne_type_list(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Trace-Interface-List AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Trace-Interface-List AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_trace_interface_list(struct avp *gavp, unsigned char **val);
+int ss_get_trace_interface_list(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Trace-Event-List AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Trace-Event-List AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_trace_event_list(struct avp *gavp, unsigned char **val);
+int ss_get_trace_event_list(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves OMC-Id AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains OMC-Id AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_omc_id(struct avp *gavp, unsigned char **val);
+int ss_get_omc_id(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Trace-Collection-Entity AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Trace-Collection-Entity AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_trace_collection_entity(struct avp *gavp, unsigned char **val);
+int ss_get_trace_collection_entity(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Job-Type AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -3934,61 +4039,88 @@ int ss_get_job_type(struct avp *gavp, int32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple Cell-Global-Identity AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
+
+/**Retrieves E-UTRAN-Cell-Global-Identity AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
+ 
+  @param gavp : a pointer to an AVP of type grouped which contains E-UTRAN-Cell-Global-Identity AVP.
+  @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
+  @return 0 : The AVP has been found and its value is written to *val.
+  @return EINVAL : A parameter is invalid.
+  @return ENOENT : No AVP has been found.
+*/
+int ss_get_e_utran_cell_global_identity(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves multiple E-UTRAN-Cell-Global-Identity AVPs' values from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple E-UTRAN-Cell-Global-Identity AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_e_utran_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_e_utran_cell_global_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves multiple Routing-Area-Identity AVPs' values from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple Routing-Area-Identity AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_routing_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_routing_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves multiple Location-Area-Identity AVPs' values from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple Location-Area-Identity AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_location_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_location_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
+
+/**Retrieves Tracking-Area-Identity AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
+ 
+  @param gavp : a pointer to an AVP of type grouped which contains Tracking-Area-Identity AVP.
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
+  @return 0 : The AVP has been found and its value is written to *val.
+  @return EINVAL : A parameter is invalid.
+  @return ENOENT : No AVP has been found.
+*/
+int ss_get_tracking_area_identity(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves multiple Tracking-Area-Identity AVPs' values from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple Tracking-Area-Identity AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_tracking_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_tracking_area_identity_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves List-Of-Measurements AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4113,22 +4245,24 @@ int ss_get_collection_period_rmm_umts(struct avp *gavp, int32_t *val);
 /**Retrieves Positioning-Method AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Positioning-Method AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_positioning_method(struct avp *gavp, unsigned char **val);
+int ss_get_positioning_method(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Measurement-Quantity AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Measurement-Quantity AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_measurement_quantity(struct avp *gavp, unsigned char **val);
+int ss_get_measurement_quantity(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Event-Threshold-Event-1F AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4154,13 +4288,14 @@ int ss_get_event_threshold_event_1i(struct avp *gavp, uint32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains multiple MDT-Allowed-PLMN-Id AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_mdt_allowed_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t *array_size);
+int ss_get_mdt_allowed_plmn_id_gavp_array(struct avp *gavp, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Complete-Data-List-Included-Indicator AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4175,52 +4310,57 @@ int ss_get_complete_data_list_included_indicator(struct avp *gavp, int32_t *val)
 /**Retrieves PDP-Type AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains PDP-Type AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_pdp_type(struct avp *gavp, unsigned char **val);
+int ss_get_pdp_type(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves PDP-Address AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains PDP-Address AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_pdp_address(struct avp *gavp, unsigned char **val);
+int ss_get_pdp_address(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves QoS-Subscribed AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains QoS-Subscribed AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_qos_subscribed(struct avp *gavp, unsigned char **val);
+int ss_get_qos_subscribed(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Ext-PDP-Type AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Ext-PDP-Type AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ext_pdp_type(struct avp *gavp, unsigned char **val);
+int ss_get_ext_pdp_type(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Ext-PDP-Address AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Ext-PDP-Address AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ext_pdp_address(struct avp *gavp, unsigned char **val);
+int ss_get_ext_pdp_address(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves CSG-Id AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4236,11 +4376,12 @@ int ss_get_csg_id(struct avp *gavp, uint32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains Expiration-Date AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_expiration_date(struct avp *gavp, unsigned char **val);
+int ss_get_expiration_date(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves ProSe-Permission AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4256,13 +4397,14 @@ int ss_get_prose_permission(struct avp *gavp, uint32_t *val);
  
   @param msg : a pointer to a message structure which contains multiple Reset-ID AVPs.
   @param array_ret : the values will be saved in **array_ret. 
+  @param len : the lengths, in bytes, of the values will be saved in *len. 
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_reset_id_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size);
+int ss_get_reset_id_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Number-Of-Requested-Vectors AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4289,11 +4431,12 @@ int ss_get_immediate_response_preferred(struct avp *gavp, uint32_t *val);
  
   @param gavp : a pointer to an AVP of type grouped which contains Re-synchronization-Info AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_re_synchronization_info(struct avp *gavp, unsigned char **val);
+int ss_get_re_synchronization_info(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Item-Number AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4308,82 +4451,90 @@ int ss_get_item_number(struct avp *gavp, uint32_t *val);
 /**Retrieves RAND AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains RAND AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_rand(struct avp *gavp, unsigned char **val);
+int ss_get_rand(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves XRES AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains XRES AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_xres(struct avp *gavp, unsigned char **val);
+int ss_get_xres(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves AUTN AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains AUTN AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_autn(struct avp *gavp, unsigned char **val);
+int ss_get_autn(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves KASME AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains KASME AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_kasme(struct avp *gavp, unsigned char **val);
+int ss_get_kasme(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Confidentiality-Key AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Confidentiality-Key AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_confidentiality_key(struct avp *gavp, unsigned char **val);
+int ss_get_confidentiality_key(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Integrity-Key AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Integrity-Key AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_integrity_key(struct avp *gavp, unsigned char **val);
+int ss_get_integrity_key(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Kc AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Kc AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_kc(struct avp *gavp, unsigned char **val);
+int ss_get_kc(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves SRES AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains SRES AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_sres(struct avp *gavp, unsigned char **val);
+int ss_get_sres(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Cancellation-Type AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4393,7 +4544,7 @@ int ss_get_sres(struct avp *gavp, unsigned char **val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_cancellation_type(struct msg *msg, int32_t *val);
+int ss_get_cancellation_type_msg(struct msg *msg, int32_t *val);
 
 /**Retrieves CLR-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4403,7 +4554,7 @@ int ss_get_cancellation_type(struct msg *msg, int32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_clr_flags(struct msg *msg, uint32_t *val);
+int ss_get_clr_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves IDR-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4413,7 +4564,7 @@ int ss_get_clr_flags(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_idr_flags(struct msg *msg, uint32_t *val);
+int ss_get_idr_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves IMS-Voice-Over-PS-Sessions-Supported AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4423,17 +4574,18 @@ int ss_get_idr_flags(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ims_voice_over_ps_sessions_supported(struct msg *msg, int32_t *val);
+int ss_get_ims_voice_over_ps_sessions_supported_msg(struct msg *msg, int32_t *val);
 
 /**Retrieves Last-UE-Activity-Time AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains Last-UE-Activity-Time AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_last_ue_activity_time(struct msg *msg, unsigned char **val);
+int ss_get_last_ue_activity_time_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves IDA-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4443,7 +4595,7 @@ int ss_get_last_ue_activity_time(struct msg *msg, unsigned char **val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_ida_flags(struct msg *msg, uint32_t *val);
+int ss_get_ida_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves User-State AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4458,22 +4610,24 @@ int ss_get_user_state(struct avp *gavp, int32_t *val);
 /**Retrieves Geographical-Information AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Geographical-Information AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_geographical_information(struct avp *gavp, unsigned char **val);
+int ss_get_geographical_information(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Geodetic-Information AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Geodetic-Information AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_geodetic_information(struct avp *gavp, unsigned char **val);
+int ss_get_geodetic_information(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Current-Location-Retrieved AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4518,12 +4672,13 @@ int ss_get_csg_membership_indication(struct avp *gavp, int32_t *val);
 /**Retrieves Time-Zone AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param gavp : a pointer to an AVP of type grouped which contains Time-Zone AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_time_zone(struct avp *gavp, unsigned char **val);
+int ss_get_time_zone(struct avp *gavp, unsigned char **val, size_t *len);
 
 /**Retrieves Daylight-Saving-Time AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4543,7 +4698,7 @@ int ss_get_daylight_saving_time(struct avp *gavp, int32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_dsr_flags(struct msg *msg, uint32_t *val);
+int ss_get_dsr_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves Context-Identifier AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4553,7 +4708,7 @@ int ss_get_dsr_flags(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_context_identifier(struct msg *msg, uint32_t *val);
+int ss_get_context_identifier_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves multiple Context-Identifier AVPs' values from message. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
@@ -4570,36 +4725,39 @@ int ss_get_context_identifier_array(struct msg *msg, uint32_t **array_ret, size_
 /**Retrieves Trace-Reference AVP value from from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains Trace-Reference AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_trace_reference(struct msg *msg, unsigned char **val);
+int ss_get_trace_reference_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves multiple TS-Code AVPs value from message. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param msg : a pointer to a message structure which contains multiple TS-Code AVPs.
-  @param array_ret : the values will be saved in **array_ret. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_ts_code_msg_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size);
+int ss_get_ts_code_msg_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves multiple SS-Code AVPs value from message. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param msg : a pointer to a message structure which contains multiple SS-Code AVPs.
-  @param array_ret : the values will be saved in **array_ret. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_ss_code_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size);
+int ss_get_ss_code_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves DSA-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4609,7 +4767,7 @@ int ss_get_ss_code_array(struct msg *msg, unsigned char ***array_ret, size_t *ar
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_dsa_flags(struct msg *msg, uint32_t *val);
+int ss_get_dsa_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves PUR-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4619,7 +4777,7 @@ int ss_get_dsa_flags(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_pur_flags(struct msg *msg, uint32_t *val);
+int ss_get_pur_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves PUA-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4629,39 +4787,42 @@ int ss_get_pur_flags(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_pua_flags(struct msg *msg, uint32_t *val);
+int ss_get_pua_flags_msg(struct msg *msg, uint32_t *val);
 
 /**Retrieves multiple User-Id AVPs value from message. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  
   @param msg : a pointer to a message structure which contains multiple User-Id AVPs.
-  @param array_ret : the values will be saved in **array_ret. 
+  @param array_ret : the values will be saved in **array_ret.  
+  @param len : the lengths, in bytes, of the values will be saved in *len.
   @param array_size : the number of values written to **array_ret. if function return is other than 0(success) this value is set to zero.
   @return 0 : The AVPs has been found and its values are written to **array_ret.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_user_id_array(struct msg *msg, unsigned char ***array_ret, size_t *array_size);
+int ss_get_user_id_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves Visited-Network-Identifier AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains Visited-Network-Identifier AVP.
-  @param val : the value will be saved in *val. 
+  @param val : the value will be saved in *val.  
+  @param len : the length, in bytes, of the value retrieved will be saved in *len.
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_visited_network_identifier(struct msg *msg, unsigned char **val);
+int ss_get_visited_network_identifier_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**Retrieves Service-Selection AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
   @param msg : a pointer to a message structure which contains Service-Selection AVP.
   @param val : the value will be saved in *val. 
+  @param len : the length, in bytes, of the value retrieved will be saved in *len. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_service_selection(struct msg *msg, unsigned char **val);
+int ss_get_service_selection_msg(struct msg *msg, unsigned char **val, size_t *len);
 
 /**valrieves Alert-Reason AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4671,7 +4832,7 @@ int ss_get_service_selection(struct msg *msg, unsigned char **val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_alert_reason(struct msg *msg, int32_t *val);
+int ss_get_alert_reason_msg(struct msg *msg, int32_t *val);
 
 /**valrieves NOR-Flags AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4681,7 +4842,17 @@ int ss_get_alert_reason(struct msg *msg, int32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_nor_flags(struct msg *msg, uint32_t *val);
+int ss_get_nor_flags_msg(struct msg *msg, uint32_t *val);
+
+/**valrieves IMS-Voice-Over-PS-Sessions-Supported AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
+ 
+  @param msg : a pointer to a message structure which contains IMS-Voice-Over-PS-Sessions-Supported AVP.
+  @param val : the value will be saved in *val. 
+  @return 0 : The AVP has been found and its value is written to *val.
+  @return EINVAL : A parameter is invalid.
+  @return ENOENT : No AVP has been found.
+*/
+int ss_get_ims_voice_over_ps_sessions_supported_msg(struct msg *msg,  int32_t *ret);
 
 /**valrieves Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP value from message. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4691,7 +4862,7 @@ int ss_get_nor_flags(struct msg *msg, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_homogeneous_support_ims_vop_sessions(struct msg *msg, int32_t *val);
+int ss_get_homogeneous_support_of_ims_voice_over_ps_sessions_msg(struct msg *msg, int32_t *val);
 
 /**valrieves Feature-List-ID AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  

@@ -2,9 +2,17 @@
 #ifndef SS_TEST_H
 #define SS_TEST_H
 
+
+#include <my_sys.h>
+#include <mysql.h>
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+
+#include "ssix_interface.h"
+
+#pragma GCC diagnostic ignored "-Wunused-value"
 
 #define VENDOR_ID_3GPP 	10415		/*Vendor-Id AVP value for 3gpp*/
 
@@ -55,8 +63,8 @@ enum ue_srvcc_capability{
 
 };
 
-/*Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP values*/
-enum homogeneous_support_ims_voice_over_ps_sessions{
+/*IMS-Voice-Over-PS-Sessions-Supported AVP values*/
+enum ims_voice_over_ps_sessions_supported{
 	NOT_SUPPORTED = 0,
 	SUPPORTED
 };
@@ -434,7 +442,7 @@ void test_get_supported_features(struct msg *msg, unsigned32 **ftr_lst_id, unsig
 void test_set_mip6(struct avp **gavp, address * ipv4, address * ipv6, diameterid * host, diameterid * realm);
 
 /*helper function to sends Cancel-Location-Request*/
-int test_util_send_clr(diameterid *destination_host, diameterid *destination_rlm, utf8string * user_name, enum cancellation_type cancellation_type, unsigned32 clr_flags);
+int test_send_clr(diameterid *destination_host, diameterid *destination_rlm, utf8string * user_name, enum cancellation_type cancellation_type, unsigned32 clr_flags);
 
 /*Prepares ULR message and send it to remote peer*/
 /*'test_types = 0', response should be user unknow*/
@@ -448,6 +456,9 @@ int test_req_clr(char * dst_host);
 
 /*Sends Authentication-Information-Request message for testing*/
 int test_req_air(char * dst_host);
+
+/*Sends Insert-Subscriber-Data-Request message for testing*/
+int test_req_idr(char * dest_host);
 
 /*Callback function to when any ULA answer message is received*/
 /*This is register when request is send and when the corresponding anser is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
@@ -464,6 +475,11 @@ void test_ans_cb_clr(void * data, struct msg ** msg);
 */
 void test_ans_cb_air(void * data, struct msg ** msg);
 
+/*Callback function to when any IDA answer message is received*/
+/*This is register when request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_idr(void * data, struct msg ** msg);
+
 /*Callback function to when any ULR message is received*/
 int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
 
@@ -473,10 +489,46 @@ int test_req_cb_clr(struct msg ** msg, struct avp * av, struct session * sess, v
 /*Callback function used when Authentication-Information-Request message is received*/
 int test_req_cb_air(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
 
+/*Callback function used when Insert-Subscriber-Data-Answer message is received*/
+int test_req_cb_idr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
+
 /*finds a substring in a given string('parent_str') that immediatly follows another reference substring('ref_str') untill space charater or new line character or null character. if return is not NULL it should be freed after use*/
 char * test_parse_string(char * parent_str, char * ref_str);
 
 /*reads a file content into a buffer and returns a pointer to a buffer. file contetn size should be less 100.  if return is not NULL it should be freed after use*/
 char * test_parse_conf(char * filename);
+
+/*Create and set subscription-data, parameter 'req' is only set when this function is used for ULA*/
+void test_set_subsc_data(struct msg ** msg, char * imsi, unsigned32 flg, struct msg * req);
+
+/*Connect to data base*/
+void test_connect_db(MYSQL **conn);
+
+/*Query database and get result*/
+int test_get_qry_res(MYSQL *conn, char * statement, MYSQL_RES **res);
+
+/*Set LCS-Info*/
+void test_set_lcs_info(struct avp **gavp, char * imsi);
+
+/* Create Teleservice-List*/
+void test_set_teleserv_list(struct avp **gavp, octetstring *ts_cd1, octetstring *ts_cd2, octetstring *ts_cd3);
+
+/*Set Call-Barring-Info */
+void test_set_call_barring_info(struct avp **gavp, char * imsi);
+
+/* Set AMBR AVP*/
+void test_set_ambr(struct avp **gavp, char * ul, char * dl);
+
+/*Set APN-Configuration-Profile */
+void test_set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id);
+
+/* Set eps_qos_prof: EPS-Subscribed-QoS-Profile */
+void test_set_eps_subsc_qos_prof(struct avp **gavp, char * qos, char * level, char * capab, char * vulner);
+
+/*Check Subscription-Data inside a message*/
+void test_check_subsc_data(struct msg * msg);
+
+/*Check LCS-Info*/
+void test_check_lcs_info( struct avp *tmp_gavp);
 
 #endif

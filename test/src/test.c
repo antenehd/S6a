@@ -198,12 +198,12 @@ int test_send_clr(diameterid *dst_host, diameterid *dst_rlm, utf8string * imsi, 
 }
 
 /*** Set MIP6-Agent-Info AVP ***/
-void test_set_mip6(struct avp **gavp, address * ipv4, address * ipv6, diameterid * host, diameterid * realm){
+void test_set_mip6(avp_or_msg **msg_gavp, address * ipv4, address * ipv6, diameterid * host, diameterid * realm){
 	
 	struct avp * tmp_gavp;
 	struct avp * tmp_gavp2;
 					
-	if(!gavp)	return;
+	if(!msg_gavp)	return;
 
 	if( (!ipv4) && (!ipv6) && (!host) && (!realm))	return;
 
@@ -232,11 +232,11 @@ void test_set_mip6(struct avp **gavp, address * ipv4, address * ipv6, diameterid
 		SS_CHECK( ss_add_avp( (avp_or_msg **)&tmp_gavp, tmp_gavp2 ), "MIP-Home-Agent-Host added.\n", "Failed to add MIP-Home-Agent-Host.\n");
 			
 	/*Add MIP6-Agent-Info group AVP into the group AVP provided in parameter 'gavp'*/			
-	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "MIP6-Agent-Info added.\n", "Failed to add MIP6-Agent-Info.\n");
+	SS_CHECK( ss_add_avp( (avp_or_msg **)msg_gavp, tmp_gavp), "MIP6-Agent-Info added.\n", "Failed to add MIP6-Agent-Info.\n");
 }
 
 /*check MIP6-Agent-Info AVP ***/
-static void check_mip6(struct avp *avp){
+void test_check_mip6(avp_or_msg *msg_gavp){
 	
 	struct avp *tmp_gavp = NULL;
 	struct avp *tmp_gavp2 = NULL;
@@ -245,10 +245,10 @@ static void check_mip6(struct avp *avp){
 	size_t size = 0;
 	size_t *len = NULL;
 					
-	if(!avp) return;
+	if(!msg_gavp) return;
 		
 	/*get MIP6-Agent-Info group AVP*/
-	SS_WCHECK( ss_get_gavp_mip6_agent_info(avp, &tmp_gavp), "MIP6-Agent-Info retrieved.\n", "Failed to retrieve MIP6-Agent-Info.\n",return);
+	SS_WCHECK( ss_get_gavp_mip6_agent_info(msg_gavp, &tmp_gavp), "MIP6-Agent-Info retrieved.\n", "Failed to retrieve MIP6-Agent-Info.\n",return);
 
 	/* get MIP-Home-Agent-Address avp (IPV4 and IPV6)*/
 	SS_WCHECK( ss_get_mip_home_agent_address_gavp_array( tmp_gavp, &tmp_str_arr, &len, &size), "MIP-Home-Agent-Address IPV4 retrieved.\n", "Failed to retrieve MIP-Home-Agent-Address IPV4.\n", NULL);		
@@ -748,7 +748,7 @@ void test_set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id){
 			SS_SET_I32( ss_set_vplmn_dynamic_address_allowed(&tmp_gavp2, tmp_i), tmp_i, row[10], "VPLMN-Dynamic-Address-Allowed set.\n", "Failed to set VPLMN-Dynamic-Address-Allowed.\n");
 
 		/*** Set MIP6-Agent-Info AVP ******************************************/
-		test_set_mip6( &tmp_gavp2, (address *) row[11], (address *) row[12], (diameterid *) row[13], (diameterid *) row[14]);
+		test_set_mip6( (avp_or_msg **)&tmp_gavp2, (address *) row[11], (address *) row[12], (diameterid *) row[13], (diameterid *) row[14]);
 							
 		/* Set Visited-Network-Identifier *********************/
 		if(row[15])
@@ -849,7 +849,7 @@ static void check_apn_conf_prof(struct avp *avp){
 		SS_WCHECK( ss_get_vplmn_dynamic_address_allowed(tmp_gavp2, &tmp_i), "VPLMN-Dynamic-Address-Allowed retrieved.\n", "Failed to retrieve VPLMN-Dynamic-Address-Allowed.\n", NULL);
 
 		/* check MIP6-Agent-Info AVP */
-		check_mip6( tmp_gavp2);
+		test_check_mip6( tmp_gavp2);
 							
 		/* get Visited-Network-Identifier *********************/
 		SS_WCHECK( ss_get_visited_network_identifier( tmp_gavp2, &tmp_str, &len), "Visited-Network-Identifier retrieved.\n", "Failed to retrieve Visited-Network-Identifier.\n", NULL);
@@ -1844,4 +1844,125 @@ void test_check_subsc_data(struct msg *msg){
 	
 	/* Get Subscription-Data-Flags*/		
 	SS_WCHECK( ss_get_subscription_data_flags( tmp_gavp, &tmp_u), "Subscription-Data-Flags retrieved.\n", "Failed to retrieve Subscription-Data-Flags.\n", return);	
+}
+
+/*Set EPS-Location-Information*/
+void test_set_eps_location_info(struct msg **msg){
+
+	struct avp *tmp_gavp = NULL;
+	struct avp *tmp_gavp2 = NULL;
+	struct avp *tmp_gavp3 = NULL;
+	octetstring eutran_cgi[] = {0x01,0x02,0x02,0x01,0x02,0x02,0x03,'\0'};
+	octetstring trak_area_id[] = {0x01,0x02,0x02,0x01,0x02,'\0'};
+	octetstring geog_inf[] = {0x01,0x02,0x02,0x01,0x02,0x02,0x03, 0x04,'\0'};
+	octetstring geod_inf[] = {0x01,0x02,0x02,0x01,0x02,0x02,0x03,0x04,0x01,0x02,'\0'};
+	enum current_location_retrieved curr_loc_ret = ACTIVE_LOCATION_RETRIEVAL;
+	unsigned32 age_loc_inf = 10;
+	unsigned32 csg_id = 1;
+	enum csg_access_mode csg_acc_mode = CLOSED;
+	enum csg_membership_indication csg_memb_ind = Not_CSG_MEMBER;
+
+	if(!msg) return;
+
+	/*Create EPS-Location-Information AVP*/
+	SS_CHECK( ss_create_eps_location_information(&tmp_gavp), "EPS-Location-Information created.\n", "Failed to create EPS-Location-Information.\n");
+
+	/*Create MME-Location-Information AVP*/
+	SS_CHECK( ss_create_mme_location_information(&tmp_gavp2), "MME-Location-Information created.\n", "Failed to create MME-Location-Information.\n");
+
+	/*Set E-UTRAN-Cell-Global-Identity*/
+	SS_CHECK( ss_set_e_utran_cell_global_identity(&tmp_gavp2, eutran_cgi, strlen((char *)eutran_cgi)), "E-UTRAN-Cell-Global-Identity set.\n", "Failed to set E-UTRAN-Cell-Global-Identity.\n");
+
+	/*Set Tracking-Area-Identity*/
+	SS_CHECK( ss_set_tracking_area_identity(&tmp_gavp2, trak_area_id, strlen((char *)trak_area_id)), "Tracking-Area-Identity set.\n", "Failed to set Tracking-Area-Identity.\n");
+	
+	/*Set Geographical-Information*/
+	SS_CHECK( ss_set_geographical_information(&tmp_gavp2, geog_inf, strlen((char *)geog_inf)), "Geographical-Information set.\n", "Failed to set Geographical-Information.\n");
+
+	/*Set Geodetic-Information*/
+	SS_CHECK( ss_set_geodetic_information(&tmp_gavp2, geod_inf, strlen((char *)geod_inf)), "Geodetic-Information set.\n", "Failed to set Geodetic-Information.\n");
+
+	/*Set Current-Location-Retrieved*/
+	SS_CHECK( ss_set_current_location_retrieved(&tmp_gavp2, curr_loc_ret), "Current-Location-Retrieved set.\n", "Failed to set Current-Location-Retrieved.\n");
+
+	/*Set Age-Of-Location-Information*/
+	SS_CHECK( ss_set_age_of_location_information(&tmp_gavp2, age_loc_inf), "Age-Of-Location-Information set.\n", "Failed to set Age-Of-Location-Information.\n");
+
+	/*Create User-CSG-Information*/
+	SS_CHECK( ss_create_user_csg_information(&tmp_gavp3), "User-CSG-Information created.\n", "Failed to create User-CSG-Information.\n");
+
+	/*Set CSG-Id*/
+	SS_CHECK( ss_set_csg_id(&tmp_gavp3, csg_id), "CSG-Id set.\n", "Failed to set CSG-Id.\n");
+	
+	/*Set CSG-Access-Mode*/
+	SS_CHECK( ss_set_csg_access_mode(&tmp_gavp3, csg_acc_mode), "CSG-Access-Mode set.\n", "Failed to set CSG-Access-Mode.\n");
+
+	/*Set CSG-Membership-Indication*/
+	SS_CHECK( ss_set_csg_membership_indication(&tmp_gavp3, csg_memb_ind), "CSG-Membership-Indication set.\n", "Failed to set CSG-Membership-Indication.\n");
+
+	/*Add User-CSG-Information*/
+	SS_CHECK( ss_add_avp( (avp_or_msg **)&tmp_gavp2, tmp_gavp3), "User-CSG-Information added.\n", "Failed to add User-CSG-Information.\n");
+
+	/*Add MME-Location-Information*/
+	SS_CHECK( ss_add_avp( (avp_or_msg **)&tmp_gavp, tmp_gavp2), "MME-Location-Information added.\n", "Failed to add MME-Location-Information.\n");
+
+	/*Add EPS-Location-Information*/
+	SS_CHECK( ss_add_avp( (avp_or_msg **)msg, tmp_gavp), "EPS-Location-Information.\n", "Failed to add EPS-Location-Information.\n");
+
+}
+
+/*check EPS-Location-Information*/
+void test_check_eps_location_info(struct msg *msg){
+
+	struct avp *tmp_gavp = NULL;
+	struct avp *tmp_gavp2 = NULL;
+	struct avp *tmp_gavp3 = NULL;
+	octetstring *eutran_cgi = 0;
+	octetstring *trak_area_id = 0;
+	octetstring *geog_inf = 0;
+	octetstring *geod_inf = 0;
+	enum current_location_retrieved curr_loc_ret = 0;
+	unsigned32 age_loc_inf = 0;
+	unsigned32 csg_id = 0;
+	enum csg_access_mode csg_acc_mode = 0;
+	enum csg_membership_indication csg_memb_ind = 0;
+	size_t len = 0;
+
+	if(!msg) return;
+
+	/*Get EPS-Location-Information AVP*/
+	SS_WCHECK( ss_get_gavp_eps_location_information(msg, &tmp_gavp), "EPS-Location-Information retrieved.\n", "Failed to retrieve EPS-Location-Information.\n", return);
+
+	/*Get MME-Location-Information AVP*/
+	SS_WCHECK( ss_get_gavp_mme_location_information(tmp_gavp, &tmp_gavp2), "MME-Location-Information retrieved.\n", "Failed to retrieve MME-Location-Information.\n", return);
+
+	/*Get E-UTRAN-Cell-Global-Identity*/
+	SS_WCHECK( ss_get_e_utran_cell_global_identity(tmp_gavp2, &eutran_cgi, &len), "E-UTRAN-Cell-Global-Identity retrieved.\n", "Failed to retrieve E-UTRAN-Cell-Global-Identity.\n", return);
+
+	/*Get Tracking-Area-Identity*/
+	SS_WCHECK( ss_get_tracking_area_identity(tmp_gavp2, &trak_area_id, &len), "Tracking-Area-Identity retrieved.\n", "Failed to retrieve Tracking-Area-Identity.\n", return);
+	
+	/*Get Geographical-Information*/
+	SS_WCHECK( ss_get_geographical_information(tmp_gavp2, &geog_inf, &len), "Geographical-Information retrieved.\n", "Failed to retrieve Geographical-Information.\n", return);
+
+	/*Get Geodetic-Information*/
+	SS_WCHECK( ss_get_geodetic_information(tmp_gavp2, &geod_inf, &len), "Geodetic-Information retrieved.\n", "Failed to retrieve Geodetic-Information.\n", return);
+
+	/*Get Current-Location-Retrieved*/
+	SS_WCHECK( ss_get_current_location_retrieved(tmp_gavp2, (int32_t *)&curr_loc_ret), "Current-Location-Retrieved retrieved.\n", "Failed to retrieve Current-Location-Retrieved.\n", return);
+
+	/*Get Age-Of-Location-Information*/
+	SS_WCHECK( ss_get_age_of_location_information(tmp_gavp2, &age_loc_inf), "Age-Of-Location-Information retrieved.\n", "Failed to retrieve Age-Of-Location-Information.\n", return);
+
+	/*Get User-CSG-Information*/
+	SS_WCHECK( ss_get_gavp_user_csg_information(tmp_gavp2, &tmp_gavp3), "User-CSG-Information retrieved.\n", "Failed to retrieve User-CSG-Information.\n", return);
+
+	/*Get CSG-Id*/
+	SS_CHECK( ss_get_csg_id(tmp_gavp3, &csg_id), "CSG-Id retrieved.\n", "Failed to retrieve CSG-Id.\n");
+	
+	/*Get CSG-Access-Mode*/
+	SS_CHECK( ss_get_csg_access_mode(tmp_gavp3, (int32_t *)&csg_acc_mode), "CSG-Access-Mode retrieved.\n", "Failed to retrieve CSG-Access-Mode.\n");
+
+	/*Get CSG-Membership-Indication*/
+	SS_WCHECK( ss_get_csg_membership_indication(tmp_gavp3, (int32_t *)&csg_memb_ind), "CSG-Membership-Indication retrieved.\n", "Failed to retrieve CSG-Membership-Indication.\n", return);
 }

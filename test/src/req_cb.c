@@ -562,70 +562,6 @@ static void set_eps_usr_state(struct msg **msg, enum user_state mme_usr_state){
 	SS_CHECK( ss_add_avp((avp_or_msg **)msg, tmp_gavp), " EPS-User-State added.\n", "Failed to add  EPS-User-State.\n");
 }
 
-/*Set EPS-Location-Information*/
-static void set_eps_location_info(struct msg **msg){
-
-	struct avp *tmp_gavp = NULL;
-	struct avp *tmp_gavp2 = NULL;
-	struct avp *tmp_gavp3 = NULL;
-	octetstring eutran_cgi[] = {0x01,0x02,0x02,0x01,0x02,0x02,0x03,'\0'};
-	octetstring trak_area_id[] = {0x01,0x02,0x02,0x01,0x02,'\0'};
-	octetstring geog_inf[] = {0x01,0x02,0x02,0x01,0x02,0x02,0x03, 0x04,'\0'};
-	octetstring geod_inf[] = {0x01,0x02,0x02,0x01,0x02,0x02,0x03,0x04,0x01,0x02,'\0'};
-	enum current_location_retrieved curr_loc_ret = ACTIVE_LOCATION_RETRIEVAL;
-	unsigned32 age_loc_inf = 10;
-	unsigned32 csg_id = 1;
-	enum csg_access_mode csg_acc_mode = CLOSED;
-	enum csg_membership_indication csg_memb_ind = Not_CSG_MEMBER;
-
-	if(!msg) return;
-
-	/*Create EPS-Location-Information AVP*/
-	SS_CHECK( ss_create_eps_location_information(&tmp_gavp), "EPS-Location-Information created.\n", "Failed to create EPS-Location-Information.\n");
-
-	/*Create MME-Location-Information AVP*/
-	SS_CHECK( ss_create_mme_location_information(&tmp_gavp2), "MME-Location-Information created.\n", "Failed to create MME-Location-Information.\n");
-
-	/*Set E-UTRAN-Cell-Global-Identity*/
-	SS_CHECK( ss_set_e_utran_cell_global_identity(&tmp_gavp2, eutran_cgi, strlen((char *)eutran_cgi)), "E-UTRAN-Cell-Global-Identity set.\n", "Failed to set E-UTRAN-Cell-Global-Identity.\n");
-
-	/*Set Tracking-Area-Identity*/
-	SS_CHECK( ss_set_tracking_area_identity(&tmp_gavp2, trak_area_id, strlen((char *)trak_area_id)), "Tracking-Area-Identity set.\n", "Failed to set Tracking-Area-Identity.\n");
-	
-	/*Set Geographical-Information*/
-	SS_CHECK( ss_set_geographical_information(&tmp_gavp2, geog_inf, strlen((char *)geog_inf)), "Geographical-Information set.\n", "Failed to set Geographical-Information.\n");
-
-	/*Set Geodetic-Information*/
-	SS_CHECK( ss_set_geodetic_information(&tmp_gavp2, geod_inf, strlen((char *)geod_inf)), "Geodetic-Information set.\n", "Failed to set Geodetic-Information.\n");
-
-	/*Set Current-Location-Retrieved*/
-	SS_CHECK( ss_set_current_location_retrieved(&tmp_gavp2, curr_loc_ret), "Current-Location-Retrieved set.\n", "Failed to set Current-Location-Retrieved.\n");
-
-	/*Set Age-Of-Location-Information*/
-	SS_CHECK( ss_set_age_of_location_information(&tmp_gavp2, age_loc_inf), "Age-Of-Location-Information set.\n", "Failed to set Age-Of-Location-Information.\n");
-
-	/*Create User-CSG-Information*/
-	SS_CHECK( ss_create_user_csg_information(&tmp_gavp3), "User-CSG-Information created.\n", "Failed to create User-CSG-Information.\n");
-
-	/*Set CSG-Id*/
-	SS_CHECK( ss_set_csg_id(&tmp_gavp3, csg_id), "CSG-Id set.\n", "Failed to set CSG-Id.\n");
-	
-	/*Set CSG-Access-Mode*/
-	SS_CHECK( ss_set_csg_access_mode(&tmp_gavp3, csg_acc_mode), "CSG-Access-Mode set.\n", "Failed to set CSG-Access-Mode.\n");
-
-	/*Set CSG-Membership-Indication*/
-	SS_CHECK( ss_set_csg_membership_indication(&tmp_gavp3, csg_memb_ind), "CSG-Membership-Indication set.\n", "Failed to set CSG-Membership-Indication.\n");
-
-	/*Add User-CSG-Information*/
-	SS_CHECK( ss_add_avp( (avp_or_msg **)&tmp_gavp2, tmp_gavp3), "User-CSG-Information added.\n", "Failed to add User-CSG-Information.\n");
-
-	/*Add MME-Location-Information*/
-	SS_CHECK( ss_add_avp( (avp_or_msg **)&tmp_gavp, tmp_gavp2), "MME-Location-Information added.\n", "Failed to add MME-Location-Information.\n");
-
-	/*Add EPS-Location-Information*/
-	SS_CHECK( ss_add_avp( (avp_or_msg **)msg, tmp_gavp), "EPS-Location-Information.\n", "Failed to add EPS-Location-Information.\n");
-
-}
 
 /*Set Local-Time-Zone*/
 static void set_local_time_zone(struct msg **msg, utf8string * time_zone, enum daylight_saving_time day_sv_tm){
@@ -1036,13 +972,263 @@ int test_req_cb_idr(struct msg ** msg, struct avp * av, struct session * sess, v
 	set_eps_usr_state(msg, mme_usr_state);
 
 	/*Set EPS-Location-Information*/
-	set_eps_location_info(msg);
+	test_set_eps_location_info(msg);
 
 	/*Set Local-Time-Zone*/
 	set_local_time_zone(msg, time_zone, day_sv_tm);
 
 	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "IDA Response sent\n", "Failed to set IDA Response");*/
 	fprintf(stdout,"OK : IDA Answer message passed to routing module.\n\n");
+	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
+
+	return 0;
+}
+
+/*Callback function used when Delete-Subscriber-Data-Request message is received*/
+int test_req_cb_dsr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act){
+
+	unsigned char *tmp_ustr = NULL;
+	unsigned char *origin_host = NULL;
+	char imsi[15] = {0};
+	unsigned32 *feature_list_id = NULL;
+	unsigned32 *feature_list = NULL;
+	size_t size = 0;
+	unsigned32 dsr_flgs = 0;
+	unsigned32 *context_ids = NULL;
+	octetstring *trace_ref = NULL;
+	octetstring **ts_codes = NULL;
+	octetstring **ss_codes = NULL;
+	unsigned32 dsa_flgs = 1;
+	size_t len = 0;
+	size_t *len_arr = NULL;
+
+	if(NULL == msg) return EINVAL;
+
+	/* Message Received */
+	SS_CHECK( ss_get_origin_host_msg( *msg, &origin_host, &len), "\n", "Failed to extract Origin-Host.\n");
+	fprintf(stdout, COLOR_GREEN"MESSAGE RECEIVED : DSR message received from '%s'"ANSI_COLOR_RESET"\n", (char *)origin_host);		
+
+	/* Extract imsi from request message*/
+	SS_CHECK( ss_get_user_name_msg(*msg, &tmp_ustr, &len), "IMSI extracted from request.\n", "Failed to extract IMSI from request.\n");
+	strncpy(imsi,(char *)tmp_ustr,15);
+
+	/*Extract Supported-Features child AVPs' values*/
+	test_get_supported_features(*msg, &feature_list_id, &feature_list, &size);
+
+	/*Extract DSR-Flags*/
+	SS_CHECK( ss_get_dsr_flags_msg(*msg, &dsr_flgs), "DSR-Flags retrieved.\n", "Failed to retrieve DSR-Flags.\n");
+	
+	/*Extract Context-Identifier*/
+	SS_WCHECK( ss_get_context_identifier_array(*msg, &context_ids, &size), "Context-Identifier retrieved.\n", "Failed to retrieve Context-Identifier.\n", NULL);
+	if(context_ids) free(context_ids);
+
+	/*Extract Trace-Reference*/
+	SS_WCHECK( ss_get_trace_reference_msg( *msg, &trace_ref, &len), "Trace-Reference set.\n", "Failed to set Trace-Reference.\n", NULL);
+
+	/*Extract TS-Code*/
+	SS_WCHECK( ss_get_ts_code_array( *msg, &ts_codes, &len_arr, &size), "TS-Code set.\n","Failed to set TS-Code.\n", NULL);
+	if(ts_codes) free(ts_codes);
+	if(len_arr) free(len_arr);
+
+	/*Extract SS-Code*/
+	SS_WCHECK( ss_get_ts_code_array( *msg, &ss_codes, &len_arr, &size), "SS-Code set.\n","Failed to set SS-Code.\n", NULL);
+	if(ss_codes) free(ss_codes);
+	if(len_arr) free(len_arr);	
+
+	/* Create answer message header from the request*/
+	SS_CHECK( ss_msg_create_answer( msg), "DSA Answer message header created from request.\n", "Failed to create DSA answer message header.\n");	
+
+	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
+	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");
+
+	/*Set two Supported-Freatures AVP*/
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+
+	/*Set DSA-flags*/
+	SS_CHECK( ss_set_dsa_flags( msg, dsa_flgs), "DSA-flags set.\n", "Failed to set DSA-flags.\n");
+
+	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "IDA Response sent\n", "Failed to set IDA Response");*/
+	fprintf(stdout,"OK : DSA Answer message passed to routing module.\n\n");
+	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
+
+	return 0;
+}
+
+/*Callback function used when Purge-UE-Request message is received*/
+int test_req_cb_pur(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act){
+
+	unsigned char *tmp_ustr = NULL;
+	unsigned char *origin_host = NULL;
+	char imsi[15] = {0};
+	unsigned32 *feature_list_id = NULL;
+	unsigned32 *feature_list = NULL;
+	unsigned32 pur_flgs = 0;
+	unsigned32 pua_flgs = 1;
+	size_t size = 0;
+	size_t len = 0;
+
+	if(NULL == msg) return EINVAL;
+
+	/* Message Received */
+	SS_CHECK( ss_get_origin_host_msg( *msg, &origin_host, &len), "\n", "Failed to extract Origin-Host.\n");
+	fprintf(stdout, COLOR_GREEN"MESSAGE RECEIVED : PUR message received from '%s'"ANSI_COLOR_RESET"\n", (char *)origin_host);		
+
+	/* Extract imsi from request message*/
+	SS_CHECK( ss_get_user_name_msg(*msg, &tmp_ustr, &len), "IMSI extracted from request.\n", "Failed to extract IMSI from request.\n");
+	strncpy(imsi,(char *)tmp_ustr,15);
+
+	/*Extract Supported-Features child AVPs' values*/
+	test_get_supported_features(*msg, &feature_list_id, &feature_list, &size);
+
+	/*Extract PUR-Flags*/
+	SS_CHECK( ss_get_pur_flags_msg(*msg, &pur_flgs), "PUR-Flags retrieved.\n", "Failed to retrieve PUR-Flags.\n");
+
+	/*check EPS-Location-Information*/
+	test_check_eps_location_info(*msg);
+	
+	/* Create answer message header from the request*/
+	SS_CHECK( ss_msg_create_answer( msg), "PUA Answer message header created from request.\n", "Failed to create PUA answer message header.\n");	
+
+	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
+	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");
+
+	/*Set two Supported-Freatures AVP*/
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+
+	/*Set PUA-flags*/
+	SS_CHECK( ss_set_pua_flags( msg, pua_flgs), "PUA-flags set.\n", "Failed to set PUA-flags.\n");
+
+	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "PUA Response sent\n", "Failed to set PUA Response");*/
+	fprintf(stdout,"OK : PUA Answer message passed to routing module.\n\n");
+	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
+
+	return 0;
+}
+
+/*Callback function used when Reset-Request message is received*/
+int test_req_cb_rsr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act){
+
+	unsigned char *origin_host = NULL;
+	unsigned32 *feature_list_id = NULL;
+	unsigned32 *feature_list = NULL;
+	utf8string **user_id = NULL;
+	octetstring **reset_id = NULL;
+	size_t size = 0;
+	size_t len = 0;
+	size_t *len_arr = NULL;
+
+	if(NULL == msg) return EINVAL;
+
+	/* Message Received */
+	SS_CHECK( ss_get_origin_host_msg( *msg, &origin_host, &len), "\n", "Failed to extract Origin-Host.\n");
+	fprintf(stdout, COLOR_GREEN"MESSAGE RECEIVED : PUR message received from '%s'"ANSI_COLOR_RESET"\n", (char *)origin_host);		
+
+	/*Extract Supported-Features child AVPs' values*/
+	test_get_supported_features(*msg, &feature_list_id, &feature_list, &size);
+
+	/*Extract User-Id*/
+	SS_WCHECK( ss_get_user_id_array(*msg, &user_id, &len_arr, &len), "User-Id values retrieved.\n", "Failed to retrieve User-Id values.\n", NULL);
+	if(user_id) free(user_id);
+	if(len_arr) free(len_arr);
+
+	/*Extract Reset-Id*/
+	SS_WCHECK( ss_get_reset_id_array(*msg, &reset_id, &len_arr, &len), "Reset-Id values retrieved.\n", "Failed to retrieve Reset-Id values.\n", NULL);
+	if(user_id) free(reset_id);
+	if(len_arr) free(len_arr);
+
+	/* Create answer message header from the request*/
+	SS_CHECK( ss_msg_create_answer( msg), "RSA Answer message header created from request.\n", "Failed to create RSA answer message header.\n");	
+
+	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
+	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");
+
+	/*Set two Supported-Freatures AVP*/
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+	test_set_supported_features(msg, (int)VENDOR_ID_3GPP, 1, 2);
+
+	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "RSA Response sent\n", "Failed to set RSA Response");*/
+	fprintf(stdout,"OK : RSA Answer message passed to routing module.\n\n");
+	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
+
+	return 0;
+}
+
+/*Callback function used when Notify-Request message is received*/
+int test_req_cb_nor(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act){
+	
+    char imsi[16] = {0};
+	diameterid * origin_host = NULL;
+	utf8string * imei = NULL;
+	utf8string * soft_version = NULL;
+	octetstring * meid = NULL;
+	unsigned32 *feature_list = NULL;
+	unsigned32 *feature_list_id = NULL;
+	octetstring * visited_net_id = NULL;
+	unsigned32 context_id = 0;
+	utf8string * service_selection = NULL;
+	enum alert_reason alert_reason;
+	enum ue_srvcc_capability ue_srvcc_capability;
+	unsigned32 nor_flgs = 0;
+	enum homogeneous_support_of_ims_voice_over_ps_sessions hm_supp_ims_vop_sessions;
+	unsigned char *tmp_ustr = NULL;
+	size_t size = 0; /*used to store number of feature list values*/
+	size_t len = 0;
+
+	if (msg == NULL) return EINVAL;	
+	
+	/* Message Received */
+	SS_CHECK( ss_get_origin_host_msg( *msg, &origin_host, &len), "\n", "Failed to extract Origin-Host.\n");
+	fprintf(stdout, COLOR_GREEN"MESSAGE RECEIVED : NOR message received from '%s'"ANSI_COLOR_RESET"\n", (char *)origin_host);	
+	
+	/* Extract imsi from request message*/
+	SS_CHECK( ss_get_user_name_msg(*msg, &tmp_ustr, &len), "IMSI extracted from request.\n", "Failed to extract IMSI from request.\n");
+	strncpy(imsi,(char *)tmp_ustr,15);
+
+	/*Retrieve Feature-List AVP value (only 1 avp is expected for testing) from request*/
+	test_get_supported_features(*msg, &feature_list_id, &feature_list, &size);
+
+	/*Retrieve terminal information from request*/
+	get_terminal_info(*msg, &imei, &soft_version, &meid);
+
+	/*Get MIP6-Agent-Info*/
+	test_check_mip6(*msg);
+
+	/*Get Visited-Network-Identifier*/
+	SS_CHECK( ss_get_visited_network_identifier_msg( *msg, &visited_net_id, &len), "Visited-Network-Identifier retrieved.\n", "Failed to retrieve Visited-Network-Identifier.\n");
+
+	/*Get Context-Identifier*/
+	SS_CHECK( ss_get_context_identifier_msg(*msg, &context_id), "Context-Identifier retrieved.\n", "Failed to retrieve Context-Identifier/\n");
+
+	/*Get Service-Selection*/
+	SS_CHECK( ss_get_service_selection_msg( *msg, &service_selection, &len), "Service-Selection retrieved.\n", "Failed to retrieve Service-Selection.\n");
+
+	/*Get Alert-Reason*/
+	SS_CHECK( ss_get_alert_reason_msg(*msg, (int32_t *)&alert_reason), "Alert-Reason retrieved.\n", "Failed to retrieve Alert-Reason.\n");
+
+	/*Retrieve ue-srvcc-capability from request*/
+	SS_WCHECK( ss_get_ue_srvcc_capability_msg(*msg, (int32_t *)&ue_srvcc_capability), "UE-SRVCC-Capability value retrieved from request.\n", "Failed to retrieve UE-SRVCC-Capability value.\n", NULL);
+	
+	/*Set NOR-Flags AVP*/
+	SS_CHECK( ss_get_nor_flags_msg( *msg, &nor_flgs), "NOR-Flags AVP retrieved.\n","Failed to retrieve NOR-Flags AVP\n");
+	
+	/*Get Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP*/
+	SS_CHECK( ss_get_homogeneous_support_of_ims_voice_over_ps_sessions_msg( *msg, (int32_t *)&hm_supp_ims_vop_sessions), "Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP Retrieved.\n","Failed to Retrieve Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP\n");
+
+	/* Create answer message header from the request, copy the request before creating answer */
+	SS_CHECK( ss_msg_create_answer( msg), "Answer message header created from request.\n", "Failed to create answer message header.\n");
+
+	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
+	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");
+
+	/*Set supported feature*/
+	test_set_supported_features(msg, (unsigned32) VENDOR_ID_3GPP, (unsigned32) 1, (unsigned32) 2);
+	test_set_supported_features(msg, (unsigned32) VENDOR_ID_3GPP, (unsigned32) 2, (unsigned32) 5);
+
+	/* Send the answer */
+	/*SS_CHECK( fd_msg_send( msg, NULL, NULL ), "NOA Response sent\n", "Failed to set NOA Response");*/
+	fprintf(stdout,"OK : Answer message passed to routing module.\n");
 	*act == DISP_ACT_SEND; /*fd_msg_send(msg, NULL,NULL) can also be used here*/
 
 	return 0;

@@ -1170,7 +1170,7 @@ int ss_get_trace_reference_msg(struct msg *msg, unsigned char **ret, size_t *len
 }
 
 /*Retrieves multiple TS-Code AVPs value from message*/
-int ss_get_ts_code_msg_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size){	
+int ss_get_ts_code_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size){	
 	
 	return get_str_array(msg, ss_ts_code, array_ret, len, array_size);		
 }

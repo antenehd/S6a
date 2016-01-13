@@ -1,5 +1,5 @@
 /*ETSI TS 129 272 V12.8.0 */
-/*Avps not included:OC-Supported-Features (Reason: AVP code is not defined yet)
+/*Avps not included:OC-Supported-Features & OC-OLR (Reason: AVP code is not defined yet)
 					SGs-MME-Identity (Reason: SGs interface is not required)
 					Coupled-Node-Diameter-ID (Reason: sgsn is not part of requirment)
 					
@@ -691,7 +691,6 @@ static int create_cmd_rule(){
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_pur, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_rsr, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_nor, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_noa, NULL));
 
 		/*User-Name*/
 		data.rule_avp = ss_user_name;

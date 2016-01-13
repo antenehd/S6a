@@ -48,9 +48,20 @@ int ss_get_gavp_equivalent_plmn_list(struct msg *msg, struct avp **gavp){
 }
 
 /*Retrievs MIP6-Agent-Info group AVP from group avp*/
-int ss_get_gavp_mip6_agent_info(struct avp *avp, struct avp **gavp){
+int ss_get_gavp_mip6_agent_info(avp_or_msg *msg_avp, struct avp **gavp){
 
-	return get_gavp(avp, ss_mip6_agent_info, gavp);
+	int ret = 1;
+
+	/*Check if the search reference(container) is AVP of type group*/
+	ret = get_gavp((struct avp *)msg_avp, ss_mip6_agent_info, gavp);
+	if(0 == ret) return ret;
+	
+	/*Check if the search reference(container) is message structure*/
+	ret = get_gavp_msg((struct msg *)msg_avp, ss_mip6_agent_info, gavp);
+	if(0 == ret) return ret;
+
+	return ret;
+	
 }
 
 /*Retrievs MIP-Home-Agent-Host group AVP from group avp*/

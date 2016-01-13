@@ -234,61 +234,6 @@ static void check_eps_usr_state(struct msg *msg){
 	SS_CHECK( ss_get_user_state(tmp_gavp2, (int32_t *)&mme_user_state), "User-State Retrieved.\n", "Failed to Retrieve User-State.\n");
 }
 
-/*check EPS-Location-Information*/
-static void check_eps_location_info(struct msg *msg){
-
-	struct avp *tmp_gavp = NULL;
-	struct avp *tmp_gavp2 = NULL;
-	struct avp *tmp_gavp3 = NULL;
-	octetstring *eutran_cgi = 0;
-	octetstring *trak_area_id = 0;
-	octetstring *geog_inf = 0;
-	octetstring *geod_inf = 0;
-	enum current_location_retrieved curr_loc_ret = 0;
-	unsigned32 age_loc_inf = 0;
-	unsigned32 csg_id = 0;
-	enum csg_access_mode csg_acc_mode = 0;
-	enum csg_membership_indication csg_memb_ind = 0;
-	size_t len = 0;
-
-	if(!msg) return;
-
-	/*Get EPS-Location-Information AVP*/
-	SS_WCHECK( ss_get_gavp_eps_location_information(msg, &tmp_gavp), "EPS-Location-Information retrieved.\n", "Failed to retrieve EPS-Location-Information.\n", return);
-
-	/*Get MME-Location-Information AVP*/
-	SS_WCHECK( ss_get_gavp_mme_location_information(tmp_gavp, &tmp_gavp2), "MME-Location-Information retrieved.\n", "Failed to retrieve MME-Location-Information.\n", return);
-
-	/*Get E-UTRAN-Cell-Global-Identity*/
-	SS_WCHECK( ss_get_e_utran_cell_global_identity(tmp_gavp2, &eutran_cgi, &len), "E-UTRAN-Cell-Global-Identity retrieved.\n", "Failed to retrieve E-UTRAN-Cell-Global-Identity.\n", return);
-
-	/*Get Tracking-Area-Identity*/
-	SS_WCHECK( ss_get_tracking_area_identity(tmp_gavp2, &trak_area_id, &len), "Tracking-Area-Identity retrieved.\n", "Failed to retrieve Tracking-Area-Identity.\n", return);
-	
-	/*Get Geographical-Information*/
-	SS_WCHECK( ss_get_geographical_information(tmp_gavp2, &geog_inf, &len), "Geographical-Information retrieved.\n", "Failed to retrieve Geographical-Information.\n", return);
-
-	/*Get Geodetic-Information*/
-	SS_WCHECK( ss_get_geodetic_information(tmp_gavp2, &geod_inf, &len), "Geodetic-Information retrieved.\n", "Failed to retrieve Geodetic-Information.\n", return);
-
-	/*Get Current-Location-Retrieved*/
-	SS_WCHECK( ss_get_current_location_retrieved(tmp_gavp2, (int32_t *)&curr_loc_ret), "Current-Location-Retrieved retrieved.\n", "Failed to retrieve Current-Location-Retrieved.\n", return);
-
-	/*Get Age-Of-Location-Information*/
-	SS_WCHECK( ss_get_age_of_location_information(tmp_gavp2, &age_loc_inf), "Age-Of-Location-Information retrieved.\n", "Failed to retrieve Age-Of-Location-Information.\n", return);
-
-	/*Get User-CSG-Information*/
-	SS_WCHECK( ss_get_gavp_user_csg_information(tmp_gavp2, &tmp_gavp3), "User-CSG-Information retrieved.\n", "Failed to retrieve User-CSG-Information.\n", return);
-
-	/*Get CSG-Id*/
-	SS_CHECK( ss_get_csg_id(tmp_gavp3, &csg_id), "CSG-Id retrieved.\n", "Failed to retrieve CSG-Id.\n");
-	
-	/*Get CSG-Access-Mode*/
-	SS_CHECK( ss_get_csg_access_mode(tmp_gavp3, (int32_t *)&csg_acc_mode), "CSG-Access-Mode retrieved.\n", "Failed to retrieve CSG-Access-Mode.\n");
-
-	/*Get CSG-Membership-Indication*/
-	SS_WCHECK( ss_get_csg_membership_indication(tmp_gavp3, (int32_t *)&csg_memb_ind), "CSG-Membership-Indication retrieved.\n", "Failed to retrieve CSG-Membership-Indication.\n", return);
-}
 
 /*check Local-Time-Zone*/
 static void check_local_time_zone(struct msg *msg){
@@ -311,7 +256,7 @@ static void check_local_time_zone(struct msg *msg){
 
 }
 
-/*This is register when ULR request is send and when the corresponding ansWer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+/*This is register when ULR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_ulr(void * data, struct msg ** msg){
 
@@ -350,7 +295,7 @@ void test_ans_cb_ulr(void * data, struct msg ** msg){
 	}
 }
 
-/*This is register when request is send and when the corresponding anser is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+/*This is register when CLR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_clr(void * data, struct msg ** msg){
 
@@ -372,7 +317,7 @@ void test_ans_cb_clr(void * data, struct msg ** msg){
 	}
 }
 
-/*This is register when request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+/*This is register when request is AIR send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_air(void * data, struct msg ** msg){
 
@@ -397,7 +342,7 @@ void test_ans_cb_air(void * data, struct msg ** msg){
 	}
 }
 
-/*This is register when request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+/*This is register when IDR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_idr(void * data, struct msg ** msg){
 
@@ -427,7 +372,7 @@ void test_ans_cb_idr(void * data, struct msg ** msg){
 	check_eps_usr_state(*msg);
 
 	/*Get EPS-Location-Information*/
-	check_eps_location_info(*msg);
+	test_check_eps_location_info(*msg);
 
 	/*Get Local-Time-Zone*/
 	check_local_time_zone(*msg);
@@ -441,6 +386,102 @@ void test_ans_cb_idr(void * data, struct msg ** msg){
 
 	if(1 == check_shut_down){
 		fprintf(stdout,COLOR_GREEN"IDR/IDA MESSAGE TEST COMPLETED.\n. Sending core shutdown signal."ANSI_COLOR_RESET"\n");
+		SS_CHECK(fd_core_shutdown(),"CORE SHUT DOWN\n", "FAILED TO SHUTDOWN CORE.\n");
+	}
+}
+
+/*This is register when DSR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_dsr(void * data, struct msg ** msg){
+
+	static int check_shut_down = 0;
+	unsigned32 dsa_flgs = 0;
+
+	/*check common content of answer msg*/
+	check_answer(msg);	
+
+	/*check DSA-Flags*/
+	SS_WCHECK( ss_get_dsa_flags_msg( *msg, &dsa_flgs), "DSA-Flags retrieved.\n", "Failed to retrieve DSA-Flags.\n", NULL);
+
+	/* Free the message */
+	fd_msg_free(*msg);
+	*msg = NULL;
+	
+	/*update cout of message received so far*/
+	check_shut_down ++;
+
+	if(1 == check_shut_down){
+		fprintf(stdout,COLOR_GREEN"DSR/DSA MESSAGE TEST COMPLETED.\n. Sending core shutdown signal."ANSI_COLOR_RESET"\n");
+		SS_CHECK(fd_core_shutdown(),"CORE SHUT DOWN\n", "FAILED TO SHUTDOWN CORE.\n");
+	}
+}
+
+/*This is register when PUR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_pur(void * data, struct msg ** msg){
+
+	static int check_shut_down = 0;
+	unsigned32 pua_flgs = 0;
+
+	/*check common content of answer msg*/
+	check_answer(msg);	
+
+	/*check PUA-Flags*/
+	SS_WCHECK( ss_get_pua_flags_msg( *msg, &pua_flgs), "PUA-Flags retrieved.\n", "Failed to retrieve PUA-Flags.\n", NULL);
+
+	/* Free the message */
+	fd_msg_free(*msg);
+	*msg = NULL;
+	
+	/*update cout of message received so far*/
+	check_shut_down ++;
+
+	if(1 == check_shut_down){
+		fprintf(stdout,COLOR_GREEN"PUR/PUA MESSAGE TEST COMPLETED.\n. Sending core shutdown signal."ANSI_COLOR_RESET"\n");
+		SS_CHECK(fd_core_shutdown(),"CORE SHUT DOWN\n", "FAILED TO SHUTDOWN CORE.\n");
+	}
+}
+
+/*This is register when RSR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_rsr(void * data, struct msg ** msg){
+
+	static int check_shut_down = 0;
+
+	/*check common content of answer msg*/
+	check_answer(msg);	
+
+	/* Free the message */
+	fd_msg_free(*msg);
+	*msg = NULL;
+	
+	/*update cout of message received so far*/
+	check_shut_down ++;
+
+	if(1 == check_shut_down){
+		fprintf(stdout,COLOR_GREEN"RSR/RSA MESSAGE TEST COMPLETED.\n. Sending core shutdown signal."ANSI_COLOR_RESET"\n");
+		SS_CHECK(fd_core_shutdown(),"CORE SHUT DOWN\n", "FAILED TO SHUTDOWN CORE.\n");
+	}
+}
+
+/*This is register when NOR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_nor(void * data, struct msg ** msg){
+
+	static int check_shut_down = 0;
+
+	/*check common content of answer msg*/
+	check_answer(msg);	
+
+	/* Free the message */
+	fd_msg_free(*msg);
+	*msg = NULL;
+	
+	/*update cout of message received so far*/
+	check_shut_down ++;
+
+	if(1 == check_shut_down){
+		fprintf(stdout,COLOR_GREEN"NOR/NOA MESSAGE TEST COMPLETED.\n. Sending core shutdown signal."ANSI_COLOR_RESET"\n");
 		SS_CHECK(fd_core_shutdown(),"CORE SHUT DOWN\n", "FAILED TO SHUTDOWN CORE.\n");
 	}
 }

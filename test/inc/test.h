@@ -439,7 +439,7 @@ void test_set_supported_features(struct msg **msg, unsigned32 vendor_id, unsigne
 void test_get_supported_features(struct msg *msg, unsigned32 **ftr_lst_id, unsigned32 **ftr_lst, size_t *size);
 
 /*Set MIP6-Agent-Info AVP */
-void test_set_mip6(struct avp **gavp, address * ipv4, address * ipv6, diameterid * host, diameterid * realm);
+void test_set_mip6(avp_or_msg **msg_gavp, address * ipv4, address * ipv6, diameterid * host, diameterid * realm);
 
 /*helper function to sends Cancel-Location-Request*/
 int test_send_clr(diameterid *destination_host, diameterid *destination_rlm, utf8string * user_name, enum cancellation_type cancellation_type, unsigned32 clr_flags);
@@ -460,25 +460,55 @@ int test_req_air(char * dst_host);
 /*Sends Insert-Subscriber-Data-Request message for testing*/
 int test_req_idr(char * dest_host);
 
+/*Sends Insert-Subscriber-Data-Request message for testing*/
+int test_req_dsr(char * dest_host);
+
+/*Sends Purge-UE-Request message for testing*/
+int test_req_pur(char * dest_host);
+
+/*Sends Reset-Request message for testing*/
+int test_req_rsr(char * dest_host);
+
+/*Sends Notify-Request message for testing*/
+int test_req_nor(char * dest_host);
+
 /*Callback function to when any ULA answer message is received*/
 /*This is register when request is send and when the corresponding anser is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_ulr(void * data, struct msg ** msg);
 
 /*Callback function to when any CLA answer message is received*/
-/*This is register when request is send and when the corresponding anser is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+/*This is register when CLR request is send and when the corresponding anser is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_clr(void * data, struct msg ** msg);
 
 /*Callback function to when any AIA answer message is received*/
-/*This is register when request is send and when the corresponding anser is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+/*This is register when AIR request is send and when the corresponding anser is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_air(void * data, struct msg ** msg);
 
 /*Callback function to when any IDA answer message is received*/
-/*This is register when request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+/*This is register when IDR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
 */
 void test_ans_cb_idr(void * data, struct msg ** msg);
+
+/*Callback function to when any DSA answer message is received*/
+/*This is register when DSR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_dsr(void * data, struct msg ** msg);
+
+/*Callback function to when any PUA answer message is received*/
+/*This is register when PUR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_pur(void * data, struct msg ** msg);
+
+/*This is register when RSR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_rsr(void * data, struct msg ** msg);
+
+/*This is register when NOR request is send and when the corresponding answer is received the deamon calls this function and passes the answer message 'msg' for this function to process. and it also passes the data 'data' which was registered when the request was sent.
+*/
+void test_ans_cb_nor(void * data, struct msg ** msg);
 
 /*Callback function to when any ULR message is received*/
 int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
@@ -491,6 +521,18 @@ int test_req_cb_air(struct msg ** msg, struct avp * av, struct session * sess, v
 
 /*Callback function used when Insert-Subscriber-Data-Answer message is received*/
 int test_req_cb_idr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
+
+/*Callback function used when Delete-Subscriber-Data-Answer message is received*/
+int test_req_cb_dsr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
+
+/*Callback function used when Purge-UE-Request message is received*/
+int test_req_cb_pur(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
+
+/*Callback function used when Reset-Request message is received*/
+int test_req_cb_rsr(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
+
+/*Callback function used when Notify-Request message is received*/
+int test_req_cb_nor(struct msg ** msg, struct avp * av, struct session * sess, void * opaq, enum disp_action * act);
 
 /*finds a substring in a given string('parent_str') that immediatly follows another reference substring('ref_str') untill space charater or new line character or null character. if return is not NULL it should be freed after use*/
 char * test_parse_string(char * parent_str, char * ref_str);
@@ -530,5 +572,14 @@ void test_check_subsc_data(struct msg * msg);
 
 /*Check LCS-Info*/
 void test_check_lcs_info( struct avp *tmp_gavp);
+
+/*Set EPS-Location-Information*/
+void test_set_eps_location_info(struct msg **msg);
+
+/*check EPS-Location-Information*/
+void test_check_eps_location_info(struct msg *msg);
+
+/*check MIP6-Agent-Info AVP ***/
+void test_check_mip6(avp_or_msg *msg_avp);
 
 #endif

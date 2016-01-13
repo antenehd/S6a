@@ -274,6 +274,66 @@
 
 	 	Now you should see the test running on both terminals
 
+	  Test Delete-Subscriber-Data-Request/Answer : 
+
+	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	    command to simulate an MME server which is waiting for S6a interface messages:
+
+		# ./testapp mme
+
+	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
+       	waiting for Upadate-Location-Answer:
+
+		# ./testapp dsr peer1.localdomain
+
+	 	Now you should see the test running on both terminals
+
+	  Test Purge-UE-Request/Answer : 
+
+	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	    command to simulate an MME server which is waiting for S6a interface messages:
+
+		# ./testapp hss
+
+	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
+       	waiting for Upadate-Location-Answer:
+
+		# ./testapp pur peer1.localdomain
+
+	 	Now you should see the test running on both terminals
+
+	  Test Reset-Request/Answer : 
+
+	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	    command to simulate an MME server which is waiting for S6a interface messages:
+
+		# ./testapp mme
+
+	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
+       	waiting for Upadate-Location-Answer:
+
+		# ./testapp rsr peer1.localdomain
+
+	 	Now you should see the test running on both terminals
+
+	  Test Notify-Request/Answer : 
+
+	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	    command to simulate an MME server which is waiting for S6a interface messages:
+
+		# ./testapp hss
+
+	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
+       	waiting for Upadate-Location-Answer:
+
+		# ./testapp nor peer1.localdomain
+
+	 	Now you should see the test running on both terminals
+
 
 
 

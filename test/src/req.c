@@ -71,7 +71,7 @@ static void set_spec_apn_info(struct avp **gavp, utf8string *serv_sel, address *
 	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel, strlen((char *)serv_sel)), "Service-Selection AVP set in Specific-APN-Info AVP.\n","Failed to set Service-Selection AVP in Specific-APN-Info AVP\n");
 
 	/*Add MIP6-Agent-Info group AVP in to Specific-APN-Info*/ 	
-	test_set_mip6( &tmp_gavp, ipv4, ipv6, host, realm);
+	test_set_mip6( (avp_or_msg **)&tmp_gavp, ipv4, ipv6, host, realm);
 
 	/*Set Visited-Network-Identifier AVP*/	
 	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id, strlen((char *) vis_net_id)), "Visited-Network-Identifier AVP set in Specific-APN-Info.\n","Failed to set Visited-Network-Identifier AVP in Specific-APN-Info.\n");
@@ -101,7 +101,7 @@ static void set_active_apn(struct msg **msg, unsigned32 context_id, utf8string *
 	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel, strlen((char *)serv_sel)), "Service-Selection AVP set in Active-APN AVP.\n","Failed to set Service-Selection AVP in Active-APN AVP\n");
 
 	/*Set MIP6-Agent-Info group AVP and its child AVPs*/
-	test_set_mip6( &tmp_gavp, ipv4, ipv6, host, realm);
+	test_set_mip6( (avp_or_msg **)&tmp_gavp, ipv4, ipv6, host, realm);
 
 	/*Set Visited-Network-Identifier AVP*/	
 	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id, strlen((char *)vis_net_id)), "Visited-Network-Identifier AVP set in Active-APN AVP.\n","Failed to set Visited-Network-Identifier AVP in Active-APN AVP.\n");
@@ -211,8 +211,8 @@ int test_req_ulr(char * dest_host, int test_type){
 	address * gmlc_address = (address *)"gmlc.local";
 	unsigned32 context_identifier = 1;
 	utf8string * service_selection = (utf8string *)"serviceSelection";
-	address  home_agent_address_v4 [] = {0xef,0x00,0x00,0x01};
-	address  home_agent_address_v6 [] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0x7f,0x00,0x00,0x01};
+	address  home_agent_address_v4 [] = {0xef,0x01,0x01,0x01, '\0'};
+	address  home_agent_address_v6 [] = {0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, 0x01,0x01,0xff,0xff,0x7f, 0x01, 0x01, 0x01, '\0'};
 	diameterid * home_agent_host_host = (diameterid *) "pdngateway1";
 	diameterid * home_agent_host_realm = (diameterid *) "epc.mnc001.mcc001.3gppnetwork.org ";
 	octetstring * visited_network_identifier = (octetstring *)"visited-net-id";
@@ -418,7 +418,7 @@ int test_req_idr(char * dest_host){
 		sleep(2);
 
 	/*Create AIR message*/
-	SS_CHECK( ss_msg_create_idr(&idr), "Authentication-Information-Request message Created.\n", "Error in creating Authentication-Information-Request message.\n");
+	SS_CHECK( ss_msg_create_idr(&idr), "Insert-Subscriber-Data-Request message Created.\n", "Error in creating Insert-Subscriber-Data-Request message.\n");
 
 	/*Set Destination-Host AVP*/
 	SS_CHECK( ss_set_destination_host((avp_or_msg **) &idr, destination_host, strlen((char *)destination_host)), "Destination-Host AVP set.\n", "failed to set Destination-Host AVP.\n");
@@ -446,6 +446,261 @@ int test_req_idr(char * dest_host){
 
 	/*Send AIR message*/
 	SS_CHECK( fd_msg_send( &idr, test_ans_cb_idr, NULL), "AIR message sent.\n", "Failed to send AIR message.\n");
+
+	return 0;
+}
+
+/*Sends Delete-Subscriber-Data-Request message for testing*/
+int test_req_dsr(char * dest_host){
+	
+	int len = 0;
+	struct msg *dsr = NULL;	
+
+	if(!dest_host)
+		return EINVAL;
+
+	diameterid *destination_host= (diameterid *) dest_host;
+	diameterid *destination_realm = (diameterid *)"localdomain";
+	utf8string *user_name = (utf8string *)"244444123456789";	
+	unsigned32 feature_list_id[] = {1,2};
+	unsigned32 feature_list[] = {3,2};
+	unsigned32 dsr_flags = 64;
+	unsigned32 context_id[] = {1,2,3};
+	octetstring trace_ref[] = {0x01,0x11,0x01,0x01,0x01,0x02,'\0'};
+	octetstring ts_code[][2] = {{0x01,'\n'},{0x02,'\0'}};
+	octetstring ss_code[][2] = {{0x01,'\n'},{0x02,'\0'}};
+
+	/*waite until remote peer state is open*/
+	len = strlen(dest_host);
+	if(ss_peer_state( dest_host, len) != 1)
+		fprintf(stdout, "Waiting until connection to remote peer is estabilished ...\n");	
+	while(ss_peer_state( dest_host, len) != 1)
+		sleep(2);
+
+	/*Create DSR message*/
+	SS_CHECK( ss_msg_create_dsr(&dsr), "Delete-Subscriber-Data-Request message Created.\n", "Error in creating Delete-Subscriber-Data-Request message.\n");
+
+	/*Set Destination-Host AVP*/
+	SS_CHECK( ss_set_destination_host((avp_or_msg **) &dsr, destination_host, strlen((char *)destination_host)), "Destination-Host AVP set.\n", "failed to set Destination-Host AVP.\n");
+
+	/*Set Destination-Realm AVP*/
+	SS_CHECK( ss_set_destination_realm( (avp_or_msg **) &dsr, destination_realm, strlen((char *)destination_realm)), "Destination-Realm AVP set.\n", "failed to set Destination-Realm AVP.\n");
+
+	/* Set User-Name (imsi)*/
+	SS_CHECK( ss_set_user_name(&dsr, user_name, strlen((char *)user_name)), "User-Name set.\n", "failed to set User-Name.\n");
+
+	/* Set Supported-Features AVP (two AVPs will be set)*/
+	test_set_supported_features(&dsr, (unsigned32)VENDOR_ID_3GPP, feature_list_id[0], feature_list[0]);
+	test_set_supported_features(&dsr, (unsigned32)VENDOR_ID_3GPP, feature_list_id[1], feature_list[1]);
+
+	/*Set DSR-Flags*/
+	SS_CHECK( ss_set_dsr_flags(&dsr, dsr_flags), "DSR-Flags set.\n", "Failed to set DSR-Flags.\n");
+
+	/*Set Context-Identifier (3 AVPs for testing)*/
+	SS_CHECK( ss_set_context_identifier((avp_or_msg **)&dsr, context_id[0]), "Context-Identifier set.\n","Failed to set Context-Identifier.\n");
+	SS_CHECK( ss_set_context_identifier((avp_or_msg **)&dsr, context_id[1]), "Context-Identifier 2 set.\n","Failed to set Context-Identifier 2.\n");
+	SS_CHECK( ss_set_context_identifier((avp_or_msg **)&dsr, context_id[2]), "Context-Identifier 3 set.\n","Failed to set Context-Identifier 3.\n");
+
+	/*Set Trace-Reference*/
+	SS_CHECK( ss_set_trace_reference((avp_or_msg **)&dsr, trace_ref, strlen((char *)trace_ref)), "Trace-Reference set.\n", "Failed to set Trace-Reference.\n");
+
+	/*Set TS-Code (2 AVPs set for testing)*/
+	SS_CHECK( ss_set_ts_code((avp_or_msg **)&dsr, ts_code[0], strlen((char *)ts_code[0])), "TS-Code set.\n", "Failed to set TS-Code.\n");
+	SS_CHECK( ss_set_ts_code((avp_or_msg **)&dsr, ts_code[1], strlen((char *)ts_code[1])), "TS-Code set.\n", "Failed to set TS-Code.\n");
+
+	/*Set SS-Code (2 AVPs set for testing)*/
+	SS_CHECK( ss_set_ss_code((avp_or_msg **)&dsr, ss_code[0], strlen((char *)ss_code[0])), "SS-Code set.\n", "Failed to set SS-Code.\n");
+	SS_CHECK( ss_set_ss_code((avp_or_msg **)&dsr, ss_code[1], strlen((char *)ss_code[1])), "SS-Code set.\n", "Failed to set SS-Code.\n");
+	
+	/*Send DSR message */
+	SS_CHECK( fd_msg_send( &dsr, test_ans_cb_dsr, NULL), "DSR message sent.\n", "Failed to send DSR message.\n");
+
+	return 0;
+}
+
+/*Sends Purge-UE-Request message for testing*/
+int test_req_pur(char * dest_host){
+	
+	int len = 0;
+	struct msg *pur = NULL;	
+
+	if(!dest_host)
+		return EINVAL;
+
+	diameterid *destination_host= (diameterid *) dest_host;
+	diameterid *destination_realm = (diameterid *)"localdomain";
+	utf8string *user_name = (utf8string *)"244444123456789";	
+	unsigned32 feature_list_id[] = {1,2};
+	unsigned32 feature_list[] = {3,2};
+	unsigned32 pur_flags = 4;
+	
+
+	/*waite until remote peer state is open*/
+	len = strlen(dest_host);
+	if(ss_peer_state( dest_host, len) != 1)
+		fprintf(stdout, "Waiting until connection to remote peer is estabilished ...\n");	
+	while(ss_peer_state( dest_host, len) != 1)
+		sleep(2);
+
+	/*Create PUR message*/
+	SS_CHECK( ss_msg_create_pur(&pur), "Purge-UE-Request message Created.\n", "Error in creating Purge-UE-Request message.\n");
+
+	/*Set Destination-Host AVP*/
+	SS_CHECK( ss_set_destination_host((avp_or_msg **) &pur, destination_host, strlen((char *)destination_host)), "Destination-Host AVP set.\n", "failed to set Destination-Host AVP.\n");
+
+	/*Set Destination-Realm AVP*/
+	SS_CHECK( ss_set_destination_realm( (avp_or_msg **) &pur, destination_realm, strlen((char *)destination_realm)), "Destination-Realm AVP set.\n", "failed to set Destination-Realm AVP.\n");
+
+	/* Set User-Name (imsi)*/
+	SS_CHECK( ss_set_user_name(&pur, user_name, strlen((char *)user_name)), "User-Name set.\n", "failed to set User-Name.\n");
+
+	/* Set Supported-Features AVP (two AVPs will be set)*/
+	test_set_supported_features(&pur, (unsigned32)VENDOR_ID_3GPP, feature_list_id[0], feature_list[0]);
+	test_set_supported_features(&pur, (unsigned32)VENDOR_ID_3GPP, feature_list_id[1], feature_list[1]);
+
+	/*Set PUR-Flags*/
+	SS_CHECK( ss_set_pur_flags(&pur, pur_flags), "PUR-Flags set.\n", "Failed to set PUR-Flags.\n");
+
+	/*Set EPS-Location-Information*/
+	test_set_eps_location_info(&pur);
+
+	/*Send PUR message */
+	SS_CHECK( fd_msg_send( &pur, test_ans_cb_pur, NULL), "PUR message sent.\n", "Failed to send PUR message.\n");
+
+	return 0;
+}
+
+/*Sends Reset-Request message for testing*/
+int test_req_rsr(char * dest_host){
+	
+	int len = 0;
+	struct msg *rsr = NULL;	
+
+	if(!dest_host)
+		return EINVAL;
+
+	diameterid *destination_host= (diameterid *) dest_host;
+	diameterid *destination_realm = (diameterid *)"localdomain";
+	unsigned32 feature_list_id[] = {1,2};
+	unsigned32 feature_list[] = {3,2};
+	utf8string *user_id[]= {(utf8string *)"24444412", (utf8string *)"24444412"};
+	octetstring *reset_id[] = {(octetstring *)"244444", (octetstring *)"244445", (octetstring *)"244446"};
+	
+
+	/*waite until remote peer state is open*/
+	len = strlen(dest_host);
+	if(ss_peer_state( dest_host, len) != 1)
+		fprintf(stdout, "Waiting until connection to remote peer is estabilished ...\n");	
+	while(ss_peer_state( dest_host, len) != 1)
+		sleep(2);
+
+	/*Create RSR message*/
+	SS_CHECK( ss_msg_create_rsr(&rsr), "Reset-Request message Created.\n", "Error in creating Reset-Request message.\n");
+
+	/*Set Destination-Host AVP*/
+	SS_CHECK( ss_set_destination_host((avp_or_msg **) &rsr, destination_host, strlen((char *)destination_host)), "Destination-Host AVP set.\n", "failed to set Destination-Host AVP.\n");
+
+	/*Set Destination-Realm AVP*/
+	SS_CHECK( ss_set_destination_realm( (avp_or_msg **) &rsr, destination_realm, strlen((char *)destination_realm)), "Destination-Realm AVP set.\n", "failed to set Destination-Realm AVP.\n");
+
+	/* Set Supported-Features AVP (two AVPs will be set)*/
+	test_set_supported_features(&rsr, (unsigned32)VENDOR_ID_3GPP, feature_list_id[0], feature_list[0]);
+	test_set_supported_features(&rsr, (unsigned32)VENDOR_ID_3GPP, feature_list_id[1], feature_list[1]);
+
+	/*Set User-Id (only 2 AVPs set for training)*/
+	SS_CHECK( ss_set_user_id( &rsr, user_id[0], strlen((char *) user_id[0])), "User-Id set.\n", "Failed to set User-Id.\n");
+	SS_CHECK( ss_set_user_id( &rsr, user_id[1], strlen((char *) user_id[1])), "User-Id 2 set.\n", "Failed to set User-Id 2.\n");	
+
+	/*Set Reset-Id, (only 3 AVPs set for testing)*/
+	SS_CHECK( ss_set_reset_id(&rsr, reset_id[0], strlen((char *)reset_id[0])), "Reset-Id set.\n", "Failed to set Reset-Id.\n");
+	SS_CHECK( ss_set_reset_id(&rsr, reset_id[1], strlen((char *)reset_id[1])), "Reset-Id 2 set.\n", "Failed to set Reset-Id 2.\n");
+	SS_CHECK( ss_set_reset_id(&rsr, reset_id[2], strlen((char *)reset_id[2])), "Reset-Id 3 set.\n", "Failed to set Reset-Id 3.\n");
+
+	/*Send RSR message */
+	SS_CHECK( fd_msg_send( &rsr, test_ans_cb_rsr, NULL), "RSR message sent.\n", "Failed to send RSR message.\n");
+
+	return 0;
+}
+
+/*Sends Notify-Request message for testing*/
+int test_req_nor(char * dest_host){
+	
+	struct msg * nor = NULL;
+	int len = 0;
+	
+	if(!dest_host) return 1;
+
+	diameterid * destination_host= (diameterid *) dest_host;
+	diameterid * destination_realm = (diameterid *)"localdomain";
+	utf8string * user_name = (utf8string *)"244444123456789";	
+	unsigned32 feature_list_id = 1;
+	unsigned32 feature_list = 2; 		
+	utf8string * imei = (utf8string *)"2345";
+	utf8string * software_version = (utf8string *)"22";
+	octetstring * meid = (octetstring *)"2345";
+	unsigned32 context_identifier = 1;
+	unsigned32 nor_flags = 8;
+	enum ue_srvcc_capability ue_srvcc_capability = UE_SRVCC_SUPPORTED;
+	enum homogeneous_support_of_ims_voice_over_ps_sessions homogeneous_support_ims_voice_over_ps_sessions = HOMO_IMS_VOICE_OVER_PS_NOT_SUPPORTED;
+	utf8string * service_selection = (utf8string *)"serviceSelection";
+	address  home_agent_address_v4 [] = {0xef,0x00,0x00,0x01};
+	address  home_agent_address_v6 [] = {0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, 0x01,0x01,0xff,0xff,0x7f, 0x01, 0x01, 0x01, '\0'};
+	diameterid * home_agent_host_host = (diameterid *) "pdngateway1";
+	diameterid * home_agent_host_realm = (diameterid *) "epc.mnc001.mcc001.3gppnetwork.org ";
+	octetstring * visited_network_identifier = (octetstring *)"visited-net-id";	
+	enum alert_reason alert_reason = UE_PRESENT;
+		
+	/*wait until remote peer connetion state is open*/
+	len = strlen(dest_host);
+	if(ss_peer_state( dest_host, len) != 1)
+		fprintf(stdout, "Waiting until connection to remote peer is estabilished ...\n");	
+	while(ss_peer_state( dest_host, len) != 1)
+		sleep(2);
+	
+	/*Create Notify-Request message*/
+	SS_CHECK( ss_msg_create_nor(&nor), "Notify-Request message Created.\n", "Error in creating Notify-Request message.\n");
+
+	/*Set Destination-Host AVP*/	
+	SS_CHECK( ss_set_destination_host( (avp_or_msg **)&nor, destination_host,strlen((char *)destination_host)), "Destination-Host AVP set.\n","Failed to set Destination-Host AVP\n");
+	
+	/*Set Destination-Realm AVP*/
+	SS_CHECK( ss_set_destination_realm( (avp_or_msg **)&nor, destination_realm,strlen((char *)destination_realm)), "Destination-Realm AVP set.\n","Failed to set Destination-Realm AVP\n");
+
+	/*Set User-Name AVP*/
+	SS_CHECK( ss_set_user_name( &nor, user_name, strlen((char *)user_name)), "User-Name AVP set.\n","Failed to set User-Name AVP\n");
+	
+	/*Set Supported-Features group AVP and its child AVPs*/
+	test_set_supported_features(&nor, (unsigned32)VENDOR_ID_3GPP, feature_list_id, feature_list);
+
+	/*Set Terminal-Information group AVP and its child AVPs*/
+	set_terminal_info( &nor, imei, software_version, meid, strlen((char *)meid));
+	
+	/*Set MIP6-Agent-Info*/
+	test_set_mip6((avp_or_msg **)&nor, home_agent_address_v4, home_agent_address_v6, home_agent_host_host, home_agent_host_realm);
+
+	/*Set Visited-Network-Identifier*/
+	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&nor, visited_network_identifier, strlen((char *)visited_network_identifier)), "Visited-Network-Identifier set.\n", "Failed to set Visited-Network-Identifier.\n");
+
+	/*Set Context-Identifier*/
+	SS_CHECK( ss_set_context_identifier((avp_or_msg **)&nor, context_identifier), "Context-Identifier set.\n", "Failed to set Context-Identifier/\n");
+
+	/*Set Service-Selection*/
+	SS_CHECK( ss_set_service_selection( (avp_or_msg **) &nor, service_selection, strlen((char *)service_selection)), "Service-Selection set.\n", "Failed to set Service-Selection.\n");
+
+	/*Set Alert-Reason*/
+	SS_CHECK( ss_set_alert_reason(&nor, alert_reason), "Alert-Reason set.\n", "Failed to set Alert-Reason.\n");
+	
+	/*Set UE-SRVCC-Capability AVP*/
+	SS_CHECK( ss_set_ue_srvcc_capability( &nor, ue_srvcc_capability), "UE-SRVCC-Capability AVP set.\n","Failed to set UE-SRVCC-Capability AVP\n");
+
+	/*Set NOR-Flags AVP*/
+	SS_CHECK( ss_set_nor_flags( &nor, nor_flags), "NOR-Flags AVP set.\n","Failed to set NOR-Flags AVP\n");
+	
+	/*Set Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP*/
+	SS_CHECK( ss_set_homogeneous_support_of_ims_voice_over_ps_sessions( &nor, (int32_t)homogeneous_support_ims_voice_over_ps_sessions), "Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP set.\n","Failed to set Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP\n");
+
+	/*send request*/
+	SS_CHECK( fd_msg_send( &nor, test_ans_cb_nor, NULL), "NOR message sent.\n", "Failed to send NOR message.\n");
 
 	return 0;
 }

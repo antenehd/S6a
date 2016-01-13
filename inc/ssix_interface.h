@@ -724,13 +724,13 @@ int ss_get_gavp_next_active_apn(struct avp *avp, struct avp **gavp);
 int ss_get_gavp_equivalent_plmn_list(struct msg *msg, struct avp **gavp);
 
 /**Retrieves MIP6-Agent-Info AVP from AVP of type grouped.
-	@param	avp : a pointer to an AVP of typed grouped in which MIP6-Agent-Info AVP is searched.
+	@param	msg_avp : a pointer to an AVP of typed grouped in which MIP6-Agent-Info AVP is searched.
 	@param gavp : a pointer to an instance of 'struct avp' pointer which will point to MIP6-Agent-Info AVP upon successful function return.
 	@return 0 : The AVP has been found (success)
     @return EINVAL : A parameter is invalid.
     @return ENOENT : No AVP has been found, and *gavp is set to NULL.
 */
-int ss_get_gavp_mip6_agent_info(struct avp *avp, struct avp **gavp);
+int ss_get_gavp_mip6_agent_info(avp_or_msg *msg_avp, struct avp **gavp);
 
 /**Retrieves MIP-Home-Agent-Host AVP from AVP of type grouped.
 	@param	avp : a pointer to an AVP of typed grouped in which MIP-Home-Agent-Host AVP is searched.
@@ -4744,7 +4744,7 @@ int ss_get_trace_reference_msg(struct msg *msg, unsigned char **val, size_t *len
   @return ENOENT : No AVP has been found.
   @return ENOMEM : Memory allocation failed
 */
-int ss_get_ts_code_msg_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size);
+int ss_get_ts_code_array(struct msg *msg, unsigned char ***array_ret, size_t **len, size_t *array_size);
 
 /**Retrieves multiple SS-Code AVPs value from message. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  

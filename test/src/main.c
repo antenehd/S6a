@@ -9,12 +9,17 @@ char * diameter_conffile_name = NULL;
 /*Value of 'argv' is the destination peer if this peer acts as a client otherwise 'argv' should be NULL(no argument)*/
 int main(int argc, char **argv){
 	
-	char * mme = "mme";
-	char * hss = "hss";
-	char * ulr = "ulr";
-	char * clr = "clr";
-	char * air = "air";
-	char * idr = "idr";
+	char *mme = "mme";
+	char *hss = "hss";
+	char *ulr = "ulr";
+	char *clr = "clr";
+	char *air = "air";
+	char *idr = "idr";
+	char *dsr = "dsr";
+	char *pur = "pur";
+	char *rsr = "rsr";
+	char *nor = "nor";
+
 	SS_CHECK( ss_init(),"Test application Initialized.\n", "Failed to initialize test application.\n"); ;
 
 	if(argc == 3){
@@ -55,8 +60,36 @@ int main(int argc, char **argv){
 		/*Test Insert-Subscriber-Data-Request message*/
 		else if(  0 == strncmp(argv[1], idr, 3)){
 
-			/*Prepare and send AIR message*/
+			/*Prepare and send IDR message*/
 			test_req_idr(argv[2]);
+		}
+
+		/*Test Delete-Subscriber-Data-Request message*/
+		else if(  0 == strncmp(argv[1], dsr, 3)){
+
+			/*Prepare and send DSR message*/
+			test_req_dsr(argv[2]);
+		}
+
+		/*Test Purge-UE-Request message*/
+		else if(  0 == strncmp(argv[1], pur, 3)){
+
+			/*Prepare and send PUR message*/
+			test_req_pur(argv[2]);
+		}
+
+		/*Test Reset-Request message*/
+		else if(  0 == strncmp(argv[1], rsr, 3)){
+
+			/*Prepare and send PUR message*/
+			test_req_rsr(argv[2]);
+		}
+
+		/*Test Notify-Request message*/
+		else if(  0 == strncmp(argv[1], nor, 3)){
+
+			/*Prepare and send PUR message*/
+			test_req_nor(argv[2]);
 		}
 
 		else
@@ -74,6 +107,12 @@ int main(int argc, char **argv){
 
 			/*Register callback for AIR*/
 			SS_CHECK( ss_reg_cb_air(test_req_cb_air), "Call back for AIR registerd.\n", "Failed to register callback for AIR.\n");
+	
+			/*Register callback for PUR*/
+			SS_CHECK( ss_reg_cb_pur(test_req_cb_pur), "Call back for PUR registerd.\n", "Failed to register callback for PUR.\n");
+
+			/*Register callback for NOR*/
+			SS_CHECK( ss_reg_cb_nor(test_req_cb_nor), "Call back for NOR registerd.\n", "Failed to register callback for NOR.\n");
 		}
 
 		/*if started as MME*/
@@ -84,6 +123,12 @@ int main(int argc, char **argv){
 
 			/*Register callback for IDR*/
 			SS_CHECK( ss_reg_cb_idr(test_req_cb_idr), "Call back for IDR registerd.\n", "Failed to register callback for IDR.\n");
+
+			/*Register callback for DSR*/
+			SS_CHECK( ss_reg_cb_dsr(test_req_cb_dsr), "Call back for DSR registerd.\n", "Failed to register callback for DSR.\n");
+
+			/*Register callback for RSR*/
+			SS_CHECK( ss_reg_cb_rsr(test_req_cb_rsr), "Call back for RSR registerd.\n", "Failed to register callback for RSR.\n");
 		}
 
 		else

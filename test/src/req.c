@@ -667,7 +667,7 @@ int test_req_nor(char * dest_host){
 	SS_CHECK( ss_set_destination_realm( (avp_or_msg **)&nor, destination_realm,strlen((char *)destination_realm)), "Destination-Realm AVP set.\n","Failed to set Destination-Realm AVP\n");
 
 	/*Set User-Name AVP*/
-	SS_CHECK( ss_set_user_name( &nor, user_name, strlen((char *)user_name)), "User-Name AVP set.\n","Failed to set User-Name AVP\n");
+	/*SS_CHECK( ss_set_user_name( &nor, user_name, strlen((char *)user_name)), "User-Name AVP set.\n","Failed to set User-Name AVP\n");*/
 	
 	/*Set Supported-Features group AVP and its child AVPs*/
 	test_set_supported_features(&nor, (unsigned32)VENDOR_ID_3GPP, feature_list_id, feature_list);

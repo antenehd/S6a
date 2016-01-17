@@ -192,7 +192,10 @@
 
 	Running the test: 
 
-	  	mysql client and server should be installed on system where this test will be done.
+	  	mysql client and server should be installed on system where this test will be done. 
+		 # sudo apt-get install mysql-server
+		 # sudo apt-get install mysql-client
+		 # sudo apt-get install libmysqlclient-dev
 
 	    To run the test, first the procedures mentioned in section 2.1. and section 2.2. must be completed 
 	 	successfuly. Then on your command terminal navigate to 'test' directory which is found in the main directory 
@@ -208,6 +211,9 @@
 	  	directory('test' directory) and excuting 'my.sh' as follows:
 
 		# sh my.sh
+
+	    Then copy 'dict_dcca.fdx', 'dict_dcca_3gpp.fdx' and 'dict_nasreq.fdx' and its corresponding directories from 'fd/extension' directory(the directory where the freediameter build and install was made) to "/testnode1/extension" and "/testnode2/extension" directories which are found in 'test' directory.
+	   
 
 	  Test Update-Location-Request/Answer : 
 

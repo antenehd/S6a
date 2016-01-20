@@ -10,16 +10,13 @@ LDFLAG:= -L . -lfdproto -lfdcore
 SOURCE=$(shell find $(SRC) -name '*.c')
 OBJS:=$(patsubst $(SRC)/%.c,$(OBJ_DIR)/%.o,$(SOURCE))
 
-.PHONY: all test debug clean
+.PHONY: all test clean
 
 all: OBJDIR BINDIR $(TARGET)
 
 test: MAKETEST
 
 testclean: MAKETESTCLEAN
-
-debug: CFLAGS += -DDEBUG -g
-debug: OBJDIR BINDIR $(TARGET)
 
 $(TARGET): $(OBJS)
 	gcc $(OBJS) $(LDFLAG) -g -shared -o $(TARGET)

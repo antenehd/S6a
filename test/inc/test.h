@@ -432,6 +432,69 @@ typedef unsigned char octetstring;
 typedef unsigned char address;
 typedef unsigned char ss_time;
 
+/*Define global AVP values to be set in each message to be sent so that upon reception it is easier to compare
+the received AVP values with the globa AVP values(i.e the values that were set in the messages to be sent)*/
+extern diameterid * gb_destination_host;
+extern diameterid * gb_destination_realm;
+extern utf8string *gb_user_name;
+extern unsigned32 gb_feature_list_id[];
+extern unsigned32 gb_feature_list[]; 
+extern utf8string *gb_imei;
+extern utf8string *gb_software_version;
+extern octetstring *gb_meid;
+extern enum rat_type gb_rat_type;	
+extern unsigned32 gb_ulr_flags;
+extern unsigned32 gb_ula_flags;
+extern enum ue_srvcc_capability gb_ue_srvcc_capability;
+extern octetstring gb_visited_plmn_id[2][4];	
+extern octetstring  gb_sgsn_number[];
+extern enum homogeneous_support_of_ims_voice_over_ps_sessions gb_homogeneous_support_ims_voice_over_ps_sessions;
+extern address *gb_gmlc_address;
+extern unsigned32 gb_context_identifier[];
+extern utf8string *gb_service_selection;
+extern address  gb_home_agent_address_v4[];
+extern address  gb_home_agent_address_v6[];
+extern diameterid *gb_home_agent_host_host;
+extern diameterid *gb_home_agent_host_realm;
+extern octetstring *gb_visited_network_identifier;
+extern octetstring *gb_mme_number_for_mt_sms;
+extern enum sms_register_request gb_sms_register_request;
+extern diameterid *gb_coupled_node_diameter_id;
+extern enum cancellation_type gb_cancellation_type;	
+extern unsigned32 gb_clr_flags;
+extern octetstring *gb_reset_ids[];
+extern enum all_apn_configuration_included_indicator gb_all_apn_conf_included_indicator;
+extern enum complete_data_list_included_indicator gb_comp_dt_lst_inc_ind;
+extern unsigned32 gb_number_of_requested_vectors;
+extern unsigned32 gb_immediate_response_preferred;
+extern octetstring gb_re_synchronization_info[];
+extern unsigned32 gb_idr_flags;
+extern enum ims_voice_over_ps_sessions_supported gb_ims_vop_sessions_supported;
+extern ss_time gb_last_ue_activity_time[];
+extern unsigned32 gb_ida_flags;
+extern enum user_state gb_mme_user_state;
+extern octetstring gb_e_utran_cgi[];
+extern octetstring gb_tracking_area_id[];
+extern octetstring gb_geographical_info[];
+extern octetstring gb_geodetic_info[];
+extern enum current_location_retrieved gb_current_location_retrieved;
+extern unsigned32 gb_age_of_location_info;
+extern unsigned32 gb_csg_id;
+extern enum csg_access_mode gb_csg_access_mode;	
+extern enum csg_membership_indication gb_csg_membership_indication;
+extern utf8string * gb_time_zone;
+extern enum daylight_saving_time gb_daylight_saving_time;
+extern unsigned32 gb_dsr_flags;
+extern unsigned32 gb_dsa_flags;
+extern octetstring gb_trace_reference[];
+extern octetstring gb_ts_code[][2];
+extern octetstring gb_ss_code[][2];
+extern unsigned32 gb_pur_flags;
+extern unsigned32 gb_pua_flags;
+extern utf8string *gb_user_id[];
+extern unsigned32 gb_nor_flags;
+extern enum alert_reason gb_alert_reason;
+
 /*Sets value of supported features and add it to message 'msg'*/
 void test_set_supported_features(struct msg **msg, unsigned32 vendor_id, unsigned32 feature_id, unsigned32 feature_list);
 
@@ -439,10 +502,10 @@ void test_set_supported_features(struct msg **msg, unsigned32 vendor_id, unsigne
 void test_get_supported_features(struct msg *msg, unsigned32 **ftr_lst_id, unsigned32 **ftr_lst, size_t *size);
 
 /*Set MIP6-Agent-Info AVP */
-void test_set_mip6(avp_or_msg **msg_gavp, address * ipv4, address * ipv6, diameterid * host, diameterid * realm);
+void test_set_mip6(avp_or_msg **msg_gavp, address *ipv4, address *ipv6, char *host, char *realm);
 
 /*helper function to sends Cancel-Location-Request*/
-int test_send_clr(diameterid *destination_host, diameterid *destination_rlm, utf8string * user_name, enum cancellation_type cancellation_type, unsigned32 clr_flags);
+int test_send_clr(diameterid *destination_host, diameterid *destination_rlm, utf8string *user_name, enum cancellation_type cancellation_type, unsigned32 clr_flags);
 
 /*Prepares ULR message and send it to remote peer*/
 /*'test_types = 0', response should be user unknow*/
@@ -568,10 +631,10 @@ void test_set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id);
 void test_set_eps_subsc_qos_prof(struct avp **gavp, char * qos, char * level, char * capab, char * vulner);
 
 /*Check Subscription-Data inside a message*/
-void test_check_subsc_data(struct msg * msg);
+void test_check_subsc_data(struct msg * msg, char *imsi);
 
 /*Check LCS-Info*/
-void test_check_lcs_info( struct avp *tmp_gavp);
+void test_check_lcs_info( struct avp *tmp_gavp, char *imsi);
 
 /*Set EPS-Location-Information*/
 void test_set_eps_location_info(struct msg **msg);
@@ -580,6 +643,25 @@ void test_set_eps_location_info(struct msg **msg);
 void test_check_eps_location_info(struct msg *msg);
 
 /*check MIP6-Agent-Info AVP ***/
-void test_check_mip6(avp_or_msg *msg_avp);
+void test_check_mip6_values(avp_or_msg *msg_avp);
+
+/*Check Supported-Features group AVP child AVPs' values*/
+void test_check_support_feature( struct msg *msg);
+
+/*Compares two strings and their length*/
+/*@name : is the name of the AVP whose recieved and sent values are compared*/
+/*@str2 : should not contain 0x00 values in between and should terminate with '\0'*/
+void test_comp_str(unsigned char *str1, unsigned char *str2, size_t str1_len, char *name);
+
+/*Compare two uint32_t values*/
+/*@name : is the name of the AVP whose recieved and sent values are compared*/
+void test_comp_int(int32_t int_1, int32_t int_2, char *name);
+
+/*Compare two uint32_t values*/
+/*@name : is the name of the AVP whose recieved and sent values are compared*/
+void test_comp_uint(uint32_t uint_1, uint32_t uint_2, char *name);
+
+/*Get MIP6-Agent-Info child AVP values*/
+int test_get_mip6_values(struct avp *gavp, address ** addr_v4, address ** addr_v6, diameterid ** dst_host, diameterid ** dst_realm);
 
 #endif

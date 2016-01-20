@@ -29,15 +29,15 @@ int main(int argc, char **argv){
 
 			/*Send ULR message , response for this will be user unknown*/
 			test_req_ulr(argv[2],0);
-			sleep(3);
+			sleep(1);
 			
 			/*Send ULR message , response for this will be rat not allowed*/
 			test_req_ulr(argv[2],1);
-			sleep(3);
+			sleep(1);
 
 			/*Send ULR message , response for this will be roaming not allowed with error diagnostic message*/
 			test_req_ulr(argv[2],2);
-			sleep(3);
+			sleep(1);
 
 			/*Send ULR message , response should be filled with subscription data of user*/
 			test_req_ulr(argv[2],3);	
@@ -139,7 +139,7 @@ int main(int argc, char **argv){
 		fprintf(stdout, "Invalid number of input arguments provided.\n");
 	
 	/*waites untill the diameter application is down*/
-	SS_CHECK(fd_core_wait_shutdown_complete(), "app shuts down gracefully.\n", "ungracefull app shutdown\n");
+	SS_CHECK(fd_core_wait_shutdown_complete(), "TEST app SHUTS DOWN gracefully.\n", "TEST APP SHUTS DOWN ungracefullY\n");
 	
 	return 1;	
 }

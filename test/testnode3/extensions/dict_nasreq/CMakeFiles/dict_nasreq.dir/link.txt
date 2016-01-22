@@ -1,1 +1,0 @@
-/usr/bin/gcc  -fPIC -Wall -g -O0   -shared -Wl,-soname,dict_nasreq.fdx -o ../dict_nasreq.fdx CMakeFiles/dict_nasreq.dir/dict_nasreq.c.o 

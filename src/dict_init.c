@@ -64,7 +64,6 @@ struct dict_object * ss_local_time_zone = NULL;
 struct dict_object * ss_subscription_data = NULL;
 struct dict_object * ss_reset_id = NULL;
 struct dict_object * ss_authentication_info = NULL;
-struct dict_object * ss_failed_avp = NULL;
 struct dict_object * ss_coupled_node_diameter_id = NULL; 
 
 /*Dictionary object for Vendor-Specific-Application-Id AVP child AVPs*/
@@ -328,219 +327,6 @@ inline static int create_cmd(size_t cmd_code,char *cmd_name_r,char *cmd_name_a,s
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, parent, NULL));	\
 	}																					\
 }	
-	
-/*Defines additional AVP dictionaries that are not defined in the extension files*/						
-static int additional_dict(){
-
-	/*Define 'Service-Selection' AVP, type is UTF8String */
-	{
-		struct dict_object * UTF8String_type;
-		CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_TYPE, TYPE_BY_NAME,"UTF8String", &UTF8String_type, ENOENT));
-		struct dict_avp_data data = {
-			493,	/* Code */
-			0,	/* Vendor */
-			"Service-Selection",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			0 ,	/* Fixed flag values */
-			AVP_TYPE_OCTETSTRING	/* base type of data */
-		};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, UTF8String_type, NULL));
-	}	
-
-	/*Define 'Reset-ID' AVP */
-	{
-		struct dict_avp_data data = {
-			1670,	/* Code */
-			10415,	/* Vendor */
-			"Reset-ID",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_OCTETSTRING	/* base type of data */
-		};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'MDT-Allowed-PLMN-Id' AVP */
-	{
-		struct dict_avp_data data = {
-			1671,	/* Code */
-			10415,	/* Vendor */
-			"MDT-Allowed-PLMN-Id",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_OCTETSTRING	/* base type of data */
-		};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/* Define 'SS-Status' AVP , this AVP is defined as type grouped in 'dict_dcca_3gpp' extension found in 	
-	 * freediameter which contradicts with '3GPP TS 29.272 version 12.8.0 Release 12' document which define it as 	
-	 * type octetstring
-	 */
-	{
-		struct dict_avp_data data = {
-			1477,	/* Code */
-			10415,	/* Vendor */
-			"SS-Status",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_OCTETSTRING	/* base type of data */
-		};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'Restoration-Priority' AVP */
-	{
-		struct dict_avp_data data = {
-			1663,	/* Code */
-			10415,	/* Vendor */
-			"Restoration-Priority",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_UNSIGNED32	/* base type of data */
-		};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/* Define 'SIPTO-Local-Network-Permission' AVP */
-	/* This AVP is defined in '3GPP TS 29.272 version 12.8.0 Release 12' as unsigned32, but is defined */
-	/* as enumerated in '3GPP TS 29.002 version 12.7.0 Release 12' and based on the values it takes its */
-	/* is defined here as enumerated*/
-	{
-		struct dict_avp_data data = {
-			1665,	/* Code */
-			10415,	/* Vendor */
-			"SIPTO-Local-Network-Permission",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_INTEGER32	/* base type of data */
-		};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'WLAN-offloadability' AVP */
-	{
-		struct dict_avp_data data = {
-			1667,	/* Code */
-			10415,	/* Vendor */
-			"WLAN-offloadability",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
-		};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'WLAN-offloadability-EUTRAN' AVP */
-	{
-		struct dict_avp_data data = {
-			1668,	/* Code */
-			10415,	/* Vendor */
-			"WLAN-offloadability-EUTRAN",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_UNSIGNED32	/* base type of data */
-			};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'WLAN-offloadability-UTRAN' AVP */
-	{
-		struct dict_avp_data data = {
-			1669,	/* Code */
-			10415,	/* Vendor */
-			"WLAN-offloadability-UTRAN",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR ,	/* Fixed flag values */
-			AVP_TYPE_UNSIGNED32	/* base type of data */
-			};		
-		CHECK_FCT(  fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'ProSe-Subscription-Data' AVP */
-	{
-		struct dict_avp_data data = {
-			3701,	/* Code */
-			10415,	/* Vendor */
-			"ProSe-Subscription-Data",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
-			};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-	
-	/*Define 'ProSe-Permission' AVP */
-	{
-		struct dict_avp_data data = {
-			3702,	/* Code */
-			10415,	/* Vendor */
-			"ProSe-Permission",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
-			AVP_TYPE_UNSIGNED32	/* base type of data */
-			};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'MIP6-Agent-Info' AVP */
-	{
-		struct dict_avp_data data = {
-			486,	/* Code */
-			0,	/* Vendor */
-			"MIP6-Agent-Info",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			0,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
-			};		
-		CHECK_FCT(  fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Define 'MIP-Home-Agent-Address' AVP, type is address */
-	{
-		struct dict_object * Address_type;
-		CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_TYPE, TYPE_BY_NAME,"Address", &Address_type, ENOENT));
-		struct dict_avp_data data = {
-			334,	/* Code */
-			0,	/* Vendor */
-			"MIP-Home-Agent-Address",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			0,	/* Fixed flag values */
-			AVP_TYPE_OCTETSTRING	/* base type of data */
-			};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, Address_type, NULL));
-	}
-
-	/*Define 'MIP-Home-Agent-Host' AVP */
-	{
-		struct dict_avp_data data = {
-			348,	/* Code */
-			0,	/* Vendor */
-			"MIP-Home-Agent-Host",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			0,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
-			};		
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict, DICT_AVP, &data, NULL, NULL));
-	}
-
-	/*Coupled-Node-Diameter-ID*/
-	{
-		struct dict_object * DiameterIdentity_type;
-		CHECK_FCT( fd_dict_search( fd_g_config->cnf_dict, DICT_TYPE, TYPE_BY_NAME, "DiameterIdentity", &DiameterIdentity_type, ENOENT));
-		struct dict_avp_data data = { 
-			1666, 					/* Code */
-			10415, 					/* Vendor */
-			"Coupled-Node-Diameter-ID", 			/* Name */
-			AVP_FLAG_VENDOR | AVP_FLAG_MANDATORY, 	/* Fixed flags */
-			AVP_FLAG_VENDOR,			/* Fixed flag values */
-			AVP_TYPE_OCTETSTRING 			/* base type of data */
-			};
-		CHECK_FCT( fd_dict_new( fd_g_config->cnf_dict,DICT_AVP, &data , DiameterIdentity_type, NULL));	
-	}
-
-	return 0;
-}
 
 /*Create dictionary objects for S6a commands*/
 static int create_cmd_dict(){
@@ -1502,9 +1288,9 @@ int ss_dict_init(){
 	struct dict_avp_request vn;
 	vn.avp_vendor = 10415;
 
-	/*Define additional AVPs that are not defined in the extension*/
-	if(additional_dict()!= 0)
-		fprintf(stderr, "ERROR : Error has occured in function 'additional_dict()'\n");
+	/*Load dictionary which contains the definition for the AVPs requered for S6a Interface*/
+	if(ss_dict_load_dict()!= 0)
+		fprintf(stderr, "ERROR : Error has occured in function 'ss_dict_load_dict()'\n");
 
 	/*Create dictionary objects for S6a commands*/
 	if(create_cmd_dict() != 0)
@@ -1975,8 +1761,4 @@ RAN-Authentication-Info  child AVPs*/
 
 	return 0;
 
-}
-		
-	
-	
-	
+}	

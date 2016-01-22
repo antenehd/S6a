@@ -1,1 +1,0 @@
-/usr/bin/gcc  -fPIC -Wall -g -O0   -shared -Wl,-soname,dict_dcca.fdx -o ../dict_dcca.fdx CMakeFiles/dict_dcca.dir/dict_dcca.c.o 

@@ -1,1 +1,0 @@
-/usr/bin/gcc  -fPIC -Wall -g -O0   -shared -Wl,-soname,dict_dcca_3gpp.fdx -o ../dict_dcca_3gpp.fdx CMakeFiles/dict_dcca_3gpp.dir/dict_dcca_3gpp.c.o 

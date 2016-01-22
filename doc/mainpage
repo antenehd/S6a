@@ -2,7 +2,7 @@
  
 \section intro_sec 1.INTRODUCTION
 
-This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net) software libraries  'linfdproto' and 'libfdcore' which contains the implementation for the diameter basic protocol and all other basic functionalities needed for this implementation to work. And it also requires the extensions 'dict_dcca', 'dict_dcca_3gpp' and 'dict_nasreq' found in freediameter to be loaded for this implementation to work. 
+This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net) software libraries  'linfdproto' and 'libfdcore' which contains the implementation for the diameter basic protocol and all other basic functionalities needed for this implementation to work. 
 
 \section use 2.USING THIS LIBRARY APIs
 	
@@ -155,7 +155,7 @@ This implementation of the S6a interface is meant to be used as a shared library
  
 \subsection step1 STEP 1 : Install Freediameter
 	
- Since this library totally relies on freediameter libraries, freediameter software must be installed. To install freediameter follow the install instruction stated in the files found in the freediameter directory. <B>The freediameter software included with in this library implementation should be used since it contains some modified codes.</B>
+ Since this library totally relies on freediameter libraries, freediameter software must be installed. To install freediameter follow the install instruction stated in the files found in the freediameter directory. <B>The freediameter software included with in this library implementation should be used since it contains some modified codes. The modified codes are found in file 'freeDiameter/libfdcore/sctp.c', 'freeDiameter/libfdcore/p_dw.c', 'freeDiameter/libfdcore/cnxctx.c' and 'freeDiameter/libfdproto/messages.c' in between comment 'MODIFIED' and 'ENDMODIFIED'.</B>
 
 \subsection step2 STEP 2 : Build S6a Interface Library
 

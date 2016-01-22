@@ -322,4 +322,7 @@ extern struct dict_object * ss_cmd_noa;
 /*Initialized the necessary dictionary objects*/
 int ss_dict_init();
 
+/*Loads the AVP definition required for S6a interface*/
+int ss_dict_load_dict();
+
 #endif

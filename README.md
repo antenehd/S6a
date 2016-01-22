@@ -7,9 +7,7 @@
    This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of 
    APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net)   
    software libraries  'linfdproto' and 'libfdcore' which contains the implementation for the diameter basic 
-   protocol and other basic functionalities need for this implementation to work. And it also requires the 
-   extensions 'dict_dcca', 'dict_dcca_3gpp' and 'dict_nasreq' found in freediameter to be loaded for this   
-   implementation to work.
+   protocol and other basic functionalities need for this implementation to work.
 	
    The details of the APIs of this library can be found in the documentaion. The documentaion is generated using
    doxygen, to generate the documentation on your terminal navigate to the main directory and run this: 
@@ -26,7 +24,7 @@
    Since this library totally relies on freediameter libraries, freediameter software must be installed.
    To install freediameter follow the install instruction stated in the files found in the 
    directory 'freeDiameter'. **The freediameter software in this repository should be used since it contains 
-   some modified codes**.
+   some modified codes**.  The modified codes are found in file 'freeDiameter/libfdcore/sctp.c', 'freeDiameter/   libfdcore/p_dw.c', 'freeDiameter/libfdcore/cnxctx.c' and 'freeDiameter/libfdproto/messages.c' in between comment 'MODIFIED' and 'ENDMODIFIED'.
 	
 ###2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
 
@@ -206,10 +204,7 @@ The testing approached used is end to end functionality test(i.e. message transf
 	 	After this create the test HSS database by navigating to 'hss_db' directory which is found in the current
 	  	directory('test' directory) and excuting 'my.sh' as follows:
 
-		# sh my.sh
-
-	    Then copy 'dict_dcca.fdx', 'dict_dcca_3gpp.fdx' and 'dict_nasreq.fdx' and its corresponding directories from 'fd/extension' directory(the directory where the freediameter build and install was made) to "/testnode1/extension" and "/testnode2/extension" directories which are found in 'test' directory.
-	   
+		# sh my.sh	   
 
    **Test Update-Location-Request/Answer :** 
 

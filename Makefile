@@ -4,7 +4,7 @@ OBJ_DIR=OBJECTS
 BIN_DIR=bin
 TEST_DIR=test
 TARGET=$(BIN_DIR)/libssixa.so
-CFLAGS:= -Wall -Winline
+CFLAGS:= -Wall -Winline -fPIC
 LDFLAG:= -L . -lfdproto -lfdcore 
 
 SOURCE=$(shell find $(SRC) -name '*.c')

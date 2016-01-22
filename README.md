@@ -25,8 +25,8 @@
 	
 		 Since this library totally relies on freediameter libraries, freediameter software must be installed.
 		 To install freediameter follow the install instruction stated in the files found in the 
-		 directory 'freeDiameter'. The freediameter software in this directory should be used since it contains 
-       	 some modified codes.
+		 directory 'freeDiameter'. **The freediameter software in this directory should be used since it contains 
+       	 some modified codes**.
 	
 	2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
 
@@ -183,12 +183,7 @@
 	
  4. TESTING
 
-	Testing for all functionalities provided by the library are not yet done. The testing approached used is end to 
-	end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to  
-    end testing each function will also be tested since all the functions will be used when all the end to end 
-    testing is completed. 
-	The end to end testing that has be done so far is for Update-Location-Request message and 
-    Update-Location-Answer messages.
+	The testing approached used is end to end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to end testing each function will also be tested since all the functions will be used when all the end to end testing is completed. 
 
 	Running the test: 
 

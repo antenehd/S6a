@@ -155,7 +155,7 @@ This implementation of the S6a interface is meant to be used as a shared library
  
 \subsection step1 STEP 1 : Install Freediameter
 	
- Since this library totally relies on freediameter libraries, freediameter software must be installed. To install freediameter follow the install instruction stated in the files found in the freediameter directory. The freediameter software in this directory should be used since it contains some modified codes.
+ Since this library totally relies on freediameter libraries, freediameter software must be installed. To install freediameter follow the install instruction stated in the files found in the freediameter directory. <B>The freediameter software included with in this library implementation should be used since it contains some modified codes.</B>
 
 \subsection step2 STEP 2 : Build S6a Interface Library
 
@@ -167,12 +167,7 @@ This will create two new directories 'OBJECTS' and 'bin'. And the library is pla
 
 \section testing 5.TESTING
 
-	Testing for all functionalities provided by the library are not yet done. The testing approached used is end to 
-	end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to  
-    end testing each function will also be tested since all the functions will be used when all the end to end 
-    testing is completed. 
-	The end to end testing that has be done so far is for Update-Location-Request message and 
-    Update-Location-Answer messages.
+	The testing approached used is end to end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to end testing each function will also be tested since all the functions will be used when all the end to end testing is completed.
 
 <B>	Running the test: </B>
 

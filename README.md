@@ -1,5 +1,5 @@
 
- S6a INTERFACE IMPLEMENTATION LIBRARY
+ #S6a INTERFACE IMPLEMENTATION LIBRARY
 
 
  1. INTRODUCTION
@@ -23,10 +23,10 @@
 
 	2.1. INSTALL FREEDIAMETER
 	
-		 Since this library totally relies on freediameter libraries, freediameter software must be installed.
-		 To install freediameter follow the install instruction stated in the files found in the 
-		 directory 'freeDiameter'. **The freediameter software in this directory should be used since it contains 
-       	 some modified codes**.
+       Since this library totally relies on freediameter libraries, freediameter software must be installed.
+	   To install freediameter follow the install instruction stated in the files found in the 
+	   directory 'freeDiameter'. **The freediameter software in this directory should be used since it contains 
+       some modified codes**.
 	
 	2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
 

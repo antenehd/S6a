@@ -1,8 +1,8 @@
 
- # S6a INTERFACE IMPLEMENTATION LIBRARY
+# S6a INTERFACE IMPLEMENTATION LIBRARY
 
 
- 1. INTRODUCTION
+## 1. INTRODUCTION
 	
 	This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of 
 	APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net)   
@@ -18,17 +18,17 @@
 
 	This will create an html documentation in 'doc' directory.
 		
- 2. ISTALLATION
+##2. ISTALLATION
 	
 
-	2.1. INSTALL FREEDIAMETER
+###2.1. INSTALL FREEDIAMETER
 	
        Since this library totally relies on freediameter libraries, freediameter software must be installed.
 	   To install freediameter follow the install instruction stated in the files found in the 
 	   directory 'freeDiameter'. **The freediameter software in this repository should be used since it contains 
        some modified codes**.
 	
-	2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
+###2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
 
 	   Assuming it has been downloaded to you PC already. To build the S6a library, on your terminal goto the 
 	   directory where this implementation is downloaded to, and excute the 'Makefile', run the following on 
@@ -41,7 +41,7 @@
 	   where the error occurs. 
 
 	
- 3. USING THIS LIBRARY APIs
+##3. USING THIS LIBRARY APIs
 	
 	The first thing that should be done is initailize 'ss_diameter_conffile_name' global variable. This variable 
     should be set to the file name including path (eg "./diam/diam.conf") of the diameter configuration file. If this 
@@ -181,7 +181,7 @@
 			   eg. for AVP Active-APN, AVPname would be 'active_apn'.
 
 	
- 4. TESTING
+##4. TESTING
 
 	The testing approached used is end to end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to end testing each function will also be tested since all the functions will be used when all the end to end testing is completed. 
 

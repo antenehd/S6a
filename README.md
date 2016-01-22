@@ -4,61 +4,61 @@
 
 ## 1. INTRODUCTION
 	
-	This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of 
-	APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net)   
-    software libraries  'linfdproto' and 'libfdcore' which contains the implementation for the diameter basic 
-    protocol and other basic functionalities need for this implementation to work. And it also requires the 
-    extensions 'dict_dcca', 'dict_dcca_3gpp' and 'dict_nasreq' found in freediameter to be loaded for this   
-    implementation to work.
+   This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of 
+   APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net)   
+   software libraries  'linfdproto' and 'libfdcore' which contains the implementation for the diameter basic 
+   protocol and other basic functionalities need for this implementation to work. And it also requires the 
+   extensions 'dict_dcca', 'dict_dcca_3gpp' and 'dict_nasreq' found in freediameter to be loaded for this   
+   implementation to work.
 	
-	The details of the APIs of this library can be found in the documentaion. The documentaion is generated using
-   	doxygen, to generate the documentation on your terminal navigate to the main directory and run this: 
+   The details of the APIs of this library can be found in the documentaion. The documentaion is generated using
+   doxygen, to generate the documentation on your terminal navigate to the main directory and run this: 
 	
 	   # doxygen doc_gen 
 
-	This will create an html documentation in 'doc' directory.
+   This will create an html documentation in 'doc' directory.
 		
 ##2. ISTALLATION
 	
 
 ###2.1. INSTALL FREEDIAMETER
 	
-       Since this library totally relies on freediameter libraries, freediameter software must be installed.
-	   To install freediameter follow the install instruction stated in the files found in the 
-	   directory 'freeDiameter'. **The freediameter software in this repository should be used since it contains 
-       some modified codes**.
+   Since this library totally relies on freediameter libraries, freediameter software must be installed.
+   To install freediameter follow the install instruction stated in the files found in the 
+   directory 'freeDiameter'. **The freediameter software in this repository should be used since it contains 
+   some modified codes**.
 	
 ###2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
 
-	   Assuming it has been downloaded to you PC already. To build the S6a library, on your terminal goto the 
-	   directory where this implementation is downloaded to, and excute the 'Makefile', run the following on 
-       terminal:
+   Assuming it has been downloaded to you PC already. To build the S6a library, on your terminal goto the 
+   directory where this implementation is downloaded to, and excute the 'Makefile', run the following on 
+   terminal:
 		 
 		 # make
 	 
-       This will create two new directories 'OBJECTS' and 'bin'. And the library is placed in the new directory 
-	   'bin' under the name 'libssixa.so'. Use 'make debug' to build a library  which gives some information    	
-	   where the error occurs. 
+   This will create two new directories 'OBJECTS' and 'bin'. And the library is placed in the new directory 
+   'bin' under the name 'libssixa.so'. Use 'make debug' to build a library  which gives some information    	
+   where the error occurs. 
 
 	
 ##3. USING THIS LIBRARY APIs
 	
-	The first thing that should be done is initailize 'ss_diameter_conffile_name' global variable. This variable 
-    should be set to the file name including path (eg "./diam/diam.conf") of the diameter configuration file. If this 
-    variable is not set the configuration file will be searched in the directory where the excutable resides and the
-    default file name is 'freediameter.conf'. Check the 'freediameter.conf.sample' file found in 'doc' directory 
-    for details about the content of diameter configuration file.
+   The first thing that should be done is initailize 'ss_diameter_conffile_name' global variable. This variable 
+   should be set to the file name including path (eg "./diam/diam.conf") of the diameter configuration file. If this 
+   variable is not set the configuration file will be searched in the directory where the excutable resides and the
+   default file name is 'freediameter.conf'. Check the 'freediameter.conf.sample' file found in 'doc' directory 
+   for details about the content of diameter configuration file.
 
-	The next step is to initiate the diameter module using 'ss_init()' API. This will load the diameter 
-    configuration, load the dictionary that contains the AVP and command definition. In additions it starts the module
-    that will route messages, listen on the configured ports, connects to configured peers, takes care of CEA, CER, 
-    DWR and DWA messages.
+   The next step is to initiate the diameter module using 'ss_init()' API. This will load the diameter 
+   configuration, load the dictionary that contains the AVP and command definition. In additions it starts the module
+   that will route messages, listen on the configured ports, connects to configured peers, takes care of CEA, CER, 
+   DWR and DWA messages.
 
-	The above two steps should always come first before using the following APIs.
+   The above two steps should always come first before using the following APIs.
 
-	After the above steps the next advisable step is to registere the callback functions that will be called when an 
-	S6a message is received. If an S6a message is received before the callbacks are registered it would be discarded. 
-    The APIs for registering the callbacks are:
+   After the above steps the next advisable step is to registere the callback functions that will be called when an 
+   S6a message is received. If an S6a message is received before the callbacks are registered it would be discarded. 
+   The APIs for registering the callbacks are:
 		 'ss_reg_cb_ulr()'  for Update-Location-Request
 		 'ss_reg_cb_clr()'	for Cancel-Location-Request
 		 'ss_reg_cb_air()' 	for Authentication-Information-Request
@@ -67,11 +67,11 @@
 		 'ss_reg_cb_pur()'  for Purge-UE-Request 
 		 'ss_reg_cb_rsr()'  for Reset-Request
 	     'ss_reg_cb_nor()'  for Notify-Request
-	Check the documentation for this APIs for details about how the callback works. 
+   Check the documentation for this APIs for details about how the callback works. 
 
-	The other  APIs can be generally described as follows:  
+   The other  APIs can be generally described as follows:  
 
-	   'ss_create_msg_&lt;cmd&gt;':
+   **'ss_create_msg_&lt;cmd&gt;' :**
 
 		  To create a specific request message. This will create a new message of the 'cmd' type
         	and it creates a new session id and set Session-Id AVP, sets the Vendor-Sepecific-Application-Id AVP and
@@ -80,19 +80,18 @@
 		 	MAINTAINED'. And in Vendor-Sepecific-Application-Id AVP, Vendor-Id AVP is set to '10415'(3gpp's vendor 
 		    id) and the Auth-Application-Id AVP IS set to '16777251'(S6a interface's application identifiere).
  			
-
-	   'ss_peer_state' :
+   **'ss_peer_state' :**
 
 		    Checks the connection state with a remote peer. To successful send message to a remote peer
 	   		the state of the connection should be open state.
 
-	   'ss_set_&lt;AVPname&gt;' : 
+   **'ss_set_&lt;AVPname&gt;' :**
 		    
 		    To set the value of an AVP and add it to it's parent which could be a message or an AVP 
 	 		of typed grouped. The AVP should be of not type grouped since AVPs of typed group do not have a value 
  			rather they have other AVPs as a child in their data field.	   		
 
-	   'ss_get_&lt;AVPname&gt;_msg' : 
+   **'ss_get_&lt;AVPname&gt;_msg' :** 
 
 		    To fetch the value of an AVP which is found in a message. The AVP should be a direct child
       		of the message. If the AVP is a child AVP of other AVP which is a direct child of the message the parent
@@ -101,50 +100,50 @@
 	 		should be of not type grouped since AVPs of typed group do not have a value rather they have other AVPs 
 	     	as a child in their data field.
 	
-	   'ss_get_&lt;AVPname&gt;' : 
+   **'ss_get_&lt;AVPname&gt;' :** 
 
 		    To fetch the value of an AVP which is found in another AVP of typed grouped. The AVP 
 		  	it's value is fetched should be a direct child of the AVP of typed grouped. The AVP should be of not type 
            	grouped since AVPs of typed group do not have a value rather they have other AVPs as a child in their 
 		    data field.
 
-	   'ss_get_&lt;AVPname&gt;_array': 
+   **'ss_get_&lt;AVPname&gt;_array':**
 
 		    To fetch an multiple values of an AVP found in a message. This API is used if the AVP
         	is a direct child of the message and if the AVP is one of the AVPs that can appear in the message more 
 	 		than once. The AVP should be of not type grouped since AVPs of typed group do not have a value 
  			rather they have other AVPs as a child in their data field.
 
-	   'ss_get_&lt;AVPname&gt;_gavp_array' :
+   **'ss_get_&lt;AVPname&gt;_gavp_array' :**
 	
 		    To fetch an multiple values of an AVP in an AVP of typed grouped. The AVP 
 		  	it's value is fetched should be a direct child of the AVP of typed grouped and if the AVP is one of the 
      		AVPs that can appear in the AVP of type grouped more than once. The AVP should be of not type grouped 
 	 		since AVPs of typed group do not have a value rather they have other AVPs as a child in their data field.
 
-	   'ss_create_&lt;AVPname&gt;' : 
+   **'ss_create_&lt;AVPname&gt;' :** 
 
 		    To create an empty AVP structure of a specific AVP of typed grouped.  For AVPs which 
  			are not of typed grouped, 'ss_set_<AVPname>' does the trick for both creating the AVP setting it's value 
 	 		and adding it to it's parent.
 
-	   'ss_add_&lt;AVPname&gt;' : 
+   **'ss_add_&lt;AVPname&gt;' :** 
 
 		    To add an AVP of typed grouped into it's parent, which could be a message or an AVP of 
  	 		typed grouped. For AVPs which are not of typed grouped, 'ss_set_<AVPname>' does the trick for both 
 	 		creating the AVP setting it's value and adding it to it's parent.
 
-	   'ss_get_gavp_&lt;AVPname&gt;' : 
+   **'ss_get_gavp_&lt;AVPname&gt;' :** 
 
 	 	    To fetch an AVP of typed grouped from it's parent. This API returns the first AVP with the name 'AVPname'.
 
-	   'ss_get_gavp_next_&lt;AVPname&gt;' :
+   **'ss_get_gavp_next_&lt;AVPname&gt;' :**
 
 		    To fetch the next AVP of typed grouped with name 'AVPname'. This API is used when there are multiple 
 		    similar AVPs of typed grouped. After fetching the first AVP with 'ss_get_gavp_<AVPname>' the rest of the
      		AVPs with similar name are fetched with API. 
 
-	   'ss_msg_create_answer' : 
+   **'ss_msg_create_answer' :**
 
 	 		To create an answer message from a received request message. This will extract and add
 	 		all the necessary values like the end-to-end identifier from the request message and  set it in the answer
@@ -153,27 +152,27 @@
 	 		Sepecific-Application-Id AVP, Vendor-Id AVP is set to '10415'(3gpp's vendor id) and the 
 		 	Auth-Application-Id AVP IS set to '16777251'(S6a interface's application identifiere).
 
-	   'fd_msg_send' : 
+   **'fd_msg_send' :** 
 
 	 		To send message to other peers. It also registers, if provided, a callback function that will 
 	 		be called when the corresponding answer is received.
 	
-	   'fd_msg_send_timeout' : 
+   **'fd_msg_send_timeout' :** 
 	 
 		    It similar with 'fd_msg_send', the only difference is that if the corresponding answer
 	 		is not recieved with in a specified time duration it will be discarded.
 
-	   'fd_core_shutdown' : 
+   **'fd_core_shutdown' :**
 
 	 		To shut down the diameter module. This will teerdown all existing connections and free
 		 	all resources consumed by the diameter module.
 
-	   'fd_core_wait_shutdown_complete' : 
+   **'fd_core_wait_shutdown_complete' :**
 	
 		    Blocks untill the diameter module is shut down.
 
 		
-	   Note :
+   **Note :**
  
 		    '<cmd>' is abbreviated name of request command message(eg. rsr for Reset-Request). 
 
@@ -183,9 +182,9 @@
 	
 ##4. TESTING
 
-	The testing approached used is end to end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to end testing each function will also be tested since all the functions will be used when all the end to end testing is completed. 
+The testing approached used is end to end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to end testing each function will also be tested since all the functions will be used when all the end to end testing is completed. 
 
-	Running the test: 
+   **Running the test:** 
 
 	  	mysql client and server should be installed on system where this test will be done. 
 		 # sudo apt-get install mysql-server
@@ -210,7 +209,7 @@
 	    Then copy 'dict_dcca.fdx', 'dict_dcca_3gpp.fdx' and 'dict_nasreq.fdx' and its corresponding directories from 'fd/extension' directory(the directory where the freediameter build and install was made) to "/testnode1/extension" and "/testnode2/extension" directories which are found in 'test' directory.
 	   
 
-	  Test Update-Location-Request/Answer : 
+   **Test Update-Location-Request/Answer :** 
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an HSS server which is waiting for S6a interface messages:
@@ -225,7 +224,7 @@
 
 	 	Now you should see the test running on both terminals.
 
-	  Test Cancel-Location-Request/Answer : 
+   **Test Cancel-Location-Request/Answer :** 
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
@@ -240,7 +239,7 @@
 
 	 	Now you should see the test running on both terminals.
 
-	  Test Authentication-Information-Request/Answer : 
+   **Test Authentication-Information-Request/Answer :** 
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an HSS server which is waiting for S6a interface messages:
@@ -260,7 +259,7 @@
 	    by the same situation as the 'warning'	message and it is generated by the freediameter application not the 
 	    test application.
 
-	  Test Insert-Subscriber-Data-Request/Answer : 
+   **Test Insert-Subscriber-Data-Request/Answer :**
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
@@ -275,7 +274,7 @@
 
 	 	Now you should see the test running on both terminals
 
-	  Test Delete-Subscriber-Data-Request/Answer : 
+   **Test Delete-Subscriber-Data-Request/Answer :** 
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
@@ -290,7 +289,7 @@
 
 	 	Now you should see the test running on both terminals
 
-	  Test Purge-UE-Request/Answer : 
+   **Test Purge-UE-Request/Answer :** 
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
@@ -305,7 +304,7 @@
 
 	 	Now you should see the test running on both terminals
 
-	  Test Reset-Request/Answer : 
+   **Test Reset-Request/Answer :** 
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
@@ -320,7 +319,7 @@
 
 	 	Now you should see the test running on both terminals
 
-	  Test Notify-Request/Answer : 
+   **Test Notify-Request/Answer :** 
 
 	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:

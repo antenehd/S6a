@@ -97,8 +97,17 @@ int fd_p_dw_handle(struct msg ** msg, int req, struct fd_peer * peer)
 	
 	TRACE_ENTRY("%p %d %p", msg, req, peer);
 	
+	/*MODIFIED: Reason for modification is that the original implementatin closes the connection if origin-state-id is not present in DWA OR DWR message. Since origin-state-id is optional it is not supposed to close the connection 
+because of missing origin-state-id.*/
+		/*ORIGINAL
+		   CHECK_FCT( check_state_id(*msg, peer), NULL );
+		ENDORIGINAL*/
+
 	/* Check the value of OSI for information */
-	CHECK_FCT( check_state_id(*msg, peer) );
+	CHECK_FCT_DO( check_state_id(*msg, peer), NULL );
+
+	/*ENDMODIFIED*/
+	
 	
 	if (req) {
 		/* If we receive a DWR, send back a DWA */

@@ -405,21 +405,13 @@ static int create_cmd_rule(){
 		/*Auth-Session-State*/
 		data.rule_avp = ss_auth_session_state;
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_ulr, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_ula, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_air, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_aia, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_clr, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_cla, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_idr, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_ida, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_dsr, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_dsa, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_pur, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_pua, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_rsr, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_rsa, NULL));
 		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_nor, NULL));
-		CHECK_FCT(fd_dict_new( fd_g_config->cnf_dict, DICT_RULE, &data, ss_cmd_noa, NULL));
 	
 		/*Origin-Host*/
 		data.rule_avp = ss_origin_host;

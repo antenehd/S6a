@@ -59,6 +59,7 @@
    After the above steps the next advisable step is to registere the callback functions that will be called when an 
    S6a message is received. If an S6a message is received before the callbacks are registered it would be discarded. 
    The APIs for registering the callbacks are:
+
     'ss_reg_cb_ulr()'  for Update-Location-Request
     'ss_reg_cb_clr()'	for Cancel-Location-Request
     'ss_reg_cb_air()' 	for Authentication-Information-Request

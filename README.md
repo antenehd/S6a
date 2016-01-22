@@ -25,20 +25,20 @@
 	
        Since this library totally relies on freediameter libraries, freediameter software must be installed.
 	   To install freediameter follow the install instruction stated in the files found in the 
-	   directory 'freeDiameter'. **The freediameter software in this directory should be used since it contains 
+	   directory 'freeDiameter'. **The freediameter software in this repository should be used since it contains 
        some modified codes**.
 	
 	2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
 
-		 Assuming it has been downloaded to you PC already. To build the S6a library, on your terminal goto the 
-	  	 directory where this implementation is downloaded to, and excute the 'Makefile', run the following on 
-       	 terminal:
+	   Assuming it has been downloaded to you PC already. To build the S6a library, on your terminal goto the 
+	   directory where this implementation is downloaded to, and excute the 'Makefile', run the following on 
+       terminal:
 		 
 		 # make
 	 
-      	 This will create two new directories 'OBJECTS' and 'bin'. And the library is placed in the new directory 
-	     'bin' under the name 'libssixa.so'. Use 'make debug' to build a library  which gives some information    	
-	     where the error occurs. 
+       This will create two new directories 'OBJECTS' and 'bin'. And the library is placed in the new directory 
+	   'bin' under the name 'libssixa.so'. Use 'make debug' to build a library  which gives some information    	
+	   where the error occurs. 
 
 	
  3. USING THIS LIBRARY APIs

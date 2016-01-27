@@ -68,32 +68,6 @@ static void set_eqv_plmn_lst(struct msg ** msg, octetstring vis_plmn_id[][4], si
 	SS_CHECK( ss_add_avp(  (avp_or_msg **)msg, tmp_gavp), "Equivalent-PLMN-List AVP into into Update-Location-Request message\n", "Failed to add Equivalent-PLMN-List AVP into Update-Location-Request message\n");
 }
 
-/*Set Specific-APN-Info group AVP (only 3 AVPs for testing) and its child AVPs*/
-static void set_spec_apn_info(struct avp **gavp, utf8string *serv_sel, address *ipv4, address *ipv6, diameterid *host, diameterid *realm, octetstring *vis_net_id){
-
-	struct avp * tmp_gavp = NULL;
-
-	if((!gavp) || (serv_sel)) return;
-
-	if((!ipv4) && (!ipv6) && (!host) && (!realm)) return;
-
-	/*Create Specific-APN-Info group AVP*/
-	SS_CHECK( ss_create_specific_apn_info(&tmp_gavp), "Specific-APN-Info group AVP created.\n", "Failed to create Specific-APN-Info AVP\n");
-	
-	/*Set Service-Selection AVP*/
-	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel, strlen((char *)serv_sel)), "Service-Selection AVP set in Specific-APN-Info AVP.\n","Failed to set Service-Selection AVP in Specific-APN-Info AVP\n");
-
-	/*Add MIP6-Agent-Info group AVP in to Specific-APN-Info*/ 	
-	test_set_mip6( (avp_or_msg **)&tmp_gavp, ipv4, ipv6, (char *)host, (char *)realm);
-
-	/*Set Visited-Network-Identifier AVP*/	
-	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id, strlen((char *) vis_net_id)), "Visited-Network-Identifier AVP set in Specific-APN-Info.\n","Failed to set Visited-Network-Identifier AVP in Specific-APN-Info.\n");
-
-	/*Add Specific-APN-Info into Active-APN AVP*/ 	
-	SS_CHECK( ss_add_avp( (avp_or_msg **)&gavp, tmp_gavp), "Specific-APN-Info AVP added into Active-APN AVP\n", "Failed to add Specific-APN-Info AVP into Active-APN AVP\n");
-}
-
-
 /*Set Active-APN group AVP and its child AVPs*/	
 static void set_active_apn(struct msg **msg, unsigned32 context_id, utf8string * serv_sel, address * ipv4, address * ipv6, diameterid * host, diameterid * realm, octetstring * vis_net_id){
 
@@ -121,7 +95,7 @@ static void set_active_apn(struct msg **msg, unsigned32 context_id, utf8string *
 
 	/*Set Specific-APN-Info group AVP (only 3 AVPs for testing) and its child AVPs*/
 	for (i = 1 ; i<3 ; i++)		
-		set_spec_apn_info( &tmp_gavp, serv_sel, ipv4, ipv6, host, realm, vis_net_id);	
+		test_set_spec_apn_info( &tmp_gavp, serv_sel, ipv4, ipv6, host, realm, vis_net_id);	
 
 	/*Add Specific-APN-Info into Active-APN AVP*/ 	
 	SS_CHECK( ss_add_avp( (avp_or_msg **)msg, tmp_gavp), "Active-APN AVP added into Update-Location-Request message\n", "Failed to add Active-APN AVP into Update-Location-Request message\n"); 

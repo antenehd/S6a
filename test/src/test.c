@@ -185,8 +185,7 @@ int test_send_clr(diameterid *dst_host, diameterid *dst_rlm, utf8string * imsi, 
 	
 	struct msg * clr;
 	
-	if((!dst_host) || (!dst_rlm) || (!imsi))
-		return 1;
+	if((!dst_host) || (!dst_rlm) || (!imsi)) return 1;
 
 	/*Create Cancel-Location-Request message*/
 	SS_CHECK( ss_msg_create_clr(&clr), "Cancel-Location-Request message Created.\n", "Error in creating Cancel-Location-Request message.\n");
@@ -384,7 +383,7 @@ int test_get_mip6_values(struct avp *gavp, address ** addr_v4, address ** addr_v
 /*Get MIP6-Agent-Info child AVP values*/
 void test_check_mip6_values(avp_or_msg *msg_gavp){
 
-	struct avp * tmp_gavp;	
+	struct avp *tmp_gavp = NULL;	
 
 	if(!msg_gavp) return;
 
@@ -396,6 +395,41 @@ void test_check_mip6_values(avp_or_msg *msg_gavp){
 							
 	/*check for  MIP-Home-Agent-Host */
 	check_mip_home_agnt_hst(tmp_gavp);
+}
+
+/*Get Specific-APN-Info child AVP values*/
+void test_check_spec_apn_info(struct avp *gavp){
+
+	struct avp *tmp_gavp = NULL;	
+	struct avp *tmp_gavp2 = NULL;	
+	unsigned char *tmp_str = NULL;
+	size_t len = 0;
+
+	if(!gavp) return;
+
+	/*Get Specific-APN-Info AVP*/
+	SS_WCHECK( ss_get_gavp_specific_apn_info(gavp, &tmp_gavp), "Specific-APN-Info retrieved.\n", "Failed to retrieve Specific-APN-Info.\n", return);
+
+	while(tmp_gavp){
+
+		/*Get Service-Selection value*/
+		SS_CHECK( ss_get_service_selection(tmp_gavp, &tmp_str, &len), "Service-Selection retrieved.\n", "Failed to retrieve Service-Selection.\n");
+		/*Check Service-Selection value*/
+		test_comp_str( tmp_str, gb_service_selection, len, "Service-Selection");
+
+		/*Check MIP6-Agent-Info child AVP values*/
+		test_check_mip6_values(tmp_gavp);	
+
+		/*Get Visited-Network-Identifier value*/
+		SS_WCHECK( ss_get_visited_network_identifier(tmp_gavp, &tmp_str, &len), "Visited-Network-Identifier retrieved.\n", "Failed to retrieve Visited-Network-Identifier.\n", NULL);
+		/*Check Visited-Network-Identifier value*/	
+		test_comp_str( tmp_str, gb_visited_network_identifier, len, "Visited-Network-Identifier");
+
+		/*Get next Specific-APN-Info*/
+		SS_WCHECK( ss_get_gavp_next_specific_apn_info(tmp_gavp, &tmp_gavp2), "Next Specific-APN-Info retrieved.\n", "Failed to retrieve next Specific-APN-Info.\n", return);
+		tmp_gavp = tmp_gavp2;
+		tmp_gavp2 = NULL;		
+	}
 }
 
 /*Set MO-LR group AVP*/
@@ -892,6 +926,33 @@ static void check_wlan_offload(struct avp *avp, uint32_t eutran, uint32_t utran)
 	
 }
 
+
+
+/*Set Specific-APN-Info group AVP (only 3 AVPs for testing) and its child AVPs*/
+void test_set_spec_apn_info(struct avp **gavp, utf8string *serv_sel, address *ipv4, address *ipv6, diameterid *host, diameterid *realm, octetstring *vis_net_id){
+
+	struct avp * tmp_gavp = NULL;
+
+	if((!gavp) || (!serv_sel)) return;
+
+	if((!ipv4) && (!ipv6) && (!host) && (!realm)) return;
+
+	/*Create Specific-APN-Info group AVP*/
+	SS_CHECK( ss_create_specific_apn_info(&tmp_gavp), "Specific-APN-Info group AVP created.\n", "Failed to create Specific-APN-Info AVP\n");
+	
+	/*Set Service-Selection AVP*/
+	SS_CHECK( ss_set_service_selection( (avp_or_msg **)&tmp_gavp, serv_sel, strlen((char *)serv_sel)), "Service-Selection AVP set in Specific-APN-Info AVP.\n","Failed to set Service-Selection AVP in Specific-APN-Info AVP\n");
+
+	/*Add MIP6-Agent-Info group AVP in to Specific-APN-Info*/ 	
+	test_set_mip6( (avp_or_msg **)&tmp_gavp, ipv4, ipv6, (char *)host, (char *)realm);
+
+	/*Set Visited-Network-Identifier AVP*/	
+	SS_CHECK( ss_set_visited_network_identifier( (avp_or_msg **)&tmp_gavp, vis_net_id, strlen((char *) vis_net_id)), "Visited-Network-Identifier AVP set in Specific-APN-Info.\n","Failed to set Visited-Network-Identifier AVP in Specific-APN-Info.\n");
+
+	/*Add Specific-APN-Info AVP*/ 	
+	SS_CHECK( ss_add_avp( (avp_or_msg **)gavp, tmp_gavp), "Specific-APN-Info AVP added.\n", "Failed to add Specific-APN-Info AVP.\n");
+}
+
 /*Set APN-Configuration-Profile */
 void test_set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id){
 
@@ -900,6 +961,7 @@ void test_set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id){
 	unsigned32 tmp_u;
 	integer32 tmp_i;
 	char buf[60] = {0};
+	int i = 0;
 
 	MYSQL *conn = NULL;
 	MYSQL_RES *res;
@@ -976,6 +1038,10 @@ void test_set_apn_conf_prof(struct avp **gavp, char * imsi, char * context_id){
 	
 		/* Set AMBR*/
 		test_set_ambr( &tmp_gavp2, row[18], row[19]);
+
+		/*Set Specific-APN-Info group AVP (only 3 AVPs for testing) and its child AVPs*/
+		for (i = 1 ; i<3 ; i++)		
+			test_set_spec_apn_info( &tmp_gavp2, gb_service_selection, gb_home_agent_address_v4, gb_home_agent_address_v6, gb_home_agent_host_host, gb_home_agent_host_realm, gb_visited_network_identifier);
 
 		/* Set APN-OI-Replacement*********/
 		if(row[20])
@@ -1149,10 +1215,11 @@ static void check_apn_conf_prof(struct avp *gavp, char * imsi, char * context_id
 		/*compare 3GPP-Charging-Characteristics values*/
 		test_comp_str( tmp_str, (unsigned char *)row[17], len, "3GPP-Charging-Characteristics");
 	
-		/* get AMBR*/
+		/* check AMBR*/
 		check_ambr( tmp_gavp2, row[18], row[19]);
 
-		/*TODO: Specific-APN-Info*/
+		/*check Specific-APN-Info*/
+		test_check_spec_apn_info( tmp_gavp2);
 
 		/* get APN-OI-Replacement */
 		SS_WCHECK( ss_get_apn_oi_replacement(tmp_gavp2, &tmp_str, &len), "APN-OI-Replacement retrieved.\n", "Failed to retrieve APN-OI-Replacement.\n", NULL);

@@ -664,4 +664,10 @@ void test_comp_uint(uint32_t uint_1, uint32_t uint_2, char *name);
 /*Get MIP6-Agent-Info child AVP values*/
 int test_get_mip6_values(struct avp *gavp, address ** addr_v4, address ** addr_v6, diameterid ** dst_host, diameterid ** dst_realm);
 
+/*Set Specific-APN-Info group AVP (only 3 AVPs for testing) and its child AVPs*/
+void test_set_spec_apn_info(struct avp **gavp, utf8string *serv_sel, address *ipv4, address *ipv6, diameterid *host, diameterid *realm, octetstring *vis_net_id);
+
+/*Get Specific-APN-Info child AVP values*/
+void test_check_spec_apn_info(struct avp *gavp);
+
 #endif

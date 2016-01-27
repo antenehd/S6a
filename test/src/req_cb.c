@@ -148,8 +148,8 @@ static void update_active_apn(struct msg *msg, char * imsi, MYSQL * conn){
 	
 	if((!msg) || (!imsi) || (!conn)) return;
 
-	/*Get Active-Apn AVP from */
-	SS_WCHECK( ss_get_gavp_active_apn( msg, &tmp_gavp), "Active-APN AVP retrieved from request.\n", "Failed to retrieve Active-APN AVP.\n", NULL);
+	/*Get Active-Apn AVP */
+	SS_WCHECK( ss_get_gavp_active_apn( msg, &tmp_gavp), "Active-APN AVP retrieved from request.\n", "Failed to retrieve Active-APN AVP.\n", return);
 
 	while(tmp_gavp){				
 				
@@ -178,9 +178,7 @@ static void update_active_apn(struct msg *msg, char * imsi, MYSQL * conn){
 			}
 		}
 
-		mysql_free_result(res);				
-		
-		/*TODO:SPECIFIC-APN*/		
+		mysql_free_result(res);		
 
 		/*Get the next Active-Apn group AVP*/
 		SS_WCHECK( ss_get_gavp_next_active_apn(tmp_gavp, &tmp_gavp2), "Next Active-Apn retrieved.\n", "Failed to retrieve Next Active-Apn.\n",NULL);
@@ -212,8 +210,7 @@ static void check_active_apn(struct msg *msg){
 		/*Check Service-Selection values*/
 		SS_WCHECK( ss_get_service_selection(tmp_gavp, &tmp_str, &len), "Service-Selection value retrieved.\n", "Failed to retrieve Service-Selection.\n", NULL);
 		/*compare Service-Selection values*/
-		if(tmp_str) test_comp_str(tmp_str, gb_service_selection, len, "Service-Selection");
-		
+		if(tmp_str) test_comp_str(tmp_str, gb_service_selection, len, "Service-Selection");		
 
 		/*check for  MIP6-Agent-Info avp*/
 		test_check_mip6_values((avp_or_msg *)tmp_gavp);
@@ -224,7 +221,8 @@ static void check_active_apn(struct msg *msg){
 		/*Compare Visited-Network-Identifier values*/
 		if(tmp_str) test_comp_str( tmp_str, gb_visited_network_identifier, len, "Visited-Network-Identifier");
 
-		/*TODO:SPECIFIC-APN*/		
+		/*check Specific-APN-Info*/
+		test_check_spec_apn_info( tmp_gavp);		
 
 		/*Get the next Active-Apn group AVP*/
 		SS_WCHECK( ss_get_gavp_next_active_apn(tmp_gavp, &tmp_gavp2), "Next Active-Apn retrieved.\n", "Failed to retrieve Next Active-Apn.\n",NULL);
@@ -469,12 +467,12 @@ static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_re
 	
 	if((row = mysql_fetch_row(res))!= NULL){
 	
-		for(i = 0; i <num_req_vect_eutran; i++){
+		for(i = 0; i < num_req_vect_eutran; i++){
 		
-		/*Create E-UTRAN-Vector AVP*/
-		SS_CHECK( ss_create_e_utran_vector(&tmp_gavp), "E-UTRAN-Vector created.\n", "Failed to create E-UTRAN-Vector AVP.\n");
+			/*Create E-UTRAN-Vector AVP*/
+			SS_CHECK( ss_create_e_utran_vector(&tmp_gavp), "E-UTRAN-Vector created.\n", "Failed to create E-UTRAN-Vector AVP.\n");
 		
-		/*Set Item-Number*/
+			/*Set Item-Number*/
 			if(row[1])
 				SS_SET_U32( ss_set_item_number( &tmp_gavp, tmp_u), tmp_u, row[1], "Item-Number set.\n", "failed to set Item-Number.\n");
 
@@ -503,6 +501,7 @@ static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_re
 	}
 	else{
 
+		fprintf(stdout, "INFO : No Auth-info for this subscriber.\n");
 		mysql_close(conn);
 		return 1;	
 	}
@@ -511,7 +510,7 @@ static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_re
 }
 
 /*Set Authentication-Info*/
-static void set_auth_info(struct msg **msg, char *imsi, unsigned32 num_req_vect_utran, unsigned32 num_req_vect_eutran){
+static void set_auth_info(struct msg **msg, char *imsi, unsigned32 num_req_vect_utran_geran, unsigned32 num_req_vect_eutran){
 
 	struct avp *tmp_gavp = NULL;
 	
@@ -521,18 +520,18 @@ static void set_auth_info(struct msg **msg, char *imsi, unsigned32 num_req_vect_
 	SS_CHECK( ss_create_authentication_info(&tmp_gavp), "Authentication-Info AVP created.\n", "failed to create Authentication-Info AVP.\n");
 
 	/*Set UTRAN-GERAN auth-vectors requested*/
-	if(0 != num_req_vect_utran){
+	if(0 != num_req_vect_utran_geran){
 
 		/*Set UTRAN auth vector*/
-		SS_CHECK( get_set_utran_vect(&tmp_gavp, imsi, num_req_vect_utran), "UTRAN-Vector set.\n", "Failed to set UTRAN-Vector.\n");	
+		SS_WCHECK( get_set_utran_vect(&tmp_gavp, imsi, num_req_vect_utran_geran), "UTRAN-Vector set.\n", "Failed to set UTRAN-Vector.\n", NULL);	
 
 		/*Set  GERAN auth vector */
-		SS_CHECK( get_set_geran_vect(&tmp_gavp, imsi, num_req_vect_utran), "GERAN-Vector set.\n", "Failed to set GERAN-Vector.\n");			
+		SS_WCHECK( get_set_geran_vect(&tmp_gavp, imsi, num_req_vect_utran_geran), "GERAN-Vector set.\n", "Failed to set GERAN-Vector.\n", NULL);			
 	}
 
 	/*Set EUTRAN auth-vectors requested*/
 	if(0 != num_req_vect_eutran)
-		SS_CHECK( get_set_eutran_vect(&tmp_gavp, imsi, num_req_vect_eutran), "E-UTRAN-Vector set.\n", "Failed to set E-UTRAN-Vector.\n");	
+		SS_WCHECK( get_set_eutran_vect(&tmp_gavp, imsi, num_req_vect_eutran), "E-UTRAN-Vector set.\n", "Failed to set E-UTRAN-Vector.\n", NULL);	
 
 	SS_CHECK( ss_add_avp((avp_or_msg *)msg, tmp_gavp), "Authentication-Info AVP added.\n", "faile to add Authentication-Info AVP.\n");	
 	
@@ -615,8 +614,8 @@ static void check_eqv_plmn_lst(struct msg *msg){
 
 	if(!msg) return;
 
-	/*Getquivalent-PLMN-List group AVP*/
-	SS_CHECK( ss_get_gavp_equivalent_plmn_list(msg, &tmp_gavp), "Equivalent-PLMN-List group AVP Retrieved.\n", "Failed to retrieve Equivalent-PLMN-List AVP\n");
+	/*Get Equivalent-PLMN-List group AVP*/
+	SS_WCHECK( ss_get_gavp_equivalent_plmn_list(msg, &tmp_gavp), "Equivalent-PLMN-List group AVP Retrieved.\n", "Failed to retrieve Equivalent-PLMN-List AVP\n", return);
 
 	/*Get array of Visited-Plmn-Id values*/
 	SS_CHECK(ss_get_visited_plmn_id_gavp_array(tmp_gavp, &visited_plmn_id, &len_arr, &array_size), "Visited-Plmn-Id retrieved from Equivalent-PLMN-List.\n", "Failed to retrieve Visited-Plmn-Id retrieved from Equivalent-PLMN-List.\n");
@@ -665,7 +664,7 @@ static void check_ulr_val(struct msg *req){
 	test_comp_uint(tmp_u, gb_ulr_flags, "ULR-Flags");
 
 	/*Check UE-SRVCC-Capability AVP*/
-	SS_CHECK( ss_get_ue_srvcc_capability_msg( req, &tmp_i), "UE-SRVCC-Capability AVP extracted.\n","Failed to extracte UE-SRVCC-Capability AVP\n");
+	SS_WCHECK( ss_get_ue_srvcc_capability_msg( req, &tmp_i), "UE-SRVCC-Capability AVP extracted.\n","Failed to extracte UE-SRVCC-Capability AVP\n", NULL);
 	test_comp_uint((uint32_t) tmp_i, (uint32_t) gb_ue_srvcc_capability, "UE-SRVCC-Capability");
 
 	/*Check Visited-PLMN-Id AVP*/
@@ -677,11 +676,11 @@ static void check_ulr_val(struct msg *req){
 	test_comp_str(tmp_str, gb_sgsn_number, len, "SGSN-Number");
 	
 	/*Get Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP*/
-	SS_CHECK( ss_get_homogeneous_support_of_ims_voice_over_ps_sessions_msg( req, &tmp_i), "Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP Retrieved.\n","Failed to Retrieve Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP\n");
+	SS_WCHECK( ss_get_homogeneous_support_of_ims_voice_over_ps_sessions_msg( req, &tmp_i), "Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP Retrieved.\n","Failed to Retrieve Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP\n", NULL);
 	test_comp_uint((uint32_t) tmp_i, (uint32_t) gb_homogeneous_support_ims_voice_over_ps_sessions, "Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions");
 
 	/*Get GMLC-Address AVP*/
-	SS_CHECK( ss_get_gmlc_address_msg( req, &tmp_str, &len), "GMLC-Address AVP Retrieved.\n","Failed to Retrieve GMLC-Address AVP\n");
+	SS_WCHECK( ss_get_gmlc_address_msg( req, &tmp_str, &len), "GMLC-Address AVP Retrieved.\n","Failed to Retrieve GMLC-Address AVP\n", NULL);
 	test_comp_str(tmp_str, gb_gmlc_address, len, "GMLC-Address");
 
 	/*check for Active-Apn AVPs and update database*/
@@ -691,17 +690,17 @@ static void check_ulr_val(struct msg *req){
 	check_eqv_plmn_lst(req);
 	
 	/*check MME-Number-for-MT-SMS AVP*/
-	SS_CHECK( ss_get_mme_number_for_mt_sms_msg( req, &tmp_str, &len), "MME-Number-for-MT-SMS AVP Retrieved.\n","Failed to Retrieve MME-Number-for-MT-SMS AVP.\n");
+	SS_WCHECK( ss_get_mme_number_for_mt_sms_msg( req, &tmp_str, &len), "MME-Number-for-MT-SMS AVP Retrieved.\n","Failed to Retrieve MME-Number-for-MT-SMS AVP.\n", NULL);
 	/*compare MME-Number-for-MT-SMS values*/
 	test_comp_str( tmp_str, gb_mme_number_for_mt_sms, len, "MME-Number-for-MT-SMS");
 
 	/*check SMS-Register-Request AVP*/
-	SS_CHECK( ss_get_sms_register_request_msg( req, &tmp_i), "SMS-Register-Request AVP Retrieved.\n","Failed to Retrieve SMS-Register-Request AVP.\n");
+	SS_WCHECK( ss_get_sms_register_request_msg( req, &tmp_i), "SMS-Register-Request AVP Retrieved.\n","Failed to Retrieve SMS-Register-Request AVP.\n", NULL);
 	/*compare SMS-Register-Request values*/
 	test_comp_uint( (uint32_t)tmp_i, (uint32_t)gb_sms_register_request,"SMS-Register-Request");
 
 	/*check Coupled-Node-Diameter-ID AVP*/
-	SS_CHECK( ss_get_coupled_node_diameter_id_msg( req, &tmp_str, &len), "Coupled-Node-Diameter-ID AVP Retrieved.\n","Failed to Retrieve Coupled-Node-Diameter-ID AVP.\n");
+	SS_WCHECK( ss_get_coupled_node_diameter_id_msg( req, &tmp_str, &len), "Coupled-Node-Diameter-ID AVP Retrieved.\n","Failed to Retrieve Coupled-Node-Diameter-ID AVP.\n", NULL);
 	/*compare Coupled-Node-Diameter-ID values*/
 	test_comp_str( tmp_str, gb_coupled_node_diameter_id, len, "Coupled-Node-Diameter-ID");
 
@@ -861,7 +860,7 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 	SS_WCHECK( ss_get_ue_srvcc_capability_msg(req, &ue_srvcc_capability), "UE-SRVCC-Capability value retrieved from request.\n", "Failed to retrieve UE-SRVCC-Capability value.\n", NULL);
 
 	/*Insert/Update terminfo(Terminal-Information) table*/
-	SS_WCHECK( insert_update_db_terminfo( conn, imsi, (char *)imei, (char *)soft_version, (char *)meid, ue_srvcc_capability), "terminfo inserted/updated.\n", "Insert/Update terminfo failed.\n", NULL);
+	insert_update_db_terminfo( conn, imsi, (char *)imei, (char *)soft_version, (char *)meid, ue_srvcc_capability);
 
 	/* Update database with Active-Apn AVPs*/
 	update_active_apn( req, imsi, conn);

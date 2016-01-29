@@ -838,25 +838,30 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 	test_get_supported_features(req, NULL, &feature_list, &size);
 
 	/* Check if mme supports ODB_HPLMN_APN*/
-	if((NULL != feature_list) && (!CHECK_SUPPORT_ODB_HPLMN_APN(*feature_list))){
+	if(NULL != feature_list){
+		if(!CHECK_SUPPORT_ODB_HPLMN_APN(*feature_list)){
 
-		fprintf(stdout,COLOR_GREEN"OK : ERROR MESSAGE 'DIAMETER_ERROR_ROAMING_NOT_ALLOWED' with error diagnostic value 'ODB_HPLMN_APN' to be sent."ANSI_COLOR_RESET"\n");
+			fprintf(stdout,COLOR_GREEN"OK : ERROR MESSAGE 'DIAMETER_ERROR_ROAMING_NOT_ALLOWED' with error diagnostic value 'ODB_HPLMN_APN' to be sent."ANSI_COLOR_RESET"\n");
 
-		/*Set origin host, origin realm and 'DIAMETER_ERROR_ROAMING_NOT_ALLOWED' experimental result code*/
-		SET_ORIGIN_AND_EXPER_RESULT(DIAMETER_ERROR_ROAMING_NOT_ALLOWED, msg);
+			/*Set origin host, origin realm and 'DIAMETER_ERROR_ROAMING_NOT_ALLOWED' experimental result code*/
+			SET_ORIGIN_AND_EXPER_RESULT(DIAMETER_ERROR_ROAMING_NOT_ALLOWED, msg);
 		
-		/*Set Error-Diagnostic AVP with 'ODB_HPLMN_APN' value*/
-		SS_CHECK( ss_set_error_diagnostic(msg, (int32_t)ODB_HPLMN_APN), "Error diagnostic value set.\n", "Failed to set error diagnostic.\n");
+			/*Set Error-Diagnostic AVP with 'ODB_HPLMN_APN' value*/
+			SS_CHECK( ss_set_error_diagnostic(msg, (int32_t)ODB_HPLMN_APN), "Error diagnostic value set.\n", "Failed to set error diagnostic.\n");
 
-		/*close mysql connection*/
-		mysql_close(conn);
-		mysql_thread_end();
+			/*close mysql connection*/
+			mysql_close(conn);
+			mysql_thread_end();
 
-		free(feature_list);		
+			free(feature_list);	
 
-		goto send;
+			/*Send answer message*/
+			goto send;
+		}
+
+		free(feature_list);
 	}
-	free(feature_list);
+
 
 	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
 	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");

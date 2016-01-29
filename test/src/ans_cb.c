@@ -48,6 +48,7 @@ static void code_2_str(int code, char ** result){
 		strcpy(*result, "UNKNOW or NOT PRESENT IN MESSAGE");	
 }
 
+/*checks common AVP values found in all answer messages*/
 static void check_answer(struct msg *msg){
 
 	unsigned32  result_code = 0;
@@ -120,12 +121,16 @@ static void check_utran_vect(struct avp *gavp, char * imsi){
 	size_t len = 0;
 	char buf[70] = {0};
 
+	unsigned long *row_len = NULL;
 	MYSQL *conn = NULL;
 	MYSQL_RES *res = NULL;
   	MYSQL_ROW row;
 
 	if((!gavp) || (!imsi)) return;
 	
+	/*Get UTRAN-Vector AVP*/
+	SS_WCHECK( ss_get_gavp_utran_vector(gavp, &tmp_gavp), "UTRAN-Vector retrieved.\n", "Failed to retrieve UTRAN-Vector.\n", return);
+
 	/*connect to database*/
 	test_connect_db(&conn);
 
@@ -137,9 +142,9 @@ static void check_utran_vect(struct avp *gavp, char * imsi){
 	
 	if((row = mysql_fetch_row(res))!= NULL){
 
-		/*Get UTRAN-Vector AVP*/
-		SS_WCHECK( ss_get_gavp_utran_vector(gavp, &tmp_gavp), "UTRAN-Vector retrieved.\n", "Failed to retrieve UTRAN-Vector.\n", return);
-		
+		/*Get length of each element in array 'row'*/
+		row_len = mysql_fetch_lengths(res);
+
 		while(tmp_gavp){
 		
 			/*check Item-Number*/
@@ -148,23 +153,23 @@ static void check_utran_vect(struct avp *gavp, char * imsi){
 
 			/*check RAND*/
 			SS_CHECK( ss_get_rand( tmp_gavp, &tmp_str, &len), "RAND retrieved.\n", "failed to retrieve RAND.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[2], len, "RAND");
+			test_comp_str( tmp_str, (unsigned char *)row[2], len, (size_t)row_len[2], "RAND");
 
 			/*check XRES*/
 			SS_CHECK( ss_get_xres( tmp_gavp, &tmp_str, &len),"XRES retrieved.\n", "failed to retrieve XRES.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[3], len, "XRES");
+			test_comp_str( tmp_str, (unsigned char *)row[3], len, (size_t)row_len[3], "XRES");
 
 			/*check AUTN*/
 			SS_CHECK( ss_get_autn( tmp_gavp, &tmp_str, &len),"AUTN retrieved.\n", "failed to retrieve AUTN.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[4], len, "AUTN");
+			test_comp_str( tmp_str, (unsigned char *)row[4], len, (size_t)row_len[4], "AUTN");
 
 			/*check Confidentiality-Key*/
 			SS_CHECK( ss_get_confidentiality_key( tmp_gavp, &tmp_str, &len), "Confidentiality-Key retrieved.\n", "failed to retrieve Confidentiality-Key.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[5], len, "Confidentiality-Key");
+			test_comp_str( tmp_str, (unsigned char *)row[5], len, (size_t)row_len[5], "Confidentiality-Key");
 	
 			/*check Integrity-Key*/
 			SS_CHECK( ss_get_integrity_key( tmp_gavp, &tmp_str, &len), "Integrity-Key retrieved.\n", "failed to retrieve Integrity-Key.\n");	
-			test_comp_str( tmp_str, (unsigned char *)row[6], len, "Integrity-Key");
+			test_comp_str( tmp_str, (unsigned char *)row[6], len, (size_t)row_len[5], "Integrity-Key");
 
 			/*Get next UTRAN-Vector AVP*/
 			SS_WCHECK( ss_get_gavp_next_utran_vector(tmp_gavp, &tmp_gavp2), "UTRAN-Vector next retrieved.\n", "Failed to retrieve next UTRAN-Vector.\n", goto end);
@@ -174,7 +179,8 @@ static void check_utran_vect(struct avp *gavp, char * imsi){
 
 end:
 	mysql_free_result(res);
-	mysql_close(conn);		
+	mysql_close(conn);	
+	mysql_thread_end();	
 }
 
 /*Get E-UTRAN auth vector from db and compare it with received values*/
@@ -187,11 +193,15 @@ static void check_eutran_vect(struct avp *gavp, char * imsi){
 	size_t len = 0;
 	char buf[70] = {0};
 
+	unsigned long *row_len = NULL;
 	MYSQL *conn = NULL;
 	MYSQL_RES *res = NULL;
   	MYSQL_ROW row;
 
 	if((!gavp) || (!imsi)) return;
+
+	/*Get E-UTRAN-Vector AVP*/
+	SS_WCHECK( ss_get_gavp_e_utran_vector(gavp, &tmp_gavp), "E-UTRAN-Vector retrieved.\n", "Failed to retrieve E-UTRAN-Vector.\n", return);
 	
 	/*connect to database*/
 	test_connect_db(&conn);
@@ -204,9 +214,9 @@ static void check_eutran_vect(struct avp *gavp, char * imsi){
 	
 	if((row = mysql_fetch_row(res))!= NULL){
 
-		/*Get E-UTRAN-Vector AVP*/
-		SS_WCHECK( ss_get_gavp_e_utran_vector(gavp, &tmp_gavp), "E-UTRAN-Vector retrieved.\n", "Failed to retrieve E-UTRAN-Vector.\n", return);
-		
+		/*Get length of each element in array 'row'*/
+		row_len = mysql_fetch_lengths(res);
+
 		while(tmp_gavp){
 		
 			/*check Item-Number*/
@@ -215,19 +225,19 @@ static void check_eutran_vect(struct avp *gavp, char * imsi){
 
 			/*check RAND*/
 			SS_CHECK( ss_get_rand( tmp_gavp, &tmp_str, &len), "RAND retrieved.\n", "failed to retrieve RAND.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[2], len, "RAND");
+			test_comp_str( tmp_str, (unsigned char *)row[2], len, (size_t)row_len[2], "RAND");
 
 			/*check XRES*/
 			SS_CHECK( ss_get_xres( tmp_gavp, &tmp_str, &len),"XRES retrieved.\n", "failed to retrieve XRES.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[3], len, "XRES");
+			test_comp_str( tmp_str, (unsigned char *)row[3], len, (size_t)row_len[3], "XRES");
 
 			/*check AUTN*/
 			SS_CHECK( ss_get_autn( tmp_gavp, &tmp_str, &len),"AUTN retrieved.\n", "failed to retrieve AUTN.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[4], len, "AUTN");
+			test_comp_str( tmp_str, (unsigned char *)row[4], len, (size_t)row_len[4], "AUTN");
 
 			/*check KASME*/
 			SS_CHECK( ss_get_kasme( tmp_gavp, &tmp_str, &len), "KASME retrieved.\n", "failed to retrieve KASME.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[5], len, "KASME");
+			test_comp_str( tmp_str, (unsigned char *)row[5], len, (size_t)row_len[5], "KASME");
 	
 			/*Get next E-UTRAN-Vector AVP*/
 			SS_WCHECK( ss_get_gavp_next_e_utran_vector(tmp_gavp, &tmp_gavp2), "E-UTRAN-Vector next retrieved.\n", "Failed to next retrieve E-UTRAN-Vector.\n", goto end);
@@ -237,7 +247,8 @@ static void check_eutran_vect(struct avp *gavp, char * imsi){
 
 end:
 	mysql_free_result(res);
-	mysql_close(conn);		
+	mysql_close(conn);	
+	mysql_thread_end();	
 }
 
 /*Get GERAN auth vector from db and compare it with received values*/
@@ -250,11 +261,15 @@ static void check_geran_vect(struct avp *gavp, char * imsi){
 	size_t len = 0;
 	char buf[70] = {0};
 
+	unsigned long *row_len = NULL;
 	MYSQL *conn = NULL;
 	MYSQL_RES *res = NULL;
   	MYSQL_ROW row;
 
 	if((!gavp) || (!imsi)) return;
+
+	/*Get GERAN-Vector AVP*/
+	SS_WCHECK( ss_get_gavp_geran_vector(gavp, &tmp_gavp), "GERAN-Vector retrieved.\n", "Failed to retrieve GERAN-Vector.\n", return);
 	
 	/*connect to database*/
 	test_connect_db(&conn);
@@ -267,8 +282,8 @@ static void check_geran_vect(struct avp *gavp, char * imsi){
 	
 	if((row = mysql_fetch_row(res))!= NULL){
 
-		/*Get GERAN-Vector AVP*/
-		SS_WCHECK( ss_get_gavp_geran_vector(gavp, &tmp_gavp), "GERAN-Vector retrieved.\n", "Failed to retrieve GERAN-Vector.\n", return);
+		/*Get length of each element in array 'row'*/
+		row_len = mysql_fetch_lengths(res);
 		
 		while(tmp_gavp){
 		
@@ -278,15 +293,15 @@ static void check_geran_vect(struct avp *gavp, char * imsi){
 
 			/*check RAND*/
 			SS_CHECK( ss_get_rand( tmp_gavp, &tmp_str, &len), "RAND retrieved.\n", "failed to retrieve RAND.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[2], len, "RAND");
+			test_comp_str( tmp_str, (unsigned char *)row[2], len, (size_t)row_len[2], "RAND");
 
 			/*check SRES*/
 			SS_CHECK( ss_get_sres( tmp_gavp, &tmp_str, &len),"SRES retrieved.\n", "failed to retrieve SRES.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[3], len, "SRES");
+			test_comp_str( tmp_str, (unsigned char *)row[3], len, (size_t)row_len[3], "SRES");
 
 			/*check Kc*/
 			SS_CHECK( ss_get_kc( tmp_gavp, &tmp_str, &len),"Kc retrieved.\n", "failed to retrieve Kc.\n");
-			test_comp_str( tmp_str, (unsigned char *)row[4], len, "Kc");
+			test_comp_str( tmp_str, (unsigned char *)row[4], len, (size_t)row_len[4], "Kc");
 	
 			/*Get next GERAN-Vector AVP*/
 			SS_WCHECK( ss_get_gavp_next_geran_vector(tmp_gavp, &tmp_gavp2), "GERAN-Vector next retrieved.\n", "Failed to next retrieve GERAN-Vector.\n", goto end);
@@ -296,7 +311,8 @@ static void check_geran_vect(struct avp *gavp, char * imsi){
 
 end:
 	mysql_free_result(res);
-	mysql_close(conn);		
+	mysql_close(conn);	
+	mysql_thread_end();	
 }
 
 /*check Authentication-Info*/
@@ -311,11 +327,11 @@ static void check_auth_info(struct msg *msg, char *imsi){
 	/*Get Authentication-Info AVP*/
 	SS_WCHECK( ss_get_gavp_authentication_info(msg, &tmp_gavp), "Authentication-Info extracted.\n", "failed to extract Authentication-Info.\n", return;);
 
-	/*Get E-UTRAN-Vector*/
-	check_eutran_vect( tmp_gavp, imsi);	
-
 	/*Get UTRAN-Vector*/
 	check_utran_vect( tmp_gavp, imsi);
+	
+	/*Get E-UTRAN-Vector*/
+	check_eutran_vect( tmp_gavp, imsi);	
 
 	/*Get GERAN-Vector*/
 	check_geran_vect( tmp_gavp, imsi);
@@ -361,7 +377,7 @@ static void check_local_time_zone(struct msg *msg){
 	/*Get Time-Zone*/
 	SS_CHECK( ss_get_time_zone(tmp_gavp, &tmp_str, &len), "Time-Zone Retrieved.\n", "Failed to Retrieve Time-Zone.\n");
 	/*compare Time-Zone value*/
-	test_comp_str( tmp_str, gb_time_zone, len,"Time-Zone");
+	test_comp_str( tmp_str, gb_time_zone, len, strlen((char*)gb_time_zone), "Time-Zone");
 
 	/*Get Daylight-Saving-Time*/
 	SS_CHECK( ss_get_daylight_saving_time(tmp_gavp, &tmp_i), "Daylight-Saving-Time Retrieved.\n", "Failed to Retrieve Daylight-Saving-Time.\n");
@@ -399,7 +415,7 @@ static void check_ula(struct msg *msg, char *imsi){
 	while(size){
 		
 		/*compare Reset-Id values*/
-		test_comp_str( reset_ids[size-1], gb_reset_ids[size-1], len_arr[size-1], "Reset-Id");
+		test_comp_str( reset_ids[size-1], gb_reset_ids[size-1], len_arr[size-1], strlen((char *)gb_reset_ids[size-1]),"Reset-Id");
 
 		size --;
 	}
@@ -499,7 +515,7 @@ void test_ans_cb_idr(void * data, struct msg ** msg){
 	/*Get Last-UE-Activity-Time*/
 	SS_WCHECK( ss_get_last_ue_activity_time_msg( *msg, &tmp_str, &len), "Last-UE-Activity-Time retrieved.\n", "Failed to retrieve Last-UE-Activity-Time.\n", NULL);
 	/*compare Last-UE-Activity-Time values*/
-	test_comp_str( tmp_str, gb_last_ue_activity_time, len, "Last-UE-Activity-Time");
+	test_comp_str( tmp_str, gb_last_ue_activity_time, len, strlen((char*)gb_last_ue_activity_time), "Last-UE-Activity-Time");
 
 	/*Get RAT-Type*/
 	SS_WCHECK( ss_get_rat_type_msg(*msg, (int32_t *)&tmp_i), "RAT-Type retrieved.\n", "Failed to retrieve RAT-Type.\n", NULL);

@@ -128,33 +128,7 @@ int ss_dict_load_dict(){
 		CHECK_dict_new(DICT_TYPE, &tdata, NULL, &type);
 		CHECK_dict_new(DICT_AVP, &data, type, NULL);
 	};
-
-	/* Requested-EUTRAN-Authentication-Info */
-	{
-		struct dict_avp_data data = {
-			1408,	/* Code */
-			10415,	/* Vendor */
-			"Requested-EUTRAN-Authentication-Info",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
-		};
-		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
-	};
-
-	/* Requested-UTRAN-GERAN-Authentication-Info */
-	{
-		struct dict_avp_data data = {
-			1409,	/* Code */
-			10415,	/* Vendor */
-			"Requested-UTRAN-GERAN-Authentication-Info",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
-		};
-		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
-	};
-
+	
 	/* Cancellation-Type */
 	{
 		struct dict_avp_data data = {
@@ -1821,19 +1795,6 @@ int ss_dict_load_dict(){
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
 			AVP_TYPE_INTEGER32	/* base type of data */
-		};
-		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
-	};
-
-	/* Trace-Data */
-	{
-		struct dict_avp_data data = {
-			1458,	/* Code */
-			10415,	/* Vendor */
-			"Trace-Data",	/* Name */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
-			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
-			AVP_TYPE_GROUPED	/* base type of data */
 		};
 		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
 	};

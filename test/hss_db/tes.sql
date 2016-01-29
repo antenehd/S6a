@@ -99,13 +99,13 @@ CREATE TABLE pdpContext(
   imsi varchar(15) NOT NULL,
   contextId int(10) unsigned,
   pdpType binary(1),
-  pdpAddr varbinary(16),
+  pdpAddr varbinary(18),
   qosSubscribed binary(3),
   vplmnDynmAddrAllw enum(/*'NOTALLOWED'*/'0', /*'ALLOWED'*/'1'),
   serviceSelection varbinary(63),
   3gppChargCharacter binary(6),
   extPdpType binary(2),
-  extPdpAddr varbinary(16),
+  extPdpAddr varbinary(18),
   maxBwUl int (10) unsigned,
   maxBwDl int (10) unsigned,
   apnOiReplacement varbinary(100),
@@ -122,11 +122,11 @@ CREATE TABLE traceData(
   imsi varchar(15) unique,
   traceReference binary(6),
   traceDepth enum(/*'Minimum'*/'0', /*'Medium'*/'1', /*'Maximum'*/'2', /*'MinimumWithoutVendorSpecificExtension'*/'3', /*'MediumWithoutVendorSpecificExtension'*/'4',/* 'MaximumWithoutVendorSpecificExtension'*/'5'),
-  traceNeTypeList binary(1),
-  traceInterfList binary(2),
-  traceEventList binary(2),
-  omcId binary(20),
-  traceCollEnty varbinary(16),
+  traceNeTypeList binary(2),
+  traceInterfList binary(14),
+  traceEventList binary(9),
+  omcId varbinary(20),
+  traceCollEnty varbinary(18),
   jobType enum(/*Immediate_MDT_only*/'0', /*Logged_MDT_only*/'1', /*Trace_only*/'2',/*Immediate_MDT_and_Trace*/'3', /*RLF_reports_only*/'4',	/*RCEF_reports_only)*/'5', /*listOfmeas int(10) unsigned*/'6',/*reporTrigg int(10) unsigned*/'7'),
   listOfMeasr int(10) unsigned,
   reporTrig int(10) unsigned,
@@ -166,8 +166,8 @@ DROP TABLE IF EXISTS apnConf;
 CREATE TABLE apnConf (
   imsi varchar(15) NOT NULL,
   contextId int(10) unsigned NOT NULL,
-  servedPartyIpAddr4 binary(4),
-  servedPartyIpAddr6 binary(16),
+  servedPartyIpAddr4 binary(6),
+  servedPartyIpAddr6 binary(18),
   pdnType enum(/*'IPv4'*/'0', /*'IPv6'*/'1', /*'IPv4v6'*/'2', /*'IPv4_OR_IPv6'*/'3') NOT NULL,
   serviceSelection varbinary(63) NOT NULL,
   qosClassId enum(/*'QCI_1'*/'1', /*'QCI_2'*/'2', /*'QCI_3'*/'3', /*'QCI_4'*/'4', /*'QCI_5'*/'5', /*'QCI_6'*/'6', /*'QCI_7'*/'7', /*'QCI_8'*/'8', /*'QCI_9'*/'9', /*'QCI_65'*/'65', /*'QCI_66'*/'66', /*'QCI_69'*/'69', /*'QCI_70'*/'70'),
@@ -175,8 +175,8 @@ CREATE TABLE apnConf (
   preEmpCap enum(/*'PRE_EMPTION_CAPABILITY_ENABLED'*/'0', /*'PRE_EMPTION_CAPABILITY_DISABLED'*/'1'),
   preEmpVulner enum(/*'PRE_EMPTION_VULNERABILITY_ENABLED'*/'0', /*'PRE_EMPTION_VULNERABILITY_DISABLED'*/'1'),
   vplmnDynmAddrAllw enum(/*'NOTALLOWED'*/'0', /*'ALLOWED'*/'1'),
-  mipHomeAgntAddr0 binary(4),
-  mipHomeAgntAddr1 binary(16),
+  mipHomeAgntAddr0 binary(6),
+  mipHomeAgntAddr1 binary(18),
   mipDestHost varbinary(255),
   mipDestRealm varbinary(255),
   visitNetId char(23),
@@ -251,14 +251,14 @@ CREATE TABLE GERANVector (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Insert subscriber data*/
-INSERT INTO subscriptionData VALUES ('244444123456789', /*'SERVICE_GRANTED'*/'0', x'358441234567', x'358441234568', x'358449999999',/*'TRUE'*/'1', '0', '1','0',x'1111',x'2222',x'3333', '0','apn.oi.repl',x'11',x'12', x'13','cccccc','10','5','1','1','0','1','1','0','0', /*consent_given*/'1','0','1','0',/*UTRAN*/'1000');
+INSERT INTO subscriptionData VALUES ('244444123456789', /*'SERVICE_GRANTED'*/'0', x'c1358441234567', x'c1358441234568', x'358449999999',/*'TRUE'*/'1', '0', '1','0',x'1111',x'2222',x'3333', '0','apn.oi.repl',x'11',x'12', x'13','cccccc','10','5','1','1','0','1','1','0','0', /*consent_given*/'1','0','1','0',/*UTRAN*/'1000');
 INSERT INTO resetId VALUES ('244444');
-INSERT INTO pdpContext VALUES('244444123456789','1','1','abcd','001','0', 'service.select', 'cccccc','01','abcd','10','5','apn.oi.repl','0','0','1','1');
+INSERT INTO pdpContext VALUES('244444123456789','1','1',x'00010a0b0c0d','001','0', 'service.select', 'cccccc','01',x'00010a0b0c0d','10','5','apn.oi.repl','0','0','1','1');
 INSERT INTO userId VALUES('24444');
 INSERT INTO csgData VALUES('244444123456789', '1','0001','service.select','service.select2','service.select3',x'011001');
-INSERT INTO traceData VALUES('244444123456789','123456','0','1','01','01','omcid','abcd','0','1','1','0', '0', '1', '1', '0', '0','0','0','0','0', '1','1','-1','-1',x'244001', x'244002', x'244003');
+INSERT INTO traceData VALUES('244444123456789','123456','0',x'4000',x'0000000000000000010000000000',x'000000000000000100','omcid',x'00010a0b0c0d','0','1','1','0', '0', '1', '1', '0', '0','0','0','0','0', '1','1','-1','-1',x'244001', x'244002', x'244003');
 INSERT INTO areaScope VALUES('244444123456789',x'24400100010001', x'24400100010002',x'244001000101',x'2440010001', x'2440010002');
-INSERT INTO apnConf VALUES('244444123456789','1','abcdabcdabcdabcd',NULL, 'IPv6','service.select','1','1', '0', '0','0', 'abcd','abcdabcdabcdabcd','pdngateway1','epc.mnc001.mcc001.3gppnetwork.org','net.visited.id', '1'/*DYNAMIC*/, 'cccccc', '10', '5', 'apn.oi.repl', '0', '0', '1','1','1','1');
+INSERT INTO apnConf VALUES('244444123456789','1',x'00010a0b0c0d', x'00020a0b0c0d0a0b0c0d0a0b0c0d0a0b0c0d', 'IPv6','service.select','1','1', '0', '0','0', x'00010a0b0c0d',x'00020a0b0c0d0a0b0c0d0a0b0c0d0a0b0c0d','pdngateway1','epc.mnc001.mcc001.3gppnetwork.org','net.visited.id', '1'/*DYNAMIC*/, 'cccccc', '10', '5', 'apn.oi.repl', '0', '0', '1','1','1','1');
 INSERT INTO lcsInfo VALUES('244444123456789',x'358123456789',x'358123456798',NULL,'1','1','2','1',NULL,NULL);
 INSERT INTO callBaringInfo VALUES('244444123456789','1','1');
 INSERT INTO EUTRANVector VALUES('244444123456789','1','1234567890123456','1234567890123456', '1234567890123456', '12345678901234561234567890123456');
@@ -267,11 +267,11 @@ INSERT INTO GERANVector VALUES('244444123456789', '1', '1234567890123456','12345
 
 /*Insert another subscriber data*/
 INSERT INTO subscriptionData VALUES ('245813000000111', /*'SERVICE_GRANTED'*/'0', x'358441234567', NULL, x'358449999999',/*'TRUE'*/'1', '0', '1','0',x'1111',x'2222',x'3333', '0','apn.oi.repl',x'11',x'12', x'13','cccccc','10','5','1','1','0','1','1','0','0', /*consent_given*/'1','0','1','0',/*UTRAN*/'1004');
-INSERT INTO pdpContext VALUES('245813000000111','1','1','abcd','001','0', 'service.select', 'cccccc','01','abcd','10','5','apn.oi.repl','0','0','1','1');
+INSERT INTO pdpContext VALUES('245813000000111','1','1',x'00010a0b0c0d','001','0', 'service.select', 'cccccc','01',x'00010a0b0c0d','10','5','apn.oi.repl','0','0','1','1');
 INSERT INTO csgData VALUES('245813000000111', '1','0001','service.select','service.select2','service.select3',x'011001');
-INSERT INTO traceData VALUES('245813000000111','123456','0','1','01','01','omcid','abcd','0','1','1','0', '0', '1', '1', '0', '0','0','0','0','0', '1','1','-1','-1',x'244001', x'244002', x'244003');
+INSERT INTO traceData VALUES('245813000000111','123456','0',x'4000',x'0000000000000000010000000000',x'000000000000000100',x'358441234567',x'00010a0b0c0d','0','1','1','0', '0', '1', '1', '0', '0','0','0','0','0', '1','1','-1','-1',x'244001', x'244002', x'244003');
 INSERT INTO areaScope VALUES('245813000000111',x'24400100010001', x'24400100010002',x'244001000101',x'2440010001', x'2440010002');
-INSERT INTO apnConf VALUES('245813000000111','1','abcdabcdabcdabcd',NULL, 'IPv6','service.select','1','1', '0', '0','0', 'abcd','abcdabcdabcdabcd','pdngateway1','epc.mnc001.mcc001.3gppnetwork.org','net.visited.id', '1'/*DYNAMIC*/, 'cccccc', '10', '5', 'apn.oi.repl', '0', '0', '1','1','1','1');
+INSERT INTO apnConf VALUES('245813000000111','1',x'00010a0b0c0d', x'00020a0b0c0d0a0b0c0d0a0b0c0d0a0b0c0d', 'IPv6','service.select','1','1', '0', '0','0', x'00010a0b0c0d',x'00020a0b0c0d0a0b0c0d0a0b0c0d0a0b0c0d','pdngateway1','epc.mnc001.mcc001.3gppnetwork.org','net.visited.id', '1'/*DYNAMIC*/, 'cccccc', '10', '5', 'apn.oi.repl', '0', '0', '1','1','1','1');
 INSERT INTO lcsInfo VALUES('245813000000111',x'358123456789',x'358123456798',NULL,'1','1','2','1',NULL,NULL);
 INSERT INTO callBaringInfo VALUES('245813000000111','1','1');
 INSERT INTO EUTRANVector VALUES('245813000000111','1','1234567890123456','1234567890123456', '1234567890123456', '12345678901234561234567890123456');

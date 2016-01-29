@@ -540,7 +540,7 @@ int test_req_nor(char * dest_host){
 	
 	/*Set Supported-Features group AVP and its child AVPs*/
 	test_set_supported_features(&nor, (unsigned32)VENDOR_ID_3GPP, gb_feature_list_id[0], gb_feature_list[0]);
-	test_set_supported_features(&nor, (unsigned32)VENDOR_ID_3GPP, gb_feature_list_id[0], gb_feature_list[0]);
+	test_set_supported_features(&nor, (unsigned32)VENDOR_ID_3GPP, gb_feature_list_id[1], gb_feature_list[1]);
 
 	/*Set Terminal-Information group AVP and its child AVPs*/
 	set_terminal_info( &nor, gb_imei, gb_software_version, gb_meid);

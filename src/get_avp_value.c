@@ -139,8 +139,8 @@ static inline int get_str_array(struct msg * msg, struct dict_object * dict, uns
 	while(avp){
 
 		/*allocate memory for the values*/
-		tmp_val = realloc(tmp_val, sizeof(char *) * (num + 1));
-		tmp_len = realloc(tmp_len, sizeof(size_t)* (num + 1));
+		tmp_val = realloc(tmp_val, (sizeof(char *)) * (num + 1));
+		tmp_len = realloc(tmp_len, (sizeof(size_t)) * (num + 1));
 		if((NULL == tmp_val) || (NULL == tmp_len))	return ENOMEM;
 		
 		/*retrieves value from AVP 'avp' and write it to location pointed by 'temp + num'*/
@@ -890,13 +890,13 @@ int ss_get_measurement_period_umts(struct avp *gavp, int32_t *ret){
 	return get_int_value_gavp(gavp, ss_measurement_period_umts, ret);
 }
 
-/*Retrieves Collection-Period-RMM-LTE avp value from group avp*/
-int ss_get_collection_period_rmm_lte(struct avp *gavp, int32_t *ret){	
+/*Retrieves Collection-Period-RRM-LTE avp value from group avp*/
+int ss_get_collection_period_rrm_lte(struct avp *gavp, int32_t *ret){	
 	return get_int_value_gavp(gavp, ss_collection_period_rrm_lte, ret);
 }
 
 /*Retrieves Collection-Period-RRM-UMTS avp value from group avp */
-int ss_get_collection_period_rmm_umts(struct avp *gavp, int32_t *ret){	
+int ss_get_collection_period_rrm_umts(struct avp *gavp, int32_t *ret){	
 	return get_int_value_gavp(gavp, ss_collection_period_rrm_umts, ret);
 }
 
@@ -913,15 +913,15 @@ int ss_get_measurement_quantity(struct avp *gavp, unsigned char **ret, size_t *l
 }
 
 /*Retrieves Event-Threshold-Event-1F avp value from group avp*/
-int ss_get_event_threshold_event_1f(struct avp *gavp, uint32_t *ret){	
+int ss_get_event_threshold_event_1f(struct avp *gavp, int32_t *ret){	
 
-	return get_uint_value_gavp(gavp, ss_event_threshold_event_1f, ret);
+	return get_int_value_gavp(gavp, ss_event_threshold_event_1f, ret);
 }
 
 /*Retrieves Event-Threshold-Event-1I avp value from group avp*/
-int ss_get_event_threshold_event_1i(struct avp *gavp, uint32_t *ret){	
+int ss_get_event_threshold_event_1i(struct avp *gavp, int32_t *ret){	
 
-	return get_uint_value_gavp(gavp, ss_event_threshold_event_1i, ret);
+	return get_int_value_gavp(gavp, ss_event_threshold_event_1i, ret);
 }	
 
 /*Retrieves multiple MDT-Allowed-PLMN-Id AVPs' values from group avp*/

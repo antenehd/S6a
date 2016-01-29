@@ -10,7 +10,7 @@
 Global variable to store configuration file path including filename (eg. "./conf/freed.conf"). It should be set before 'ss_init' function is called. If it is initialized to NULL or not initialized at all the configuration file is should be located in same directory as the excutable code file name should be 'freeDiameter.conf'.
 Note: This variable is already defined to a NULL value. 
 */
-extern char * ss_diameter_conffile_name;
+extern char *ss_diameter_conffile_name;
 
 /** arguments of this typedef data type should be either 'struct avp *' or 'struct msg *' */
 typedef void avp_or_msg; 
@@ -288,6 +288,21 @@ int fd_core_shutdown(void);
 	@return !0 : on failure
 */
 int fd_core_wait_shutdown_complete(void);
+
+/**
+   This function adds a Result-Code AVP to a message, and optionally
+   - sets the 'E' error flag in the header,
+   - adds Error-Message, Error-Reporting-Host and Failed-AVP AVPs.
+ 
+   	 @param msg : A msg object -- it must be an answer.
+   	 @param rescode : The name of the returned error code (ex: "DIAMETER_INVALID_AVP")
+   	 @param errormsg : (optional) human-readable error message to put in Error-Message AVP
+   	 @param optavp : (optional) If provided, the content will be put inside a Failed-AVP
+     @param type_id : 0 => nothing; 1 => adds Origin-Host and Origin-Realm with local info. 2=> adds Error-Reporting-Host. 
+     @return 0 : Operation complete.
+     @return !0 : an error occurred.
+*/
+int fd_msg_rescode_set( struct msg * msg, char * rescode, char * errormsg, struct avp * optavp, int type_id );
 
 
 /**************************************************************************************************/
@@ -2448,7 +2463,7 @@ int ss_set_measurement_period_lte(struct avp **avp, int32_t val);
 */
 int ss_set_measurement_period_umts(struct avp **avp, int32_t val);
 
-/**Sets Collection-Period-RMM-LTE AVP value and add it in to AVP structure that can contain it. This function creates an instance of Collection-Period-RMM-LTE AVP and set the given value in to it and add the AVP into the given message structure.
+/**Sets Collection-Period-RRM-LTE AVP value and add it in to AVP structure that can contain it. This function creates an instance of Collection-Period-RRM-LTE AVP and set the given value in to it and add the AVP into the given message structure.
 
   @param avp : pointer to an AVP of type grouped pointer where the AVP will be added after being set.
   @param val: the value to be set
@@ -2457,7 +2472,7 @@ int ss_set_measurement_period_umts(struct avp **avp, int32_t val);
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_collection_period_rmm_lte(struct avp **avp, int32_t val);
+int ss_set_collection_period_rrm_lte(struct avp **avp, int32_t val);
 
 /**Sets Collection-Period-RRM-UMTS AVP value and add it in to AVP structure that can contain it. This function creates an instance of Collection-Period-RRM-UMTS AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2468,7 +2483,7 @@ int ss_set_collection_period_rmm_lte(struct avp **avp, int32_t val);
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_collection_period_rmm_umts(struct avp **avp, int32_t val);
+int ss_set_collection_period_rrm_umts(struct avp **avp, int32_t val);
 
 /**Sets Positioning-Method AVP value and add it in to AVP structure that can contain it. This function creates an instance of Positioning-Method AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2503,7 +2518,7 @@ int ss_set_measurement_quantity(struct avp **avp, unsigned char *val, size_t len
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_event_threshold_event_1f(struct avp **avp, uint32_t val);
+int ss_set_event_threshold_event_1f(struct avp **avp, int32_t val);
 
 /**Sets Event-Threshold-Event-1I AVP value and add it in to AVP structure that can contain it. This function creates an instance of Event-Threshold-Event-1I AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -2514,7 +2529,7 @@ int ss_set_event_threshold_event_1f(struct avp **avp, uint32_t val);
   @return (other standard errors may be returned, too, with their standard meaning. Example:
       ENOMEM 	: Memory allocation for the new object element failed.)
 */
-int ss_set_event_threshold_event_1i(struct avp **avp, uint32_t val);
+int ss_set_event_threshold_event_1i(struct avp **avp, int32_t val);
 
 /**Sets MDT-Allowed-PLMN-Id AVP value and add it in to AVP structure that can contain it. This function creates an instance of MDT-Allowed-PLMN-Id AVP and set the given value in to it and add the AVP into the given message structure.
 
@@ -4222,15 +4237,15 @@ int ss_get_measurement_period_lte(struct avp *gavp, int32_t *val);
 */
 int ss_get_measurement_period_umts(struct avp *gavp, int32_t *val);
 
-/**Retrieves Collection-Period-RMM-LTE AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
+/**Retrieves Collection-Period-RRM-LTE AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
-  @param gavp : a pointer to an AVP of type grouped which contains Collection-Period-RMM-LTE AVP.
+  @param gavp : a pointer to an AVP of type grouped which contains Collection-Period-RRM-LTE AVP.
   @param val : the value will be saved in *val. 
   @return 0 : The AVP has been found and its value is written to *val.
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_collection_period_rmm_lte(struct avp *gavp, int32_t *val);
+int ss_get_collection_period_rrm_lte(struct avp *gavp, int32_t *val);
 
 /**Retrieves Collection-Period-RRM-UMTS AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4240,7 +4255,7 @@ int ss_get_collection_period_rmm_lte(struct avp *gavp, int32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_collection_period_rmm_umts(struct avp *gavp, int32_t *val);
+int ss_get_collection_period_rrm_umts(struct avp *gavp, int32_t *val);
 
 /**Retrieves Positioning-Method AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4272,7 +4287,7 @@ int ss_get_measurement_quantity(struct avp *gavp, unsigned char **val, size_t *l
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_event_threshold_event_1f(struct avp *gavp, uint32_t *val);
+int ss_get_event_threshold_event_1f(struct avp *gavp, int32_t *val);
 
 /**Retrieves Event-Threshold-Event-1I AVP value from group AVP. Upon successful function return the parameter *val will point to the value. The value should not be freed since it was not malloced.
  
@@ -4282,7 +4297,7 @@ int ss_get_event_threshold_event_1f(struct avp *gavp, uint32_t *val);
   @return EINVAL : A parameter is invalid.
   @return ENOENT : No AVP has been found.
 */
-int ss_get_event_threshold_event_1i(struct avp *gavp, uint32_t *val);
+int ss_get_event_threshold_event_1i(struct avp *gavp, int32_t *val);
 
 /**Retrieves multiple MDT-Allowed-PLMN-Id AVPs' values from group AVP. Upon successful function return the parameter **array_ret will point to the value. If the return is 0(success) the **array_ret should be freed after use.
  

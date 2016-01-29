@@ -10,7 +10,7 @@
 #define SET_ORIGIN_AND_EXPER_RESULT(result, msg)																	\
 {																													\
 	/* Add the Origin-Host and Origin-Realm AVP in the answer*/														\
-	CHECK_FCT( fd_msg_add_origin ( *msg, 0 ) );																		\
+	CHECK_FCT( fd_msg_add_origin( *msg, 0 ) );																		\
 	/*Set experimental result*/																						\
 	SS_CHECK( ss_create_experimental_result(&tmp_gavp), "Experimental-Result AVP created.\n", "Failed to create Experimental-Result AVP.\n");																						\
 	/*Vendor-id*/																									\
@@ -18,6 +18,20 @@
 	/*experimental result code*/																					\
   	SS_CHECK(ss_set_experimental_result_code( &tmp_gavp, (unsigned32)result), "experimental result code set.\n", "Failed to set experimental result code.\n");																		\
 	SS_CHECK( ss_add_avp(  (avp_or_msg **)msg, tmp_gavp ), "experimental result added.\n", "Failed to add experimental result.\n");																							\
+}
+
+/*converts unsigned char string to a string containing it's hexadecimal representation*/
+/*buffer '*hex' should be at least 2*'ustr_size'+1 long, 'ustr_size' is size of 'ustr' in bytes*/
+static void to_hex_str(unsigned char *ustr, char hex[], size_t ustr_size){
+	
+	int i;
+
+	if((!ustr) || (!hex) || (0 == ustr_size)) return;
+
+	for(i=0; i < ustr_size; i++)
+		sprintf((hex + (2*i)), "%02x", ustr[i]);
+	
+	hex[2*ustr_size] = '\0';
 }
 
 /*Insert/Update terminfo(Terminal-Information) table*/
@@ -167,8 +181,17 @@ static void update_active_apn(struct msg *msg, char * imsi, MYSQL * conn){
 			/*check for  MIP6-Agent-Info avp*/
 			if(test_get_mip6_values(tmp_gavp, &hm_agnt_addr_v4, &hm_agnt_addr_v6, &dst_hst, &dst_rlm) == 0){
 			
+				char res4[13] = {0};
+				char res6[37] = {0};
+
+				/*convert received ipv4 address into hex string*/
+				to_hex_str(hm_agnt_addr_v4, res4, 6);
+
+				/*convert received ipv4 address into hex string*/
+				to_hex_str(hm_agnt_addr_v6, res6, 18);
+
 				/*mysqpl statement to update apnConf table with new MIP6-Agent-Info*/
-				snprintf(buf2,550,"update apnConf set mipHomeAgntAddr0='%.16s', mipHomeAgntAddr1='%.16s', mipDestHost='%s', mipDestRealm='%s' where imsi='%.15s' and contextId='%u'",(char *)hm_agnt_addr_v4, (char *)hm_agnt_addr_v6, (char *)dst_hst, (char *)dst_rlm, imsi, context_id);
+				snprintf(buf2,550,"update apnConf set mipHomeAgntAddr0=x'%.12s', mipHomeAgntAddr1=x'%.36s', mipDestHost='%s', mipDestRealm='%s' where imsi='%.15s' and contextId='%u'",res4, res6, (char *)dst_hst, (char *)dst_rlm, imsi, context_id);
 				
 				/*Update apnConf table*/
 				if (mysql_query(conn, buf2)) 
@@ -210,7 +233,7 @@ static void check_active_apn(struct msg *msg){
 		/*Check Service-Selection values*/
 		SS_WCHECK( ss_get_service_selection(tmp_gavp, &tmp_str, &len), "Service-Selection value retrieved.\n", "Failed to retrieve Service-Selection.\n", NULL);
 		/*compare Service-Selection values*/
-		if(tmp_str) test_comp_str(tmp_str, gb_service_selection, len, "Service-Selection");		
+		if(tmp_str) test_comp_str(tmp_str, gb_service_selection, len, strlen((char*)gb_service_selection), "Service-Selection");		
 
 		/*check for  MIP6-Agent-Info avp*/
 		test_check_mip6_values((avp_or_msg *)tmp_gavp);
@@ -219,7 +242,7 @@ static void check_active_apn(struct msg *msg){
 		tmp_str = NULL;
 		SS_WCHECK( ss_get_visited_network_identifier(tmp_gavp, &tmp_str, &len), "Visited-Network-Identifier value retrieved.\n", "Failed to retrieve Visited-Network-Identifier.\n", NULL);
 		/*Compare Visited-Network-Identifier values*/
-		if(tmp_str) test_comp_str( tmp_str, gb_visited_network_identifier, len, "Visited-Network-Identifier");
+		if(tmp_str) test_comp_str( tmp_str, gb_visited_network_identifier, len, strlen((char*)gb_visited_network_identifier), "Visited-Network-Identifier");
 
 		/*check Specific-APN-Info*/
 		test_check_spec_apn_info( tmp_gavp);		
@@ -307,7 +330,7 @@ static void check_req_auth_info(unsigned32 *num_req_vect, unsigned32 *immd_resp_
 
 	/*compare Re-synchronization-Info value*/
 	if(re_sync_inf)
-		test_comp_str( re_sync_inf, gb_re_synchronization_info, len,"Re-synchronization-Info");	
+		test_comp_str( re_sync_inf, gb_re_synchronization_info, len, strlen((char*)gb_re_synchronization_info), "Re-synchronization-Info");	
 }
 
 /*Get  UTRAN auth vector from db and set UTRAN-Vector*/
@@ -317,6 +340,7 @@ static int get_set_utran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 	unsigned32 tmp_u = 0;
 	char buf[70] = {0};
 	int i = 0;
+	unsigned long *len = NULL;
 	MYSQL *conn = NULL;
 	MYSQL_RES *res = NULL;
   	MYSQL_ROW row;
@@ -334,6 +358,9 @@ static int get_set_utran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 	SS_CHECK(test_get_qry_res(conn, buf, &res), "UTRANVector data retrieved from db.\n", "Failed to retrieve UTRANVector data from database.\n"); 
 	
 	if((row = mysql_fetch_row(res))!= NULL){
+
+		/*Get length of each element in array 'row'*/
+		len = mysql_fetch_lengths(res);
 	
 		for(i = 0; i < num_req_vect_utran; i++){
 		
@@ -346,23 +373,23 @@ static int get_set_utran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 
 			/*set RAND*/
 			if(row[2])
-				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2], strlen(row[2])),"RAND set.\n", "failed to set RAND.\n");
+				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2], len[2]),"RAND set.\n", "failed to set RAND.\n");
 
 			/*set XRES*/
 			if(row[3])
-				SS_CHECK( ss_set_xres( &tmp_gavp, (octetstring *)row[3], strlen(row[3])),"XRES set.\n", "failed to set XRES.\n");
+				SS_CHECK( ss_set_xres( &tmp_gavp, (octetstring *)row[3], len[3]),"XRES set.\n", "failed to set XRES.\n");
 
 			/*set AUTN*/
 			if(row[4])
-				SS_CHECK( ss_set_autn( &tmp_gavp, (octetstring *)row[4], strlen(row[4])),"AUTN set.\n", "failed to set AUTN.\n");
+				SS_CHECK( ss_set_autn( &tmp_gavp, (octetstring *)row[4], len[4]),"AUTN set.\n", "failed to set AUTN.\n");
 
 			/*set Confidentiality-Key*/
 			if(row[5])
-				SS_CHECK( ss_set_confidentiality_key( &tmp_gavp, (octetstring *)row[5], strlen(row[5])),"Confidentiality-Key set.\n", "failed to set Confidentiality-Key.\n");
+				SS_CHECK( ss_set_confidentiality_key( &tmp_gavp, (octetstring *)row[5], len[5]),"Confidentiality-Key set.\n", "failed to set Confidentiality-Key.\n");
 	
 			/*set Integrity-Key*/
 			if(row[6])
-				SS_CHECK( ss_set_integrity_key( &tmp_gavp, (octetstring *)row[6], strlen(row[6])),"Integrity-Key set.\n", "failed to set Integrity-Key.\n");	
+				SS_CHECK( ss_set_integrity_key( &tmp_gavp, (octetstring *)row[6], len[6]),"Integrity-Key set.\n", "failed to set Integrity-Key.\n");	
 
 			/*Add UTRAN-Vector AVP*/
 			SS_CHECK( ss_add_avp((avp_or_msg **)gavp, tmp_gavp), "UTRAN-Vector added.\n", "Failed to add UTRAN-Vector.\n");	
@@ -370,10 +397,12 @@ static int get_set_utran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 
 		mysql_free_result(res);
 		mysql_close(conn);
+		mysql_thread_end();
 	}
 	else{
 
 		mysql_close(conn);
+		mysql_thread_end();
 		return 1;	
 	}
 	
@@ -387,6 +416,7 @@ static int get_set_geran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 	unsigned32 tmp_u = 0;
 	char buf[70] = {0};
 	int i = 0;
+	unsigned long *len = NULL;
 	MYSQL *conn = NULL;
 	MYSQL_RES *res = NULL;
   	MYSQL_ROW row;
@@ -405,6 +435,9 @@ static int get_set_geran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 	
 	if((row = mysql_fetch_row(res))!= NULL){
 	
+		/*Get length of each element in array 'row'*/
+		len = mysql_fetch_lengths(res);
+
 		for(i = 0; i < num_req_vect_geran; i++){
 		
 			/*GERAN-Vector*/
@@ -416,15 +449,15 @@ static int get_set_geran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 
 			/*set RAND*/
 			if(row[2])
-				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2], strlen(row[2])),"RAND set.\n", "failed to set RAND.\n");
+				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2], len[2]),"RAND set.\n", "failed to set RAND.\n");
 
 			/*set SRES*/
 			if(row[3])
-				SS_CHECK( ss_set_sres( &tmp_gavp, (octetstring *)row[3], strlen(row[3])),"SRES set.\n", "failed to set SRES.\n");
+				SS_CHECK( ss_set_sres( &tmp_gavp, (octetstring *)row[3], len[3]),"SRES set.\n", "failed to set SRES.\n");
 
 			/*set Kc*/
 			if(row[4])
-				SS_CHECK( ss_set_kc( &tmp_gavp, (octetstring *)row[4], strlen(row[4])),"Kc set.\n", "failed to set Kc.\n");
+				SS_CHECK( ss_set_kc( &tmp_gavp, (octetstring *)row[4], len[4]),"Kc set.\n", "failed to set Kc.\n");
 
 			/*Add GERAN-Vector */
 			SS_CHECK( ss_add_avp((avp_or_msg **)gavp, tmp_gavp), "GERAN-Vector added\n", "Fail to add GERAN-Vector.\n");
@@ -432,10 +465,12 @@ static int get_set_geran_vect(struct avp **gavp, char * imsi, unsigned32 num_req
 
 		mysql_free_result(res);
 		mysql_close(conn);
+		mysql_thread_end();
 	}
 	else{
 
 		mysql_close(conn);
+		mysql_thread_end();
 		return 1;	
 	}
 	
@@ -449,6 +484,7 @@ static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_re
 	unsigned32 tmp_u = 0;
 	char buf[70] = {0};
 	int i = 0;
+	unsigned long *len = NULL;
 	MYSQL *conn = NULL;
 	MYSQL_RES *res = NULL;
   	MYSQL_ROW row;
@@ -467,6 +503,9 @@ static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_re
 	
 	if((row = mysql_fetch_row(res))!= NULL){
 	
+		/*Get length of each element in array 'row'*/
+		len = mysql_fetch_lengths(res);
+	
 		for(i = 0; i < num_req_vect_eutran; i++){
 		
 			/*Create E-UTRAN-Vector AVP*/
@@ -478,19 +517,19 @@ static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_re
 
 			/*set RAND*/
 			if(row[2])
-				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2], strlen(row[2])),"RAND set.\n", "failed to set RAND.\n");
+				SS_CHECK( ss_set_rand( &tmp_gavp, (octetstring *)row[2], len[2]),"RAND set.\n", "failed to set RAND.\n");
 
 			/*set XRES*/
 			if(row[3])
-				SS_CHECK( ss_set_xres( &tmp_gavp, (octetstring *)row[3], strlen(row[3])),"XRES set.\n", "failed to set XRES.\n");
+				SS_CHECK( ss_set_xres( &tmp_gavp, (octetstring *)row[3], len[3]),"XRES set.\n", "failed to set XRES.\n");
 
 			/*set AUTN*/
 			if(row[4])
-				SS_CHECK( ss_set_autn( &tmp_gavp, (octetstring *)row[4], strlen(row[4])),"AUTN set.\n", "failed to set AUTN.\n");
+				SS_CHECK( ss_set_autn( &tmp_gavp, (octetstring *)row[4], len[4]),"AUTN set.\n", "failed to set AUTN.\n");
 
 			/*set KASME*/
 			if(row[5])
-				SS_CHECK( ss_set_kasme( &tmp_gavp, (octetstring *)row[5], strlen(row[5])),"KASME set.\n", "failed to set KASME.\n");
+				SS_CHECK( ss_set_kasme( &tmp_gavp, (octetstring *)row[5], len[5]),"KASME set.\n", "failed to set KASME.\n");
 
 			/*Add E-UTRAN-Vector AVP*/
 			SS_CHECK( ss_add_avp((avp_or_msg **)gavp, tmp_gavp), "E-UTRAN-Vector added.\n", "Failed to add E-UTRAN-Vector.\n");
@@ -498,11 +537,13 @@ static int get_set_eutran_vect(struct avp **gavp, char * imsi, unsigned32 num_re
 
 		mysql_free_result(res);
 		mysql_close(conn);
+		mysql_thread_end();
 	}
 	else{
 
 		fprintf(stdout, "INFO : No Auth-info for this subscriber.\n");
 		mysql_close(conn);
+		mysql_thread_end();
 		return 1;	
 	}
 	
@@ -595,13 +636,13 @@ void check_terminal_info(struct msg *msg){
 	get_terminal_info(msg, &imei, &imei_len, &soft_version, &soft_len, &meid, &meid_len);
 
 	/*Check IMEI value*/
-	test_comp_str( imei, gb_imei, imei_len, "IMEI");
+	test_comp_str( imei, gb_imei, imei_len, strlen((char*)gb_imei), "IMEI");
 
 	/*Check Software-Version value*/
-	test_comp_str( soft_version, gb_software_version, soft_len, "Software-Version");
+	test_comp_str( soft_version, gb_software_version, soft_len, strlen((char*)gb_software_version), "Software-Version");
 
 	/*Check MEID value*/
-	test_comp_str( meid, gb_meid, meid_len, "MEID");
+	test_comp_str( meid, gb_meid, meid_len, strlen((char*)gb_meid), "MEID");
 }
 
 /*check Equivalent-PLMN-List child AVPs values*/
@@ -623,7 +664,7 @@ static void check_eqv_plmn_lst(struct msg *msg){
 	while(array_size){
 
 		/*compare Visited-Plmn-Id value*/
-		test_comp_str( visited_plmn_id[array_size-1], gb_visited_plmn_id[array_size-1], len_arr[array_size-1], "Visited-Plmn-Id");
+		test_comp_str( visited_plmn_id[array_size-1], gb_visited_plmn_id[array_size-1], len_arr[array_size-1], strlen((char*)gb_visited_plmn_id[array_size-1]), "Visited-Plmn-Id");
 
 		array_size --;
 	}
@@ -647,7 +688,7 @@ static void check_ulr_val(struct msg *req){
 
 	/*check User-Name*/
 	SS_CHECK( ss_get_user_name_msg(req, &tmp_str, &len), "User-Name extracted from request.\n", "Failed to extract User-Name from request.\n");
-	test_comp_str(tmp_str, gb_user_name, len, "User-Name");
+	test_comp_str(tmp_str, gb_user_name, len, strlen((char*)gb_user_name), "User-Name");
 
 	/*Check Supported-Features group AVP child AVPs' values*/
 	test_check_support_feature( req);
@@ -669,11 +710,11 @@ static void check_ulr_val(struct msg *req){
 
 	/*Check Visited-PLMN-Id AVP*/
 	SS_CHECK( ss_get_visited_plmn_id_msg( req, &tmp_str, &len), "Visited-PLMN-Id AVP extracted.\n","Failed to extracte Visited-PLMN-Id AVP\n");
-	test_comp_str(tmp_str, (unsigned char *)gb_visited_plmn_id[0], len, "Visited-PLMN-Id");
+	test_comp_str(tmp_str, (unsigned char *)gb_visited_plmn_id[0], len, strlen((char*)gb_visited_plmn_id[0]),"Visited-PLMN-Id");
 
 	/*Get SGSN-Number AVP*/
 	SS_WCHECK( ss_get_sgsn_number_msg( req, &tmp_str, &len), "SGSN-Number AVP Retrieved.\n","Failed to Retrieve SGSN-Number AVP\n", NULL);
-	test_comp_str(tmp_str, gb_sgsn_number, len, "SGSN-Number");
+	test_comp_str(tmp_str, gb_sgsn_number, len, strlen((char*)gb_sgsn_number),"SGSN-Number");
 	
 	/*Get Homogeneous-Support-of-IMS-Voice-Over-PS-Sessions AVP*/
 	SS_WCHECK( ss_get_homogeneous_support_of_ims_voice_over_ps_sessions_msg( req, &tmp_i), "Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP Retrieved.\n","Failed to Retrieve Homogeneous-Support-of-IMS-Voice-Over-PS-Session AVP\n", NULL);
@@ -681,7 +722,7 @@ static void check_ulr_val(struct msg *req){
 
 	/*Get GMLC-Address AVP*/
 	SS_WCHECK( ss_get_gmlc_address_msg( req, &tmp_str, &len), "GMLC-Address AVP Retrieved.\n","Failed to Retrieve GMLC-Address AVP\n", NULL);
-	test_comp_str(tmp_str, gb_gmlc_address, len, "GMLC-Address");
+	test_comp_str(tmp_str, gb_gmlc_address, len, strlen((char*)gb_gmlc_address), "GMLC-Address");
 
 	/*check for Active-Apn AVPs and update database*/
 	check_active_apn( req);
@@ -692,7 +733,7 @@ static void check_ulr_val(struct msg *req){
 	/*check MME-Number-for-MT-SMS AVP*/
 	SS_WCHECK( ss_get_mme_number_for_mt_sms_msg( req, &tmp_str, &len), "MME-Number-for-MT-SMS AVP Retrieved.\n","Failed to Retrieve MME-Number-for-MT-SMS AVP.\n", NULL);
 	/*compare MME-Number-for-MT-SMS values*/
-	test_comp_str( tmp_str, gb_mme_number_for_mt_sms, len, "MME-Number-for-MT-SMS");
+	test_comp_str( tmp_str, gb_mme_number_for_mt_sms, len, strlen((char*)gb_mme_number_for_mt_sms),"MME-Number-for-MT-SMS");
 
 	/*check SMS-Register-Request AVP*/
 	SS_WCHECK( ss_get_sms_register_request_msg( req, &tmp_i), "SMS-Register-Request AVP Retrieved.\n","Failed to Retrieve SMS-Register-Request AVP.\n", NULL);
@@ -702,7 +743,7 @@ static void check_ulr_val(struct msg *req){
 	/*check Coupled-Node-Diameter-ID AVP*/
 	SS_WCHECK( ss_get_coupled_node_diameter_id_msg( req, &tmp_str, &len), "Coupled-Node-Diameter-ID AVP Retrieved.\n","Failed to Retrieve Coupled-Node-Diameter-ID AVP.\n", NULL);
 	/*compare Coupled-Node-Diameter-ID values*/
-	test_comp_str( tmp_str, gb_coupled_node_diameter_id, len, "Coupled-Node-Diameter-ID");
+	test_comp_str( tmp_str, gb_coupled_node_diameter_id, len, strlen((char*)gb_coupled_node_diameter_id), "Coupled-Node-Diameter-ID");
 
 	fprintf(stdout, COLOR_YELLOW"FINISHED : COMPARING VALUES RECEIVED IN ULR MESSAGE DONE."COLOR_YELLOW"\n\n");
 }
@@ -767,6 +808,7 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 
 		mysql_free_result(res);
 		mysql_close(conn);
+		mysql_thread_end();
 
 		goto send;
 	}
@@ -784,6 +826,7 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 
 		mysql_free_result(res);
 		mysql_close(conn);
+		mysql_thread_end();
 
 		goto send;
 	}
@@ -807,11 +850,13 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 
 		/*close mysql connection*/
 		mysql_close(conn);
+		mysql_thread_end();
 
 		free(feature_list);		
 
 		goto send;
 	}
+	free(feature_list);
 
 	/* Set the Origin-Host, Origin-Realm and "DIAMETER_SUCCESS" Result-Code*/
 	SS_CHECK( fd_msg_rescode_set( *msg, "DIAMETER_SUCCESS", NULL, NULL, 1), "origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n", "Failed to set origin-host origin-realm and 'DIAMETER_SUCCESS' set in answer message.\n");
@@ -867,6 +912,7 @@ int test_req_cb_ulr(struct msg ** msg, struct avp * av, struct session * sess, v
 
 	/*close mysql connection*/
 	mysql_close(conn);
+	mysql_thread_end();
 
 	/*Compare values of received message with the values sent*/
 	check_ulr_val(req);
@@ -996,7 +1042,7 @@ int test_req_cb_air(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*Get Visited-PLMN-Id*/
 	SS_CHECK( ss_get_visited_plmn_id_msg(*msg, &visited_plmn_id, &len), "Visited-PLMN-Id retrieved.\n", "failed to retrieve Visited-PLMN-Id.\n");	
 	/*compare Visited-PLMN-Id value*/
-	test_comp_str( visited_plmn_id, gb_visited_plmn_id[0], len, "Visited-PLMN-Id");
+	test_comp_str( visited_plmn_id, gb_visited_plmn_id[0], len, strlen((char*)gb_visited_plmn_id[0]), "Visited-PLMN-Id");
 
 	/* Create answer message header from the request*/
 	SS_CHECK( ss_msg_create_answer( msg), "AIA Answer message header created from request.\n", "Failed to create AIA answer message header.\n");	
@@ -1056,7 +1102,7 @@ int test_req_cb_idr(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*compare value*/
 	while(size){
 
-		test_comp_str( reset_ids[size-1], gb_reset_ids[size-1], len_arr[size-1], "Reset-Id");
+		test_comp_str( reset_ids[size-1], gb_reset_ids[size-1], len_arr[size-1], strlen((char*)gb_reset_ids[size-1]), "Reset-Id");
 		size--;
 	}
 	if(reset_ids) free(reset_ids);
@@ -1142,14 +1188,14 @@ int test_req_cb_dsr(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*Extract Trace-Reference*/
 	SS_WCHECK( ss_get_trace_reference_msg( *msg, &tmp_str, &len), "Trace-Reference set.\n", "Failed to set Trace-Reference.\n", NULL);
 	/*compare Trace-Reference value*/
-	test_comp_str( tmp_str, gb_trace_reference, len, "Trace-Reference");
+	test_comp_str( tmp_str, gb_trace_reference, len, strlen((char*)gb_trace_reference), "Trace-Reference");
 
 	/*Extract TS-Code*/
 	SS_WCHECK( ss_get_ts_code_array( *msg, &tmp_str_arr, &len_arr, &size), "TS-Code set.\n","Failed to set TS-Code.\n", NULL);
 	/*compare TS-Code value*/
 	while(size){
 
-		test_comp_str( tmp_str_arr[size-1], gb_ts_code[size-1], len_arr[size-1], "TS-Code");
+		test_comp_str( tmp_str_arr[size-1], gb_ts_code[size-1], len_arr[size-1], strlen((char*)gb_ts_code[size-1]), "TS-Code");
 		size--;
 	}
 	if(tmp_str_arr) free(tmp_str_arr);
@@ -1160,7 +1206,7 @@ int test_req_cb_dsr(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*compare SS-Code value*/
 	while(size){
 
-		test_comp_str( tmp_str_arr[size-1], gb_ss_code[size-1], len_arr[size-1], "SS-Code");
+		test_comp_str( tmp_str_arr[size-1], gb_ss_code[size-1], len_arr[size-1], strlen((char*)gb_ss_code[size-1]), "SS-Code");
 		size--;
 	}
 	if(tmp_str_arr) free(tmp_str_arr);
@@ -1257,7 +1303,7 @@ int test_req_cb_rsr(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*compare User-Id value*/
 	while(size){
 	
-		test_comp_str( tmp_str_arr[size-1], gb_user_id[size-1], len_arr[size-1], "User-Id");
+		test_comp_str( tmp_str_arr[size-1], gb_user_id[size-1], len_arr[size-1], strlen((char*)gb_user_id[size-1]), "User-Id");
 		size--;
 	}
 	if(tmp_str_arr) free(tmp_str_arr);
@@ -1269,7 +1315,7 @@ int test_req_cb_rsr(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*compare Reset-Id value*/
 	while(size){
 	
-		test_comp_str( tmp_str_arr[size-1], gb_reset_ids[size-1], len_arr[size-1], "Reset-Id");
+		test_comp_str( tmp_str_arr[size-1], gb_reset_ids[size-1], len_arr[size-1], strlen((char*)gb_reset_ids[size-1]), "Reset-Id");
 		size--;
 	}
 	if(tmp_str_arr) free(tmp_str_arr);
@@ -1310,7 +1356,7 @@ int test_req_cb_nor(struct msg ** msg, struct avp * av, struct session * sess, v
 	/* Extract imsi from request message*/
 	SS_CHECK( ss_get_user_name_msg(*msg, &tmp_str, &len), "IMSI extracted from request.\n", "Failed to extract IMSI from request.\n");
 
-	/*Retrieve Feature-List AVP value (only 1 avp is expected for testing) from request*/
+	/*Retrieve Feature-List AVP value from request*/
 	test_check_support_feature(*msg);
 
 	/*check terminal information from request*/
@@ -1322,7 +1368,7 @@ int test_req_cb_nor(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*Get Visited-Network-Identifier*/
 	SS_CHECK( ss_get_visited_network_identifier_msg( *msg, &tmp_str, &len), "Visited-Network-Identifier retrieved.\n", "Failed to retrieve Visited-Network-Identifier.\n");
 	/*compare Visited-Network-Identifier value*/
-	test_comp_str( tmp_str, gb_visited_network_identifier, len, "Visited-Network-Identifier");
+	test_comp_str( tmp_str, gb_visited_network_identifier, len, strlen((char*)gb_visited_network_identifier), "Visited-Network-Identifier");
 
 	/*Get Context-Identifier*/
 	SS_CHECK( ss_get_context_identifier_msg(*msg, &tmp_u), "Context-Identifier retrieved.\n", "Failed to retrieve Context-Identifier/\n");
@@ -1332,7 +1378,7 @@ int test_req_cb_nor(struct msg ** msg, struct avp * av, struct session * sess, v
 	/*Get Service-Selection*/
 	SS_CHECK( ss_get_service_selection_msg( *msg, &tmp_str, &len), "Service-Selection retrieved.\n", "Failed to retrieve Service-Selection.\n");
 	/*compare Service-Selection value*/
-	test_comp_str( tmp_str, gb_service_selection, len, "Service-Selection");
+	test_comp_str( tmp_str, gb_service_selection, len, strlen((char*)gb_service_selection), "Service-Selection");
 
 	/*Get Alert-Reason*/
 	SS_CHECK( ss_get_alert_reason_msg(*msg, &tmp_i), "Alert-Reason retrieved.\n", "Failed to retrieve Alert-Reason.\n");

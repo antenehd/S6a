@@ -1281,11 +1281,11 @@ int ss_dict_init(){
 	vn.avp_vendor = 10415;
 
 	/*Load dictionary which contains the definition for the AVPs requered for S6a Interface*/
-	if(ss_dict_load_dict()!= 0)
+	if(0 != ss_dict_load_dict())
 		fprintf(stderr, "ERROR : Error has occured in function 'ss_dict_load_dict()'\n");
 
 	/*Create dictionary objects for S6a commands*/
-	if(create_cmd_dict() != 0)
+	if(0 != create_cmd_dict())
 		fprintf(stderr, "ERROR : Error has occured in function 'create_cmd_dict()'\n");
 		
 	/*Initialize AVPs*/	

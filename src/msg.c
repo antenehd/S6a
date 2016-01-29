@@ -75,8 +75,7 @@ static inline int create_init_msg(struct dict_object *msg_type, struct msg **msg
 /* Create answer message from a request message. And set  Vendor-Specific-Application-Id and Auth-Session-State in to the message*/
 int ss_msg_create_answer(struct msg **msg){
 	
-	if((!msg) || (!(*msg)))
-		return EINVAL;
+	if((!msg) || (!(*msg)))	return EINVAL;
 
 	/*create answer message from request message, upon success msg will point to the answer message*/
 	SS_CHECK( fd_msg_new_answer_from_req( fd_g_config->cnf_dict, msg, 0 ) );

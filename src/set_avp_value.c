@@ -617,13 +617,13 @@ int ss_set_measurement_period_umts(struct avp **gavp,  int32_t val){
 	return set_int_value((avp_or_msg **)gavp, ss_measurement_period_umts, val);
 }
 
-/*Sets Collection-Period-RMM-LTE avp value to group avp*/
-int ss_set_collection_period_rmm_lte(struct avp **gavp,  int32_t val){	
+/*Sets Collection-Period-RRM-LTE avp value to group avp*/
+int ss_set_collection_period_rrm_lte(struct avp **gavp,  int32_t val){	
 	return set_int_value((avp_or_msg **)gavp, ss_collection_period_rrm_lte, val);
 }
 
 /*Sets Collection-Period-RRM-UMTS avp value to group avp*/
-int ss_set_collection_period_rmm_umts(struct avp **gavp,  int32_t val){	
+int ss_set_collection_period_rrm_umts(struct avp **gavp,  int32_t val){	
 	return set_int_value((avp_or_msg **)gavp, ss_collection_period_rrm_umts, val);
 }
 
@@ -640,15 +640,15 @@ int ss_set_measurement_quantity(struct avp **gavp, unsigned char *val, size_t le
 }
 
 /*Sets Event-Threshold-Event-1F avp value to group avp*/
-int ss_set_event_threshold_event_1f(struct avp **gavp, uint32_t val){	
+int ss_set_event_threshold_event_1f(struct avp **gavp, int32_t val){	
 
-	return set_uint_value((avp_or_msg **)gavp, ss_event_threshold_event_1f, val);
+	return set_int_value((avp_or_msg **)gavp, ss_event_threshold_event_1f, val);
 }
 
 /*Sets Event-Threshold-Event-1I avp value to group avp */
-int ss_set_event_threshold_event_1i(struct avp **gavp, uint32_t val){	
+int ss_set_event_threshold_event_1i(struct avp **gavp, int32_t val){	
 
-	return set_uint_value((avp_or_msg **)gavp, ss_event_threshold_event_1i, val);
+	return set_int_value((avp_or_msg **)gavp, ss_event_threshold_event_1i, val);
 }	
 
 /*Sets multiple MDT-Allowed-PLMN-Id AVPs' values to group avp*/

@@ -651,7 +651,7 @@ void test_check_support_feature( struct msg *msg);
 /*Compares two strings and their length*/
 /*@name : is the name of the AVP whose recieved and sent values are compared*/
 /*@str2 : should not contain 0x00 values in between and should terminate with '\0'*/
-void test_comp_str(unsigned char *str1, unsigned char *str2, size_t str1_len, char *name);
+void test_comp_str(unsigned char *str1, unsigned char *str2, size_t str1_len, size_t str2_len, char *name);
 
 /*Compare two uint32_t values*/
 /*@name : is the name of the AVP whose recieved and sent values are compared*/

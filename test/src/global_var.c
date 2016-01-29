@@ -18,8 +18,8 @@ enum homogeneous_support_of_ims_voice_over_ps_sessions gb_homogeneous_support_im
 address *gb_gmlc_address = (address *)"gmlc.local";
 unsigned32 gb_context_identifier[] = {1,2,3};
 utf8string *gb_service_selection = (utf8string *)"serviceSelection";
-address  gb_home_agent_address_v4 [] = {'a','b','c','d', '\0'};
-address  gb_home_agent_address_v6 [] = {'a','b','c','d','a','b','c','d','a','b','c','d','a','b','c','d','\0'};
+address  gb_home_agent_address_v4 [] = {0x00,0x01,0x0a,0x0b,0x0c,0x0d};
+address  gb_home_agent_address_v6 [] = {0x00,0x02,0x0a,0x0b,0x0c,0x0d,0x0a,0x0b,0x0c,0x0d,0x0a,0x0b,0x0c,0x0d,0x0a,0x0b,0x0c,0x0d};
 diameterid *gb_home_agent_host_host = (diameterid *) "pdngateway1";
 diameterid *gb_home_agent_host_realm = (diameterid *) "epc.mnc001.mcc001.3gppnetwork.org";
 octetstring *gb_visited_network_identifier = (octetstring *)"visited-net-id";

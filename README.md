@@ -5,7 +5,7 @@
 ## 1. INTRODUCTION
 	
    This implementation of the S6a interface is meant to be used as a shared library. It contains a lot of 
-   APIs that are useful to implement the s6a interface. It is bases on the freediameter(www.freediameter.net)   
+   APIs that are useful to implement the s6a interface. It is based on the freediameter(www.freediameter.net)   
    software libraries  'linfdproto' and 'libfdcore' which contains the implementation for the diameter basic 
    protocol and other basic functionalities need for this implementation to work.
 	
@@ -28,8 +28,8 @@
 	
 ###2.2. BUILD THE S6a INTERFACE IMPLEMENTATION LIBRARY
 
-   Assuming it has been downloaded to you PC already. To build the S6a library, on your terminal goto the 
-   directory where this implementation is downloaded to, and excute the 'Makefile', run the following on 
+   Assuming it has been downloaded to your PC already, to build the S6a library, on your terminal goto the 
+   directory where this implementation is downloaded, and excute the 'Makefile', run the following on 
    terminal:
 		 
 		 # make
@@ -48,13 +48,13 @@
    for details about the content of diameter configuration file.
 
    The next step is to initiate the diameter module using 'ss_init()' API. This will load the diameter 
-   configuration, load the dictionary that contains the AVP and command definition. In additions it starts the module
+   configuration, load the dictionary that contains the AVP and command definition. In addition, it starts the module
    that will route messages, listen on the configured ports, connects to configured peers, takes care of CEA, CER, 
    DWR and DWA messages.
 
    The above two steps should always come first before using the following APIs.
 
-   After the above steps the next advisable step is to registere the callback functions that will be called when an 
+   After the above steps the next advisable step is to register the callback functions that will be called when an 
    S6a message is received. If an S6a message is received before the callbacks are registered it would be discarded. 
    The APIs for registering the callbacks are:
 
@@ -182,7 +182,7 @@
 	
 ##4. TESTING
 
-The testing approached used is end to end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to end testing each function will also be tested since all the functions will be used when all the end to end testing is completed. 
+The testing approach used is end to end functionality test(i.e. message transfer from local peer node to remote peer node). While doing the end to end testing each function will also be tested since all the functions will be used when all the end to end testing is completed. 
 
    **Running the test:** 
 

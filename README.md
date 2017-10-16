@@ -192,7 +192,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 		 # sudo apt-get install libmysqlclient-dev
 
 	    To run the test, first the procedures mentioned in section 2.1. and section 2.2. must be completed 
-	 	successfuly. Then on your command terminal navigate to 'test' directory which is found in the main directory 
+	 	successfuly. Then on your command terminal go to 'test' directory which is found in the main directory 
 	 	and	excute 'Makefile' and then excute 'copy.sh' as follows:
 		
 		# cd test
@@ -238,7 +238,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Authentication-Information-Request/Answer :** 
 
-	 	go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an HSS server which is waiting for S6a interface messages:
 
 		# ./testapp hss
@@ -263,7 +263,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
 		# ./testapp mme
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
@@ -273,7 +273,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Delete-Subscriber-Data-Request/Answer :** 
 
-	 	Go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	Go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp mme
@@ -288,7 +288,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Purge-UE-Request/Answer :** 
 
-	 	Go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	Go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp hss
@@ -303,12 +303,12 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Reset-Request/Answer :** 
 
-	 	go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp mme
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
@@ -318,7 +318,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Notify-Request/Answer :** 
 
-	 	Go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	Go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp hss

@@ -208,12 +208,12 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Update-Location-Request/Answer :** 
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	Go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an HSS server which is waiting for S6a interface messages:
 
 		# ./testapp hss
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an MME client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
@@ -223,12 +223,12 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Cancel-Location-Request/Answer :** 
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp mme
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
@@ -238,12 +238,12 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Authentication-Information-Request/Answer :** 
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an HSS server which is waiting for S6a interface messages:
 
 		# ./testapp hss
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an MME client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
@@ -258,7 +258,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Insert-Subscriber-Data-Request/Answer :**
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	go to the 'test' directory and then go to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp mme
@@ -273,12 +273,12 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Delete-Subscriber-Data-Request/Answer :** 
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	Go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp mme
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
@@ -288,12 +288,12 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Purge-UE-Request/Answer :** 
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	Go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp hss
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
@@ -303,7 +303,7 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Reset-Request/Answer :** 
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp mme
@@ -318,12 +318,12 @@ The testing approach used is end to end functionality test(i.e. message transfer
 
    **Test Notify-Request/Answer :** 
 
-	 	Navigate to the 'test' directory and then navigate to 'testnode1' directory and run the following 
+	 	Go to the 'test' directory and then navigate to 'testnode1' directory and run the following 
 	    command to simulate an MME server which is waiting for S6a interface messages:
 
 		# ./testapp hss
 
-	 	Then open another terminal and navigate to 'testnode2' directory which is found in the same directory as
+	 	Then open another terminal and go to 'testnode2' directory which is found in the same directory as
 	    'testhss'. From there run the following to simulate an HSS client sending Update-Location-Request and 
        	waiting for Upadate-Location-Answer:
 
